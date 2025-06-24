@@ -116,8 +116,7 @@ export default function ScheduleSection() {
                 ?.filter(
                   (sessao) =>
                     moment(sessao.startTime).format("YYYY-MM-DD") ===
-                    moment(selectedDate).format("YYYY-MM-DD") &&
-                    sessao.roomId === room.id
+                    moment(selectedDate).format("YYYY-MM-DD")
                 )
                 ?.toSorted(
                   (a, b) =>
@@ -145,6 +144,7 @@ export default function ScheduleSection() {
                     );
                   }
 
+                  if(room.id !== item.roomId) return null;
                   return item.presentations
                     ?.toSorted(
                       (a, b) => a.positionWithinBlock - b.positionWithinBlock
@@ -162,7 +162,7 @@ export default function ScheduleSection() {
                           author={pres?.submission?.mainAuthor?.name ?? ""}
                           title={pres?.submission?.title ?? ""}
                           onClickEvent={() => openModalPresentation(pres)}
-                          cardColor={colorsSession[roomIndex]}
+                          cardColor={colorsSession[index]}
                         />
                         <div className="m-0 programacao-item-aux"></div>
                       </div>
