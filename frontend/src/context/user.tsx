@@ -54,28 +54,30 @@ export const UserProvider = ({ children }: UserProps) => {
   const getUsers = async (params: GetUserParams) => {
     setLoadingUserList(true);
 
-    userApi
-      .getUsers(params)
-      .then((response) => {
-        setUserList(response);
-      })
-      .catch((err) => {
-        setUserList([]);
+    if(user){
+      userApi
+        .getUsers(params)
+        .then((response) => {
+          setUserList(response);
+        })
+        .catch((err) => {
+          setUserList([]);
 
-        showAlert({
-          icon: "error",
-          title: "Erro ao listar usuários",
-          text:
-            err.response?.data?.message?.message ||
-            err.response?.data?.message ||
-            "Ocorreu um erro durante a busca.",
-          confirmButtonText: "Retornar",
+          showAlert({
+            icon: "error",
+            title: "Erro ao listar usuários",
+            text:
+              err.response?.data?.message?.message ||
+              err.response?.data?.message ||
+              "Ocorreu um erro durante a busca.",
+            confirmButtonText: "Retornar",
+          });
+        })
+        .finally(() => {
+          setLoadingUserList(false);
         });
-      })
-      .finally(() => {
-        setLoadingUserList(false);
-      });
-  };
+    };
+    }
 
   const registerUser = async (body: RegisterUserParams) => {
     setLoadingCreateUser(true);
