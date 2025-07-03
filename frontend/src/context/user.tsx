@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
 import { useSweetAlert } from "@/hooks/useAlert";
 import { userApi } from "@/services/user";
+import { AuthContext } from "./AuthProvider/authProvider";
 
 interface UserProps {
   children: ReactNode;
@@ -47,14 +48,16 @@ export const UserProvider = ({ children }: UserProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [userList, setUserList] = useState<User[]>([]);
   const [advisors, setAdvisors] = useState<User[]>([]);
+  const { user: authUser } = useContext(AuthContext);
+
 
   const { showAlert } = useSweetAlert();
   const router = useRouter();
 
   const getUsers = async (params: GetUserParams) => {
     setLoadingUserList(true);
-
-    if(user){
+    
+    if(authUser){
       userApi
         .getUsers(params)
         .then((response) => {
