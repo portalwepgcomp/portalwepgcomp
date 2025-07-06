@@ -47,7 +47,7 @@ O protótipo do sistema está sendo desenvolvido no **Figma**, onde todas as tel
 
    ### Back-end
 
-   Para rodar o projeto localmente, é necessário possuir instâncias de banco de dados (PostgreSQL) e fila RabbitMQ. De modo a facilitar o desenvolvimento local, o projeto acompanha um arquivo docker-compose.yml, mas que tem o Docker como dependência. Após instalar a ferramenta (ou caso já a possua), construa os _containers_ executando o seguinte comando na pasta do back-end:
+   Para rodar o projeto localmente, é necessário possuir uma instância de banco de dados (PostgreSQL). De modo a facilitar o desenvolvimento local, o projeto acompanha um arquivo docker-compose.yml, mas que tem o Docker como dependência. Após instalar a ferramenta (ou caso já a possua), construa os _containers_ executando o seguinte comando na pasta do back-end:
 
    ```bash
    docker-compose up -d
