@@ -60,9 +60,11 @@ ul {
 
 .fixed {
   position: fixed;
-  width: 100vw;
+  top: 0;
+  left: 0;
+  width: 100%;
   background-color: white;
-  z-index: 10000;
+  z-index: 9;
 }
 
 .header-placeholder {
@@ -74,14 +76,26 @@ ul {
 }
 .navbar-menu-itens {
   margin-right: 3rem;
+  justify-content: end;
 }
 .nav-wall {
   height: 40px;
 }
 
-@media (max-width:1000px)  {    
+.navbar{
+  padding: 5px;
+}
+
+.nav-tg{
+  max-width: 95%;
+}
+
+@media (max-width:1000px)  {
     .navbar-menu-itens {
         margin-right: 0 !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     .container-fluid {
         justify-content: center !important;
