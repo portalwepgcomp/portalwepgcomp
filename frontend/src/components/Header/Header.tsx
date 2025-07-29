@@ -137,7 +137,6 @@ export default function Header() {
                 className="navbar-image"
                 width={300}
                 height={100}
-                priority
               />
             </Link>
 
@@ -215,7 +214,7 @@ export default function Header() {
                     className="nav-link text-black tamanho-texto-programacao-evento"
                     href="home#Programacao"
                   >
-                    Programação do evento
+                    Programação
                   </Link>
                 </div>
 

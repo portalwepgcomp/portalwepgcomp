@@ -27,6 +27,10 @@ ul {
   }
 }
 
+.container-fluid{
+  gap: 1rem;
+}
+
 .tamanho-texto-programacao-evento {
     width: 188px;
 }
@@ -60,8 +64,6 @@ ul {
 
 .fixed {
   position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
   background-color: white;
   z-index: 9;
@@ -69,10 +71,14 @@ ul {
 
 .header-placeholder {
     min-height: 126px;
+    display: flex;
+    align-items: center;
 }
 
 .navbar-image {
-  width: 350px !important;
+  max-width: 350px;
+  width: 100%;
+  height: auto;
 }
 .navbar-menu-itens {
   margin-right: 3rem;
@@ -83,11 +89,16 @@ ul {
 }
 
 .navbar{
-  padding: 5px;
+  padding: 25px;
 }
 
 .nav-tg{
   max-width: 95%;
+}
+
+.nav-link{
+  text-align: center;
+  width: fit-content;
 }
 
 @media (max-width:1000px)  {
@@ -104,6 +115,18 @@ ul {
         display: none;
     }
     .header-placeholder {
-        min-height: 182px;
+        min-height: 152px;
     }
+
+    .navbar{
+      padding: 5px;
+    }
+}
+
+@media (max-width: 500px) {
+  #event-edition-select {
+    max-width: 6rem ;
+    font-size: 12px;
+    text-wrap: wrap;
+  }
 }
