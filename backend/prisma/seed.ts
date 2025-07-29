@@ -31,8 +31,7 @@ async function main() {
       description:
         'Um evento para estudantes de doutorado apresentarem suas pesquisas.',
       callForPapersText: 'Envie seus artigos para avaliação e apresentação.',
-      partnersText:
-        '<b>Apoiado por:</b><br>Instituto qualquercoisa<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><rect width="24" height="24" fill="black"/><rect x="6" y="6" width="12" height="12" fill="white"/></svg>',
+      partnersText: '<b>Apoiado por:</b><br>Instituto Qualquercoisa',
       location: 'UFBA, Salvador, Bahia, Brasil',
       startDate: new Date('2024-11-12'),
       endDate: new Date('2024-11-15'), //
