@@ -127,7 +127,7 @@ export default function Header() {
       <div className="header-placeholder">
         <span />
       </div>
-      <nav className="navbar navbar-expand-lg fixed">
+      <nav className="navbar navbar-expand-lg fixed px-2">
         <div className="container-fluid">
           <div className="container-brand-edition">
             <Link className="navbar-brand" href="/">
@@ -137,7 +137,6 @@ export default function Header() {
                 className="navbar-image"
                 width={300}
                 height={100}
-                priority
               />
             </Link>
 
@@ -164,7 +163,7 @@ export default function Header() {
             )}
           </div>
 
-          <nav className="navbar">
+          <nav className="navbar d-flex justify-content-center nav-tg">
             <button
               className="navbar-toggler"
               type="button"
@@ -178,12 +177,11 @@ export default function Header() {
             </button>
           </nav>
 
-          <div className="d-flex justify-content-end navbar-menu-itens">
+          <div className="d-flex  navbar-menu-itens">
             <div
-              className="collapse navbar-collapse"
               id="navbarSupportedContent"
             >
-              <ul className="navbar-nav align-items-center me-auto mb-2 mb-lg-0 fw-normal">
+              <ul className="navbar-nav align-items-center fw-normal">
                 <div
                   className={`nav-item ${
                     selectedItem === "inicio" ? "fw-bold" : ""
@@ -195,11 +193,6 @@ export default function Header() {
                   </Link>
                 </div>
                 {!signed && (
-                  <li className="nav-wall">
-                    <div className="nav-wall vr text-black"></div>
-                  </li>
-                )}
-                {!signed && (
                   <li className="nav-item">
                     <Link
                       className="nav-link active text-black"
@@ -210,7 +203,7 @@ export default function Header() {
                     </Link>
                   </li>
                 )}
-                <div className="vr text-black"></div>
+
                 <div
                   className={`nav-item ${
                     selectedItem === "programação do evento" ? "fw-bold" : ""
@@ -221,10 +214,10 @@ export default function Header() {
                     className="nav-link text-black tamanho-texto-programacao-evento"
                     href="home#Programacao"
                   >
-                    Programação do evento
+                    Programação
                   </Link>
                 </div>
-                <div className="vr text-black"></div>
+
                 <div
                   className={`nav-item ${
                     selectedItem === "orientações" ? "fw-bold" : ""
@@ -235,7 +228,7 @@ export default function Header() {
                     Orientações
                   </Link>
                 </div>
-                <div className="vr text-black"></div>
+
                 <div
                   className={`nav-item ${
                     selectedItem === "contato" ? "fw-bold" : ""
@@ -246,11 +239,11 @@ export default function Header() {
                     Contato
                   </Link>
                 </div>
-                <div className="vr text-black"></div>
+
                 <li className="nav-item">
                   {signed ? (
                     <div className="welcome-user">
-                      Olá, {user?.name}!{perfil()}
+                      Olá, {user?.name.split(" ")[0]}!{perfil()}
                     </div>
                   ) : (
                     <Link
