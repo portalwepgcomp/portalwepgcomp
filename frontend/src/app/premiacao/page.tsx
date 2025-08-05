@@ -26,29 +26,6 @@ export default function Premiacao() {
         <div className="d-flex flex-column before-banner premiacao">
           <div className="d-flex flex-column">
             <Banner title="Premiação" />
-
-            <div className="d-flex justify-content-center align-items-center">
-              <div className="d-flex flex-column content text-center">
-                <div className="d-grid text-black">
-                  <p className="fw-bold fs-5">
-                    As premiações serão dadas por categoria:
-                  </p>
-                  <ul className="list-unstyled">
-                    <li className="mb-2 fs-6">
-                      • Melhores apresentações por voto da audiência
-                    </li>
-                    <li className="mb-2 fs-6">
-                      • Melhores apresentações por voto da banca avaliadora
-                    </li>
-                    <li className="mb-2 fs-6">• Melhores avaliadores</li>
-                  </ul>
-                  <p className="mb-1 fw-bold fs-5">
-                    O resultado será divulgado no último dia do evento.
-                  </p>
-                </div>
-              </div>
-            </div>
-
             <div className="d-flex justify-content-center gap-4 buttons">
               <button
                 className={`btn d-flex justify-content-center align-items-center fw-semibold ${
