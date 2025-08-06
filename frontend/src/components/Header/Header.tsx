@@ -128,7 +128,7 @@ export default function Header() {
         <span />
       </div>
       <nav className="navbar navbar-expand-lg fixed px-2">
-        <div className="container-fluid">
+        <div className="container-fluid justify-content-between">
           <div className="container-brand-edition">
             <Link className="navbar-brand" href="/">
               <Image
@@ -163,24 +163,19 @@ export default function Header() {
             )}
           </div>
 
-          <nav className="navbar d-flex justify-content-center nav-tg">
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
-          </nav>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
 
-          <div className="d-flex  navbar-menu-itens">
-            <div
-              id="navbarSupportedContent"
-            >
+          <div className="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
               <ul className="navbar-nav align-items-center fw-normal">
                 <div
                   className={`nav-item ${
@@ -257,7 +252,6 @@ export default function Header() {
                 </li>
               </ul>
             </div>
-          </div>
         </div>
       </nav>
     </>
