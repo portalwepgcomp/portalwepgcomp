@@ -13,8 +13,6 @@ export default function Carousel() {
 	const { signed } = useAuth();
 	const { slide1, slide2, slide3 } = CarouselMock;
 
-	const formatDate = (date: string | undefined) => {};
-
 	return (
 		<div
 			id='carousel-wepgcomp'
