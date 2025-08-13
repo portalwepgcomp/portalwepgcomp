@@ -12,9 +12,10 @@ import { useSubmission } from "@/hooks/useSubmission";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 import { useEdicao } from "@/hooks/useEdicao";
 import { formatDate } from "@/utils/formatDate";
+import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
 
 export default function Sessoes() {
-  const { listSessions, sessoesList, deleteSession, setSessao } = useSession();
+  const { listSessions, sessoesList, deleteSession, setSessao, loadingSessoesList } = useSession();
   const { getUsers } = useUsers();
   const { getSubmissions } = useSubmission();
 
@@ -72,22 +73,26 @@ export default function Sessoes() {
           gap: "50px",
         }}
       >
-        <Listagem
-          idModal="sessaoModal"
-          title={"Sessões"}
-          labelAddButton={"Incluir Sessão"}
-          searchPlaceholder={"Pesquise pelo nome da sessão"}
-          searchValue={searchValue}
-          onChangeSearchValue={(value) => setSearchValue(value)}
-          cardsList={mapCardList(sessionsListValues, "title", "formatedStartTime")}
-          idGeneralModal="trocarOrdemApresentacao"
-          generalButtonLabel="Trocar ordem das apresentações"
-          onClickItem={getSessionOnList}
-          onClear={() => setSessao(null)}
-          onDelete={(id: string) => deleteSession(id, Edicao?.id ?? "")}
-        />
-        <ModalSessao />
-        <ModalSessaoOrdenarApresentacoes />
+        {loadingSessoesList ? (<IndicadorDeCarregamento />) : (
+        <>
+          <Listagem
+            idModal="sessaoModal"
+            title={"Sessões"}
+            labelAddButton={"Incluir Sessão"}
+            searchPlaceholder={"Pesquise pelo nome da sessão"}
+            searchValue={searchValue}
+            onChangeSearchValue={(value) => setSearchValue(value)}
+            cardsList={mapCardList(sessionsListValues, "title", "formatedStartTime")}
+            idGeneralModal="trocarOrdemApresentacao"
+            generalButtonLabel="Trocar ordem das apresentações"
+            onClickItem={getSessionOnList}
+            onClear={() => setSessao(null)}
+            onDelete={(id: string) => deleteSession(id, Edicao?.id ?? "")}
+          />
+          <ModalSessao />
+          <ModalSessaoOrdenarApresentacoes />
+        </>)}
+        
       </div>
     </ProtectedLayout>
   );

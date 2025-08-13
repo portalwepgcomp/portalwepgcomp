@@ -1,12 +1,13 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import "leaflet/dist/leaflet.css";
-import HtmlEditorComponent from "../HtmlEditorComponent/HtmlEditorComponent";
 import { useEdicao } from "@/hooks/useEdicao";
+import "leaflet/dist/leaflet.css";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import HtmlEditorComponent from "../HtmlEditorComponent/HtmlEditorComponent";
 
-import "./style.scss";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
+import { Marker, Popup } from "react-leaflet";
+import "./style.scss";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -37,8 +38,8 @@ export default function Endereco() {
     }
   };
 
-  const latitude = -13.0;
-  const longitude = -38.507;
+  const latitude = -13.002843214882326;
+  const longitude = -38.50717484672244;
 
   useEffect(() => {
     setContent(Edicao?.location ?? "");
@@ -60,7 +61,13 @@ export default function Endereco() {
           zoom={15}
           placeholder={<MapPlaceholder />}
           className="map-home"
+          scrollWheelZoom={false}
         >
+          <Marker position={[latitude,longitude]}>
+            <Popup>
+              Entrada da UFBA
+            </Popup>
+          </Marker>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

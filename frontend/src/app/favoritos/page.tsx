@@ -1,10 +1,11 @@
 "use client";
 
+import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
 import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
+import { usePresentation } from "@/hooks/usePresentation";
 import { FavoritosMock } from "@/mocks/Favoritos";
 import Listagem, { mapCardList } from "@/templates/Listagem/Listagem";
 import { useEffect, useState } from "react";
-import { usePresentation } from "@/hooks/usePresentation";
 
 export default function Favoritos() {
   const {
@@ -16,9 +17,11 @@ export default function Favoritos() {
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [sessionsListValues, setSessionsListValues] = useState<any[]>([]);
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    getPresentationBookmarks();
+    setLoading(true);
+    getPresentationBookmarks().finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -40,7 +43,10 @@ export default function Favoritos() {
   }
 
   const handleDelete = async (submissionId: any) => {
-    await deletePresentationBookmark(submissionId);
+    const favoritoParaDeletar: PresentationBookmarkRegister = {
+      presentationId: submissionId,
+    };
+    await deletePresentationBookmark(favoritoParaDeletar);
 
     const updatedSubmissions = sessionsListValues.filter(
       (submission) => submission.id !== submissionId
@@ -60,6 +66,7 @@ export default function Favoritos() {
   }));
 
   return (
+    
     <ProtectedLayout>
       <div
         className="d-flex flex-column"
@@ -67,6 +74,9 @@ export default function Favoritos() {
           gap: "50px",
         }}
       >
+      {isLoading ? (
+        <IndicadorDeCarregamento />
+      ) : (
         <Listagem
           title={title}
           cardsList={mapCardList(sessionMaped, "title", "abstract")}
@@ -79,6 +89,8 @@ export default function Favoritos() {
           onEdit={(item) => favoriteItem(item)}
           fullInfo={true}
         />
+      )}
+        
       </div>
     </ProtectedLayout>
   );

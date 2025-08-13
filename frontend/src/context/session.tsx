@@ -8,9 +8,9 @@ import {
   useState,
 } from "react";
 
-import { sessionApi } from "@/services/sessions";
 import { useSweetAlert } from "@/hooks/useAlert";
 import { useSweetToast } from "@/hooks/useToast";
+import { sessionApi } from "@/services/sessions";
 
 interface SessionProps {
   children: ReactNode;

@@ -1,5 +1,7 @@
 "use client";
 
+import React from 'react';
+
 import moment from "moment";
 import "moment/locale/pt-br";
 import Image from "next/image";
@@ -14,11 +16,12 @@ import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 import { useEdicao } from "@/hooks/useEdicao";
 import { useSession } from "@/hooks/useSession";
 
-import "./style.scss";
 import { useActiveEdition } from "@/hooks/useActiveEdition";
+import IndicadorDeCarregamento from '../IndicadorDeCarregamento/IndicadorDeCarregamento';
+import "./style.scss";
 
 export default function ScheduleSection() {
-  const { listSessions, sessoesList, listRooms, roomsList } = useSession();
+  const { listSessions, sessoesList, listRooms, roomsList, loadingRoomsList, loadingSessoesList } = useSession();
   const { Edicao } = useEdicao();
   const { selectEdition } = useActiveEdition();
 
@@ -103,8 +106,8 @@ export default function ScheduleSection() {
           ))}
         </div>
 
-        {roomsList.map((room, roomIndex) => (
-          <>
+        {loadingRoomsList ? <IndicadorDeCarregamento /> : roomsList.map((room, roomIndex) => (
+          <React.Fragment key={room.id || roomIndex}>
             <div className="programacao-sala" key={room.id || roomIndex}>
               <h3 className="fw-bold text-white m-0 text-center w-100 list-item">
                 {room.name}
@@ -189,8 +192,8 @@ export default function ScheduleSection() {
                   </div>
                 )}
             </div>
-            </>
-          
+            </React.Fragment>
+
         ))}
 
         <Modal
