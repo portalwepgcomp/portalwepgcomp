@@ -37,6 +37,34 @@
             transform: translateY(-0.125rem);
         }
     }
+
+    .buttons {
+        .input-group {
+            width: 30rem;
+            
+            .form-control {
+                border-radius: 0.625rem 0 0 0.625rem;
+                border: 0.125rem solid #FFA90F;
+                flex: 1;
+                
+                &:focus {
+                    border-color: #E68A00;
+                    box-shadow: 0 0 0 0.2rem rgba(255, 169, 15, 0.25);
+                }
+            }
+            
+            .search-button {
+                background-color: #FFA90F;
+                border-radius: 0 0.625rem 0.625rem 0;
+                width: 3rem;
+                min-width: 3rem;
+                
+                &:hover {
+                    background-color: #E68A00;
+                }
+            }
+        }
+    }
 }
 
 @media (max-width: 1000px) {
@@ -45,6 +73,12 @@
         justify-content: center;
         flex-direction: column;
         align-items: center;
+        gap: 1rem;
+        
+        .input-group {
+            width: 100% !important;
+            max-width: 30rem;
+        }
     }
 
     .premiacao .btn {
