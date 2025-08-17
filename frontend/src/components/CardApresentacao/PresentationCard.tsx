@@ -10,6 +10,7 @@ import moment from "moment";
 import { useRouter } from "next/navigation";
 
 interface PresentationCardProps {
+  key?: string;
   id: string;
   title: string;
   subtitle: string;
@@ -23,6 +24,7 @@ interface PresentationCardProps {
 }
 
 export default function PresentationCard({
+  key,
   id,
   title,
   subtitle,
@@ -86,6 +88,7 @@ export default function PresentationCard({
       style={{
         backgroundColor: cardColor ? cardColor : undefined,
       }}
+      key={key}
     >
       <div
         className="d-flex align-items-center w-100"
