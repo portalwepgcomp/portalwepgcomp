@@ -10,18 +10,12 @@ import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 import { useSession } from "@/hooks/useSession";
 
 import PresentationCard from "@/components/CardApresentacao/PresentationCard";
-import { usePresentation } from "@/hooks/usePresentation";
 import "./style.scss";
 
 export default function MinhasBancas() {
 	const { listPresentionBlockByPanelist, presentationBlockByPanelistList } =
 		useSession();
 	const { user } = useContext(AuthContext);
-	const { deletePresentationBookmark } = usePresentation();
-
-	const handleDelete = async (submissionId: any) => {
-		await deletePresentationBookmark(submissionId);
-	};
 
 	useEffect(() => {
 		const eventEditionId = getEventEditionIdStorage() ?? "";
@@ -68,7 +62,6 @@ export default function MinhasBancas() {
 												pdfFile={pres?.submission?.pdfFile ?? ""}
 												email={pres?.submission?.mainAuthor?.email ?? ""}
 												advisorName={pres?.submission?.advisor?.name ?? ""}
-												onDelete={() => handleDelete(pres.submissionId)}
 											/>
 										);
 									});
