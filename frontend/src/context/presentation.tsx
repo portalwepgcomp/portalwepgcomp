@@ -64,7 +64,7 @@ export const PresentationProvider = ({ children }: PresentationProps) => {
         
         setPresentationbookmarks(response);
         return response;
-      } catch (error) {
+      } catch {
         setpresentationBookmark({ bookmarked: false });
         return { bookmarked: false };
       }
@@ -76,7 +76,7 @@ export const PresentationProvider = ({ children }: PresentationProps) => {
     }
 
   const deletePresentationBookmark = async (presentationBookmark: PresentationBookmarkRegister) => {
-    const result = await presentationApi.deletePresentationBookmark(presentationBookmark)
+    await presentationApi.deletePresentationBookmark(presentationBookmark)
 
     await getPresentationBookmarks();
   };

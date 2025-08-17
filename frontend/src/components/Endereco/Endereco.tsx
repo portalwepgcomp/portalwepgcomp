@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import HtmlEditorComponent from "../HtmlEditorComponent/HtmlEditorComponent";
 
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
-import { Marker, Popup } from "react-leaflet";
 import "./style.scss";
 
 const MapContainer = dynamic(
@@ -15,6 +14,14 @@ const MapContainer = dynamic(
 );
 const TileLayer = dynamic(
   () => import("react-leaflet").then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Marker),
+  { ssr: false }
+);
+const Popup = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Popup),
   { ssr: false }
 );
 
