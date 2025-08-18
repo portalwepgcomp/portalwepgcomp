@@ -91,14 +91,14 @@ npm run start-frontend
 ## Ambientes
 
 - **Frontend**
-- Produção: https://portal-wepgcomp-client.vercel.app
-- Desenvolvimento: https://portal-wepgcomp-client-development.vercel.app
+- Produção: https://wepgcomp.app.ic.ufba.br/
+- Desenvolvimento: https://wepgcomp.netlify.app/
 
 - **Backend**
-- Produção: https://portal-wepgcomp-api.vercel.app
-- Swagger produção: https://portal-wepgcomp-api.vercel.app/docs
-- Desenvolvimento: https://portal-wepgcomp-api-development.vercel.app
-- Swagger desenvolvimento: https://portal-wepgcomp-api-development.vercel.app/docs
+- Produção: https://wepgcomp-api.app.ic.ufba.br/
+- Swagger produção: https://wepgcomp-api.app.ic.ufba.br//docs
+- Desenvolvimento: https://wepgcomp-api.onrender.com/
+- Swagger desenvolvimento: https://wepgcomp-api.onrender.com/docs
 
 ## Colaboradores
 
