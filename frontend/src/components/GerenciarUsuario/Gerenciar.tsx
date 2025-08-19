@@ -32,10 +32,7 @@ export default function Gerenciar() {
   const [usersListValues, setUsersListValues] = useState<User[]>(userList);
 
   const statusOptions = ["ATIVO", "PENDENTE", "INATIVO"];
-  const statusOptionsFilterButtons = [
-    { label: "ATIVO", option: "ATIVO" },
-    { label: "PENDENTE OU INATIVO", option: "INATIVO" },
-  ];
+ 
   const permissionsOptions = ["SUP ADMINISTRADOR", "ADMINISTRADOR", "NORMAL"];
 
   const getStatus = (isActive: boolean, isPending: boolean) => {
@@ -64,24 +61,6 @@ export default function Gerenciar() {
     ATIVO: "button-ativo-true",
     PENDENTE: "button-pendente-true",
     INATIVO: "button-inativo-true",
-  };
-
-  const buttonsStatusClassname = {
-    ATIVO: ativo ? "button-ativo-true" : "button-ativo-false",
-    PENDENTE: pendente ? "button-pendente-true" : "button-pendente-false",
-    INATIVO: inativo ? "button-inativo-true" : "button-inativo-false",
-    ["SUP ADMINISTRADOR"]: spAdmin ? "button-ativo-true" : "button-ativo-false",
-    ADMINISTRADOR: admin ? "button-pendente-true" : "button-pendente-false",
-    NORMAL: normal ? "button-inativo-true" : "button-inativo-false",
-  };
-
-  const handleFilter = {
-    ATIVO: () => setAtivo(!ativo),
-    PENDENTE: () => setPendente(!pendente),
-    INATIVO: () => setInativo(!inativo),
-    ["SUP ADMINISTRADOR"]: () => setSpAdmin(!spAdmin),
-    ADMINISTRADOR: () => setAdmin(!admin),
-    NORMAL: () => setNormal(!normal),
   };
 
   const handleUserPermission = (targetUser: User, newPermission: string) => {
