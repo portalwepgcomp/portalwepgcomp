@@ -59,16 +59,15 @@ export const PresentationProvider = ({ children }: PresentationProps) => {
   };
 
     const getPresentationBookmarks = async () => {
-        return presentationApi.getPresentationBookmarks()
-            .then((response) => {
-                setPresentationbookmarks(response);
-                return response;
-            })
-            .catch(() => {
-                setpresentationBookmark({ bookmarked: false });
-                return { bookmarked: false };
-            })
-            .finally(() => {});
+      try {
+        const response = await presentationApi.getPresentationBookmarks();
+        
+        setPresentationbookmarks(response);
+        return response;
+      } catch {
+        setpresentationBookmark({ bookmarked: false });
+        return { bookmarked: false };
+      }
     }
 
     const postPresentationBookmark = async (presentationBookmark: PresentationBookmarkRegister) => {
@@ -76,12 +75,10 @@ export const PresentationProvider = ({ children }: PresentationProps) => {
             .finally(() => {});
     }
 
-  const deletePresentationBookmark = async (
-    presentationBookmark: PresentationBookmarkRegister
-  ) => {
-    presentationApi
-      .deletePresentationBookmark(presentationBookmark)
-      .finally(() => {});
+  const deletePresentationBookmark = async (presentationBookmark: PresentationBookmarkRegister) => {
+    await presentationApi.deletePresentationBookmark(presentationBookmark)
+
+    await getPresentationBookmarks();
   };
 
     return(

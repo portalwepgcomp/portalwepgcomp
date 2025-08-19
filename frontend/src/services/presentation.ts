@@ -31,9 +31,9 @@ export const presentationApi = {
         const { data } = await instance.get(`${baseUrl}/bookmarks`, {
             headers: {
                 "Content-Type": "application/json",
-            },
+            }
         });
-
+        
         return data;
     },
 
