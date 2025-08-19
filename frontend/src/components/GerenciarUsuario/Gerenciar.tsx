@@ -166,33 +166,43 @@ export default function Gerenciar() {
           </div>
         </div>
 
-        <div className="status d-flex flex-column align-items-start">
-          <div className="filtrar mt-3 text-black bold">FILTRAR</div>
-          <span> STATUS:</span>
-          <div className="d-flex filtros-botoes">
-            {statusOptionsFilterButtons?.map((status) => (
-              <button
-                key={status.option}
-                className={`${
-                  buttonsStatusClassname[status.option]
-                } button-status`}
-                onClick={handleFilter[status.option]}
-              >
-                {status.label}
-              </button>
-            ))}
+        <div className="filter-dropdowns">
+          <div className="filter-dropdown">
+            <label className="filter-dropdown-label">Status</label>
+            <select
+              className="filter-dropdown-select"
+              onChange={(e) => {
+                const value = e.target.value;
+                setAtivo(value === 'ativo');
+                setPendente(value === 'pendente');
+                setInativo(value === 'inativo');
+              }}
+              value={ativo ? 'ativo' : pendente ? 'pendente' : inativo ? 'inativo' : ''}
+            >
+              <option value="">Todos os status</option>
+              <option value="ativo">Apenas Ativos</option>
+              <option value="pendente">Apenas Pendentes</option>
+              <option value="inativo">Apenas Inativos</option>
+            </select>
           </div>
-          <span> PERMISSÃO:</span>
-          <div className="d-flex mb-3 filtros-botoes">
-            {permissionsOptions?.map((permission) => (
-              <button
-                key={permission}
-                className={`${buttonsStatusClassname[permission]} button-status`}
-                onClick={handleFilter[permission]}
-              >
-                {permission}
-              </button>
-            ))}
+
+          <div className="filter-dropdown">
+            <label className="filter-dropdown-label">Permissão</label>
+            <select
+              className="filter-dropdown-select"
+              onChange={(e) => {
+                const value = e.target.value;
+                setSpAdmin(value === 'superadmin');
+                setAdmin(value === 'admin');
+                setNormal(value === 'normal');
+              }}
+              value={spAdmin ? 'superadmin' : admin ? 'admin' : normal ? 'normal' : ''}
+            >
+              <option value="">Todas as permissões</option>
+              <option value="superadmin">Super Admin</option>
+              <option value="admin">Admin</option>
+              <option value="normal">Normal</option>
+            </select>
           </div>
         </div>
       </div>
