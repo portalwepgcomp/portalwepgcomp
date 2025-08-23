@@ -132,7 +132,7 @@ export default function Header() {
           <div className="container-brand-edition">
             <Link className="navbar-brand" href="/">
               <Image
-                src={"/assets/images/logo_PGCOMP.svg"}
+                src={"/assets/images/logo_WEPGCOMP.svg"}
                 alt="PGCOMP Logo"
                 className="navbar-image"
                 width={300}
