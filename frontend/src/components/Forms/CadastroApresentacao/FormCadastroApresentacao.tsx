@@ -34,7 +34,10 @@ const formCadastroSchema = z.object({
   data: z.string().optional(),
   celular: z
     .string()
-    .regex(/^\d{10,11}$/, "O celular deve conter 10 ou 11 dígitos"),
+    .refine((value) => {
+      const formatCellPhone = value.replace(/\D/g, "");
+      return formatCellPhone.length >= 10 && formatCellPhone.length <= 11;
+    }, "O celular deve conter 10 ou 11 dígitos"),
   slide: z.string({ invalid_type_error: "Campo Inválido" }).optional(), //temporário para a entrega,
 });
 
