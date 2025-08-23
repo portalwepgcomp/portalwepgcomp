@@ -35,26 +35,38 @@ export default function Premiacao({
       <div className='d-flex flex-column'>
         <h1 className='fw-bold title'>
           {categoria === "banca"
-            ? " Melhores Apresentações - Banca"
+            ? " "
             : categoria === "avaliadores"
-            ? "Melhores Avaliadores"
-            : "Melhores Apresentações - Público"}
+            ? ""
+            : ""}
         </h1>
         <h5 className='text-black'>
           {`
                     ${
                       categoria === "banca"
-                        ? "Ranking das melhores apresentações por voto da banca avaliadora"
+                        ? ""
                         : categoria === "avaliadores"
-                        ? "Ranking dos melhores/maiores avaliadores da edição"
+                        ? ""
                         : categoria === "publico"
-                        ? "Ranking das melhores apresentações por voto da audiência"
+                        ? ""
                         : ""
                     }
                     `}
         </h5>
         <div className='d-flex flex-column gap-3'>
           {premiacoes.length === 0 && categoria !== "avaliadores" ? (
+            <div className='d-flex align-items-center justify-content-center p-3'>
+              <h4 className='empty-list mb-0'>
+                <Image
+                  src='/assets/images/empty_box.svg'
+                  alt='Lista vazia'
+                  width={90}
+                  height={90}
+                />
+                Essa lista ainda está vazia
+              </h4>
+            </div>
+          ) : categoria === "avaliadores" && premiacoesValuesAvaliadores !== undefined && premiacoesValuesAvaliadores.length === 0 ? (
             <div className='d-flex align-items-center justify-content-center p-3'>
               <h4 className='empty-list mb-0'>
                 <Image
@@ -117,19 +129,19 @@ export default function Premiacao({
                 </div>
               </div>
             ))
-          ) :
-        <div className='d-flex align-items-center justify-content-center p-3 mt-4 me-5'>
-          <h4 className='empty-list mb-0'>
-            <Image
-              src='/assets/images/empty_box.svg'
-              alt='Lista vazia'
-              width={90}
-              height={90}
-            />
-            Essa lista ainda está vazia
-          </h4>
-        </div>
-        }
+          ) : (
+            <div className='d-flex align-items-center justify-content-center p-3 mt-4 me-5'>
+              <h4 className='empty-list mb-0'>
+                <Image
+                  src='/assets/images/empty_box.svg'
+                  alt='Lista vazia'
+                  width={90}
+                  height={90}
+                />
+                Essa lista ainda está vazia
+              </h4>
+            </div>
+          )}
         </div>
       </div>
     </div>

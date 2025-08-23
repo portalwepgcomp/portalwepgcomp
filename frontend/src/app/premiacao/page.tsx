@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 import Premiacoes from "@/components/Premiacao/Premiacoes";
 import Banner from "@/components/UI/Banner";
@@ -13,6 +14,7 @@ export default function Premiacao() {
   const [activeCategory, setActiveCategory] = useState<
     "banca" | "avaliadores" | "publico"
   >("banca");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleChangeCategory = (
     categoria: "banca" | "avaliadores" | "publico"
@@ -27,6 +29,28 @@ export default function Premiacao() {
           <div className="d-flex flex-column">
             <Banner title="Premiação" />
             <div className="d-flex justify-content-center gap-4 buttons">
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Pesquise pelo nome da apresentação"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <button
+                  className="btn btn-outline-secondary border border-0 search-button d-flex justify-content-center align-items-center"
+                  type="button"
+                  id="button-addon2"
+                >
+                  <Image
+                    src="/assets/images/search.svg"
+                    alt="Search icon"
+                    width={24}
+                    height={24}
+                  />
+                </button>
+              </div>
+              
               <button
                 className={`btn d-flex justify-content-center align-items-center fw-semibold ${
                   activeCategory === "banca" ? "click" : "unclick"
@@ -53,7 +77,7 @@ export default function Premiacao() {
               </button>
             </div>
 
-            {!!activeCategory && <Premiacoes categoria={activeCategory} />}
+            {!!activeCategory && <Premiacoes categoria={activeCategory} searchValue={searchTerm} />}
           </div>
         </div>
       </PremiacaoProvider>
