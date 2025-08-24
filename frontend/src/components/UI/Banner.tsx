@@ -11,7 +11,7 @@ export default function Banner({ title, isCarousel = false }: Readonly<BannerPro
   if (isCarousel) {
     return (
       <CarouselSlide
-        imageUrl={"/assets/images/slide1.svg"}
+        imageUrl={"/assets/images/slide1.png"}
         slideIndex="0"
         isActive
       >
@@ -27,7 +27,7 @@ export default function Banner({ title, isCarousel = false }: Readonly<BannerPro
   return (
     <div
       style={{
-        backgroundImage: 'url(/assets/images/slide1.svg)',
+        backgroundImage: 'url(/assets/images/slide1.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: '120px',

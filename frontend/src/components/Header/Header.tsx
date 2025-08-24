@@ -140,6 +140,9 @@ export default function Header() {
               />
             </Link>
 
+          </div>
+          <div className="container-brand-edition">
+
             {!!yearsOptions.length && (
               <select
                 id="event-edition-select"
@@ -162,6 +165,7 @@ export default function Header() {
               </select>
             )}
           </div>
+
 
           <button
             className="navbar-toggler"
