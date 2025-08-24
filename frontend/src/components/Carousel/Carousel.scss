@@ -2,6 +2,25 @@
     min-height: 730px;
 }
 
+.carousel-fade {
+  .carousel-item {
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: .6s;
+    transition-timing-function: ease;
+    position: relative;
+    backface-visibility: hidden;
+  }
+
+  .carousel-item.active {
+    opacity: 1;
+  }
+}
+
+.carousel-slide .carousel-slide-content {
+  z-index: 0;
+}
+
 .carousel-component{
     .lead {
         width: 100%;
@@ -101,6 +120,7 @@
 
 .carousel-indicators {
     margin-top: 1rem;
+    margin-bottom: 0;
 }
 
 @media (max-width:1024px)  {

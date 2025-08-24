@@ -2,17 +2,18 @@ ul {
   gap: 0.9rem;
 }
 
-@keyframes slidNavBrand {
+@keyframes fadeInDown {
   0% {
-    margin-left: 100%;
+    transform: translateY(-100%);
+    opacity: 0;
   }
   100% {
-    margin-left: 0%;
+    transform: translateY(0%);
+    opacity: 1;
   }
 }
 
 .navbar-brand {
-  animation: 3s forwards 0s 1 slidNavBrand;
   position: relative;
   margin: auto;
 }
@@ -32,6 +33,7 @@ ul {
 }
 
 .container-fluid{
+  animation: 1.5s fadeInDown;
   gap: 1rem;
 }
 
@@ -80,7 +82,7 @@ ul {
 }
 
 .navbar-image {
-  max-width: 350px;
+  max-width: 250px;
   width: 100%;
   height: auto;
 }
