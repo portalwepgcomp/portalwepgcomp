@@ -16,7 +16,7 @@ export default function Carousel() {
 	return (
 		<div
 			id='carousel-wepgcomp'
-			className='carousel slide carousel-component'
+			className='carousel slide carousel-fade carousel-component'
 			data-bs-ride='carousel'
 			data-bs-interval='6000'
 		>
