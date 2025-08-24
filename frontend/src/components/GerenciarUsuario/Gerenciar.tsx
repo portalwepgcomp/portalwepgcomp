@@ -207,17 +207,7 @@ export default function Gerenciar() {
         </div>
       </div>
 
-      <div className="description">
-        Usuário Ativo: Usuário com cadastro validado e ativo no sistema.
-      </div>
-      <div className="description">
-        Usuário Pendente: Usuário cujo cadastro aguarda aprovação pela comissão
-        (geralmente professores).
-      </div>
-      <div className="description">
-        Usuário Inativo: Usuário com cadastro inválido ou negado pela comissão
-        no sistema.
-      </div>
+
       <div className="d-flex flex-column w-100 justify-content-center m-0 listagem">
         {!!loadingUserList && <LoadingPage />}
 
