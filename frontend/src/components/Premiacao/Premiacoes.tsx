@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import PremiacaoCategoria from "./PremiacaoCategoria";
 
@@ -9,11 +8,11 @@ import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 
 export default function Premiacoes({
   categoria,
+  searchValue,
 }: Readonly<{
   categoria: "banca" | "avaliadores" | "publico";
+  searchValue: string;
 }>) {
-  const [searchTerm, setSearchTerm] = useState("");
-
   const {
     premiacaoListBanca,
     premiacaoListAudiencia,
@@ -56,33 +55,10 @@ export default function Premiacoes({
 
   return (
     <div className="d-flex flex-column premiacao-list">
-      <div className="input-group mb-4">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Pesquise pelo nome da apresentação"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-
-        <button
-          className="btn btn-outline-secondary border border-0 search-button d-flex justify-content-center align-items-center"
-          type="button"
-          id="button-addon2"
-        >
-          <Image
-            src="/assets/images/search.svg"
-            alt="Search icon"
-            width={24}
-            height={24}
-          />
-        </button>
-      </div>
-
       <PremiacaoCategoria
         categoria={categoria}
         premiacoes={getAwards()}
-        searchValue={searchTerm}
+        searchValue={searchValue}
         avaliadores={premiacaoListAvaliadores}
       />
     </div>

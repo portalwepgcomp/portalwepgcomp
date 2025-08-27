@@ -132,13 +132,16 @@ export default function Header() {
           <div className="container-brand-edition">
             <Link className="navbar-brand" href="/">
               <Image
-                src={"/assets/images/logo_PGCOMP.svg"}
+                src={"/assets/images/logo_WEPGCOMP.svg"}
                 alt="PGCOMP Logo"
                 className="navbar-image"
                 width={300}
                 height={100}
               />
             </Link>
+
+          </div>
+          <div className="container-brand-edition">
 
             {!!yearsOptions.length && (
               <select
@@ -162,6 +165,7 @@ export default function Header() {
               </select>
             )}
           </div>
+
 
           <button
             className="navbar-toggler"

@@ -256,7 +256,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       endDate: final,
       partnersText: "",
     } as EdicaoParams;
-
+    console.log(edicaoData, body)
     if (edicaoData?.id) {
       updateEdicao(edicaoData?.id, body);
       setTimeout(() => {
@@ -338,11 +338,11 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                 id="ed-inicio-data"
                 onChange={(date) =>
                   field.onChange(
-                    dayjs(date).subtract(1, "day").toISOString() || null
+                    dayjs(date).toISOString() || null
                   )
                 }
                 selected={
-                  field.value ? dayjs(field.value).add(1, "day").toDate() : null
+                  field.value ? dayjs(field.value).toDate() : null
                 }
                 showIcon
                 className="form-control datepicker"
