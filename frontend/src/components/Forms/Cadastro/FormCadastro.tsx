@@ -24,7 +24,9 @@ const formCadastroSchema = z
       invalid_type_error: "Campo inválido!",
     }),
 
-    matricula: z.string().optional(),
+    matricula: z.string().regex(/^\d{9}$/, {
+      message: "Matricula inválida, deve possuir exatamente 9 dígitos.",
+    }),
 
     email: z
       .string({
@@ -33,6 +35,9 @@ const formCadastroSchema = z
       .min(1, "O email é obrigatório.")
       .email({
         message: "E-mail inválido!",
+      })
+      .refine((email) => email.toLowerCase().endsWith("@ufba.br"), {
+        message: "Apenas emails com domínio @ufba.br são permitidos.",
       }),
 
     senha: z
@@ -63,24 +68,12 @@ const formCadastroSchema = z
     if (
       data.perfil !== "ouvinte" &&
       data.matricula &&
-      data.matricula.length > 20
-    ) {
-      ctx.addIssue({
-        path: ["matricula"],
-        message: "A matrícula tem limite de 20 dígitos.",
-        code: z.ZodIssueCode.custom,
-      });
-    }
-
-    if (
-      data.perfil !== "ouvinte" &&
-      data.matricula &&
-      !/^\d{1,19}$/.test(data.matricula)
+      !/^\d{9}$/.test(data.matricula)
     ) {
       ctx.addIssue({
         path: ["matricula"],
         message:
-          "A matrícula precisa conter apenas números e ter menos de 20 dígitos.",
+          "Matricula inválida, deve possuir exatamente 9 dígitos.",
         code: z.ZodIssueCode.custom,
       });
     }
@@ -130,6 +123,10 @@ export function FormCadastro() {
       (perfil !== "ouvinte" && !matricula)
     ) {
       throw new Error("Campos obrigatórios em branco.");
+    }
+
+    if (!email.endsWith("@ufba.br")) {
+
     }
 
     const body = {
