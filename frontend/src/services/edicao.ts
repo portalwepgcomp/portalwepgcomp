@@ -1,4 +1,4 @@
-"use client"
+// "use client"
 import axiosInstance from '@/utils/api';
 
 const baseUrl = "/event";
