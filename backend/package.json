@@ -31,7 +31,8 @@
     "prisma:migrate": "prisma db push",
     "postinstall": "prisma generate",
     "clean": "rm -rf package-lock.json node_modules && npm cache clean --force",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -80,7 +81,9 @@
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^9.1.7",
     "jest": "^29.5.0",
+    "lint-staged": "^16.1.5",
     "prettier": "^3.0.0",
     "prisma": "^5.20.0",
     "source-map-support": "^0.5.21",
