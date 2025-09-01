@@ -34,12 +34,6 @@ export default function MinhasBancas() {
       <Banner title="Minhas bancas" />
 
       <div className="minhas-bancas">
-        <p>
-          Esta página exibe as bancas pelas quais você, como professor
-          avaliador, é responsável. As apresentações estão organizadas por
-          sessão, e cada sessão é destacada com uma cor distinta para facilitar
-          a identificação.
-        </p>
         <div
           className="d-flex flex-column"
           style={{
