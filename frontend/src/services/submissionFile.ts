@@ -1,6 +1,6 @@
 import axiosInstance from '@/utils/api';
 
-const baseUrl = "/uploads";
+const baseUrl = "/storage";
 const instance = axiosInstance;
 
 export const submissionFileApi = {

@@ -152,7 +152,7 @@ export default function PresentationCard({
               color: "#FFA90F",
               padding: "3px 20px",
             }}
-            href={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${pdfFile}`}
+            href={`${process.env.NEXT_PUBLIC_API_URL}/storage/${pdfFile}`}
             download
             target="_blank"
             >
