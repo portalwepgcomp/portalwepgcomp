@@ -24,7 +24,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.DOKKU_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.DOKKU_HOST }} >> ~/.ssh/known
+          ssh-keyscan -H ${{ secrets.DOKKU_HOST }} >> ~/.ssh/known_hosts
 
       - name: Start SSH agent and add key
         run: |
