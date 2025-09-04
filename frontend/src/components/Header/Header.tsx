@@ -1,21 +1,21 @@
 "use client";
 
-import { useState, useEffect, useContext } from "react";
 import { usePathname } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
 
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 
-import PerfilOuvinte from "../Perfil/PerfilOuvinte";
 import PerfilAdmin from "../Perfil/PerfilAdmin";
 import PerfilDoutorando from "../Perfil/PerfilDoutorando";
+import PerfilOuvinte from "../Perfil/PerfilOuvinte";
 import PerfilProfessor from "../Perfil/PerfilProfessor";
 
-import "./style.scss";
-import { useEdicao } from "@/hooks/useEdicao";
 import { useActiveEdition } from "@/hooks/useActiveEdition";
+import { useEdicao } from "@/hooks/useEdicao";
+import "./style.scss";
 
 export default function Header() {
   const { user, signed } = useContext(AuthContext);
@@ -132,7 +132,7 @@ export default function Header() {
           <div className="container-brand-edition">
             <Link className="navbar-brand" href="/">
               <Image
-                src={"/assets/images/logo_WEPGCOMP.svg"}
+                src={"/assets/images/logo_PGCOMP.svg"}
                 alt="PGCOMP Logo"
                 className="navbar-image"
                 width={300}

@@ -24,9 +24,7 @@ const formCadastroSchema = z
       invalid_type_error: "Campo inválido!",
     }),
 
-    matricula: z.string().regex(/^\d{9}$/, {
-      message: "Matricula inválida, deve possuir exatamente 9 dígitos.",
-    }),
+    matricula: z.string().optional(),
 
     email: z
       .string({
@@ -35,9 +33,6 @@ const formCadastroSchema = z
       .min(1, "O email é obrigatório.")
       .email({
         message: "E-mail inválido!",
-      })
-      .refine((email) => email.toLowerCase().endsWith("@ufba.br"), {
-        message: "Apenas emails com domínio @ufba.br são permitidos.",
       }),
 
     senha: z
@@ -57,7 +52,7 @@ const formCadastroSchema = z
       }),
   })
   .superRefine((data, ctx) => {
-    if (data.perfil !== "ouvinte" && !data.matricula) {
+    if (data.perfil !== "ouvinte" && (!data.matricula || data.matricula.trim() === "")) {
       ctx.addIssue({
         path: ["matricula"],
         message: "A matrícula é obrigatória.",
@@ -68,12 +63,12 @@ const formCadastroSchema = z
     if (
       data.perfil !== "ouvinte" &&
       data.matricula &&
-      !/^\d{9}$/.test(data.matricula)
+      !/^\d{1,19}$/.test(data.matricula)
     ) {
       ctx.addIssue({
         path: ["matricula"],
         message:
-          "Matricula inválida, deve possuir exatamente 9 dígitos.",
+          "Matricula inválida, insira uma matrícula válida.",
         code: z.ZodIssueCode.custom,
       });
     }
@@ -125,7 +120,10 @@ export function FormCadastro() {
       throw new Error("Campos obrigatórios em branco.");
     }
 
-    if (!email.endsWith("@ufba.br")) {
+    if(perfil === profileFormated.doutorando || perfil === profileFormated.professor) {
+      if (!email.toLowerCase().endsWith("@ufba.br")) {
+        throw new Error("E-mail inválido. Deve ser um e-mail da UFBA.");
+      }
 
     }
 
