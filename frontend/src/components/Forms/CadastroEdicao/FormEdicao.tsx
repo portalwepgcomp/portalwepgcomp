@@ -521,7 +521,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       <div className="d-flex flex-column justify-content-start">
         <div className="fs-4"> Sessões e apresentações </div>
 
-        <div className="d-flex flex-row justify-content-start w-50 gap-3">
+        <div className="d-flex flex-column justify-content-start gap-3">
           <div className="col-12 mb-1">
             <label className="form-label form-title">
               Número de sessões
