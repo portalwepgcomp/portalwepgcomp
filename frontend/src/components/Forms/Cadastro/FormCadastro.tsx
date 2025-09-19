@@ -110,16 +110,6 @@ export function FormCadastro() {
       ouvinte: "Listener",
     };
 
-    if (
-      !nome ||
-      !email ||
-      !senha ||
-      !perfil ||
-      (perfil !== "ouvinte" && !matricula)
-    ) {
-      throw new Error("Campos obrigatórios em branco.");
-    }
-
     if(perfil === profileFormated.doutorando || perfil === profileFormated.professor) {
       if (!email.toLowerCase().endsWith("@ufba.br")) {
         throw new Error("E-mail inválido. Deve ser um e-mail da UFBA.");
