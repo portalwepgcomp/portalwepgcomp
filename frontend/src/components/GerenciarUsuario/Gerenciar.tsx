@@ -30,6 +30,8 @@ export default function Gerenciar() {
   const [normal, setNormal] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<string>("");
   const [usersListValues, setUsersListValues] = useState<User[]>(userList);
+  const [aluno, setAluno] = useState<boolean>(false);
+  const [professor, setProfessor] = useState<boolean>(false);
 
   const statusOptions = ["ATIVO", "PENDENTE", "INATIVO"];
  
@@ -101,13 +103,22 @@ export default function Gerenciar() {
       filterParams.status = "Inactive";
     }
 
+    // Adicione esta lógica para o filtro de papel
+    if (aluno && !professor) {
+      filterParams.profiles = "DoctoralStudent";
+    } else if (professor && !aluno) {
+      filterParams.profiles = "Professor";
+    } else {
+      filterParams.profiles = undefined;
+    }
+
     const finalParams = {
       ...filterParams,
       roles: filterRoles.length ? filterRoles.join(",") : undefined,
     };
 
     getUsers(finalParams as GetUserParams);
-  }, [ativo, inativo, pendente, admin, spAdmin, normal]);
+  }, [ativo, inativo, pendente, admin, spAdmin, normal, aluno, professor]);
 
   useEffect(() => {
     const newUsersList =
@@ -181,6 +192,23 @@ export default function Gerenciar() {
               <option value="superadmin">Super Admin</option>
               <option value="admin">Admin</option>
               <option value="normal">Normal</option>
+            </select>
+          </div>
+
+          <div className="filter-dropdown">
+            <label className="filter-dropdown-label">Cargo</label>
+            <select
+              className="filter-dropdown-select"
+              onChange={(e) => {
+                const value = e.target.value;
+                setAluno(value === 'aluno');
+                setProfessor(value === 'professor');
+              }}
+              value={aluno ? 'aluno' : professor ? 'professor' : ''}
+            >
+              <option value="">Todos os cargos</option>
+              <option value="aluno">Aluno</option>
+              <option value="professor">Professor</option>
             </select>
           </div>
         </div>
