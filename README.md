@@ -15,7 +15,7 @@ Atualmente este projeto é objeto de Trabalho de Conclusão de Curso e inciialme
 
 A equipe está utilizando a metodologia **Kanban** com o auxílio da plataforma **Jira** para gerenciar as tarefas e acompanhar o progresso. O projeto segue um cronograma de entregas semanais.
 
-- Link para o Notion: <a href="https://wepgcomp.atlassian.net/jira/software/projects/MFLP/boards/1" target="_blank">Jira Board</a>
+- Link para o Jira: <a href="https://wepgcomp.atlassian.net/jira/software/projects/MFLP/boards/1" target="_blank">Jira Board</a>
 - obs: Solicitar acesso aos mantenedores 
 
 ## Requisitos do Sistema
