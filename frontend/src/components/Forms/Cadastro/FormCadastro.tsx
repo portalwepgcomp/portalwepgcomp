@@ -72,6 +72,18 @@ const formCadastroSchema = z
         code: z.ZodIssueCode.custom,
       });
     }
+
+    if (
+      data.perfil !== "ouvinte" &&
+      data.email &&
+      !data.email.toLowerCase().endsWith("@ufba.br")
+    ) {
+      ctx.addIssue({
+        path: ["email"],
+        message: "E-mail inválido. Deve ser um e-mail da UFBA.",
+        code: z.ZodIssueCode.custom,
+      });
+    }
   })
   .refine((data) => data.senha === data.confirmaSenha, {
     message: "As senhas não conferem!",
@@ -109,13 +121,6 @@ export function FormCadastro() {
       professor: "Professor",
       ouvinte: "Listener",
     };
-
-    if(perfil === profileFormated.doutorando || perfil === profileFormated.professor) {
-      if (!email.toLowerCase().endsWith("@ufba.br")) {
-        throw new Error("E-mail inválido. Deve ser um e-mail da UFBA.");
-      }
-
-    }
 
     const body = {
       name: nome,
