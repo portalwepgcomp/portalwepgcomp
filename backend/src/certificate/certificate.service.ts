@@ -70,6 +70,13 @@ export class CertificateService {
         },
       },
     });
+    const panelistBlocks = await this.prismaClient.presentationBlock.findMany({
+      where: {
+      id: {
+        in: user.panelistParticipations.map(p => p.presentationBlockId),
+      },
+      },
+    });
     const eventEdition = await this.prismaClient.eventEdition.findUnique({
       where: { id: eventEditionId },
     });
@@ -101,8 +108,23 @@ export class CertificateService {
       eventEdition.name,
     );
     let texto = '';
+    let panelistText = '';
+    if(panelistBlocks.length > 0){
+      panelistText = 'nos blocos de apresentação '
+      if(panelistBlocks.length == 1){
+        panelistText = 'no bloco de apresentação '
+      }
+      for (let i = 0; i < panelistBlocks.length; i++) {
+        const block = panelistBlocks[i];
+        if (i === panelistBlocks.length - 2) {
+          panelistText += `${block.title} e `;
+        } else {
+          panelistText += `${block.title}, `;
+        }
+      }
+    }
     if (user.profile == Profile.Professor) {
-      texto += `   Certificamos que ${user.name} participou como avaliador(a) em sessões de apresentações do evento ${eventEdition.name}, promovido pelo Programa de Pós-Graduação em Ciência da Computação do Instituto de Computação da Universidade Federal da Bahia, no período de ${eventEdition.startDate.toLocaleDateString()} a ${eventEdition.endDate.toLocaleDateString()}.`;
+      texto += `   Certificamos que ${user.name} participou como avaliador(a) em sessões de apresentações do evento ${eventEdition.name}, ${panelistText}promovido pelo Programa de Pós-Graduação em Ciência da Computação do Instituto de Computação da Universidade Federal da Bahia, no período de ${eventEdition.startDate.toLocaleDateString()} a ${eventEdition.endDate.toLocaleDateString()}.`;
       if (user.panelistAwards.length) {
         texto += ` Também ficamos felizes de informar que ${user.name} foi homenageado(a) como um dos melhores avaliadores pela comissão organizadora do ${eventEdition.name}.`;
       }
