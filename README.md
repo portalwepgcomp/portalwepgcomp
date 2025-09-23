@@ -4,6 +4,10 @@
 
 Atualmente este projeto é objeto de Trabalho de Conclusão de Curso e inciialmente foi desenvolvido como parte da disciplina **IC045/MATE85 - Tópicos em Sistemas de Informação e Web**, com o objetivo de criar o portal do **Workshop de Estudantes de Pós-Graduação em Computação (WEPGCOMP)**. O sistema permite a gestão de eventos acadêmicos, incluindo o cadastro de participantes, avaliação de apresentações, emissão de certificados, e organização de sessões.
 
+Link deploy dev testes:
+- Front: https://portalwepgcomp-front.vercel.app/
+- Back: https://portalwepgcomp.onrender.com/
+
 ## Tecnologias Utilizadas
 
 - **Back-end**: NodeJS com Nest
