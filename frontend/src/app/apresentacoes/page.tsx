@@ -115,6 +115,7 @@ export default function Apresentacoes() {
                             sessionsListValues,
                             "title",
                             "abstract"
+                            
                         )}
                         isLoading={loadingSubmissionList}
                         onEdit={handleEdit}

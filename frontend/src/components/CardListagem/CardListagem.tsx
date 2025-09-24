@@ -7,9 +7,12 @@ import Star from "../UI/Star";
 
 import { useSweetAlert } from "@/hooks/useAlert";
 import { useEdicao } from "@/hooks/useEdicao";
+import ReadMore from "../ReadMore/ReadMore";
 
 interface CardListagem {
   title: string;
+  mainAuthor: string;
+  advisor: string;
   subtitle: string;
   showFavorite?: boolean;
   generalButtonLabel?: string;
@@ -22,6 +25,8 @@ interface CardListagem {
 
 export default function CardListagem({
   title,
+  mainAuthor,
+  advisor,
   subtitle,
   onClickItem,
   generalButtonLabel,
@@ -37,8 +42,13 @@ export default function CardListagem({
   return (
     <div className="card-listagem" onClick={onClickItem}>
       <div className="card-listagem-text">
-        <p>{title}</p>
-        <p>{subtitle}</p>
+        <h5 className="card-listagem-title">{title}</h5>
+        <div className="card-listagem-authors">
+          <h6 className="card-listagem-main-author">Doutorando(a): {mainAuthor}</h6>
+          {advisor && <p className="card-listagem-advisor">Orientador(a): {advisor}</p>}
+        </div>
+        {/* <p className="card-listagem-subtitle">{subtitle}</p> */}
+        <ReadMore text={subtitle} maxLength={100}/>
       </div>
       <div className="buttons-area">
         {!!idGeneralModal && !!generalButtonLabel && !!Edicao?.isActive && (

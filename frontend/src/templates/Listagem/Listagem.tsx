@@ -66,7 +66,6 @@ export default function Listagem({
   onEdit,
   onClear,
   fullInfo,
-  isLoading
 }: Readonly<ListagemProps>) {
   const pathname = usePathname();
   const { Edicao } = useEdicao();
@@ -78,9 +77,9 @@ export default function Listagem({
 
   useEffect(() => {
     if (isMounted) {
-      console.log(cardsList, isLoading);
+      console.log(cardsList);
     }
-  }, [cardsList, isLoading, isMounted]);
+  }, [cardsList, isMounted]);
 
   return (
     <div className="listagem-template">
@@ -123,7 +122,6 @@ export default function Listagem({
                 value={searchValue}
                 onChange={(e) => onChangeSearchValue(e.target.value)}
               />
-
               <button
                 className="btn btn-outline-secondary"
                 type="button"
@@ -148,6 +146,8 @@ export default function Listagem({
                   key={card.name}
                   title={card?.title || "Sem Título"}
                   subtitle={card.subtitle}
+                  mainAuthor={card.mainAuthor.name}
+                  advisor={card.advisor?.name}
                   generalButtonLabel={generalButtonLabel}
                   idGeneralModal={
                     card?.type == "Presentation" && !!card?.presentations.length
@@ -185,7 +185,9 @@ export default function Listagem({
                 <CardListagem
                   key={card.name}
                   title={card.title}
+                  mainAuthor={card.mainAuthor.name}
                   subtitle={card.subtitle}
+                  advisor={card.advisor?.name}
                   showFavorite
                   onClickItem={() => onClickItem && onClickItem(card)}
                 />
