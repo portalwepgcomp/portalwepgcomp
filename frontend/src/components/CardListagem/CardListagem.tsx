@@ -47,7 +47,6 @@ export default function CardListagem({
           <h6 className="card-listagem-main-author">Doutorando(a): {mainAuthor}</h6>
           {advisor && <p className="card-listagem-advisor">Orientador(a): {advisor}</p>}
         </div>
-        {/* <p className="card-listagem-subtitle">{subtitle}</p> */}
         <ReadMore text={subtitle} maxLength={100}/>
       </div>
       <div className="buttons-area">

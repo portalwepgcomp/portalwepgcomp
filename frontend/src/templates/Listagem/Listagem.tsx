@@ -75,12 +75,6 @@ export default function Listagem({
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (isMounted) {
-      console.log(cardsList);
-    }
-  }, [cardsList, isMounted]);
-
   return (
     <div className="listagem-template">
       <Banner title={title} />
