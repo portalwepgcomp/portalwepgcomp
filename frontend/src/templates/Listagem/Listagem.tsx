@@ -9,6 +9,7 @@ import Banner from "@/components/UI/Banner";
 
 import "./style.scss";
 import { useEdicao } from "@/hooks/useEdicao";
+import { useEffect, useState } from "react";
 
 export function mapCardList(
   list: any[],
@@ -65,9 +66,21 @@ export default function Listagem({
   onEdit,
   onClear,
   fullInfo,
+  isLoading
 }: Readonly<ListagemProps>) {
   const pathname = usePathname();
   const { Edicao } = useEdicao();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      console.log(cardsList, isLoading);
+    }
+  }, [cardsList, isLoading, isMounted]);
 
   return (
     <div className="listagem-template">
@@ -190,7 +203,7 @@ export default function Listagem({
                 />
               )
             )}
-          {!cardsList.length && (
+          {cardsList.length == 0 && isMounted && (
             <div className="d-flex align-items-center justify-content-center p-3 mt-4 me-5">
               <h4 className="empty-list mb-0">
                 <Image

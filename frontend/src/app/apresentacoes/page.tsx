@@ -9,112 +9,123 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSubmission } from "@/hooks/useSubmission";
 import { ApresentacoesMock } from "@/mocks/Apresentacoes";
 import Listagem, { mapCardList } from "@/templates/Listagem/Listagem";
+import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
 
 export default function Apresentacoes() {
-  const { title, userArea } = ApresentacoesMock;
-  const { user } = useAuth();
+    const { title, userArea } = ApresentacoesMock;
+    const { user } = useAuth();
 
-  const {
-    submissionList,
-    getSubmissions,
-    loadingSubmissionList,
-    deleteSubmissionById,
-    setSubmission,
-  } = useSubmission();
+    const {
+        submissionList,
+        getSubmissions,
+        loadingSubmissionList,
+        deleteSubmissionById,
+        setSubmission,
+    } = useSubmission();
 
-  const [searchValue, setSearchValue] = useState<string>("");
-  const [sessionsListValues, setSessionsListValues] = useState<any[]>([]);
-  const [isAddButtonDisabled, setIsAddButtonDisabled] =
-    useState<boolean>(false);
+    const [searchValue, setSearchValue] = useState<string>("");
+    const [sessionsListValues, setSessionsListValues] = useState<any[]>([]);
+    const [isAddButtonDisabled, setIsAddButtonDisabled] =
+        useState<boolean>(false);
 
-  const getSubmissionOnList = (card: any) => {
-    const submission = submissionList?.find((v) => v.id === card.id);
+    const getSubmissionOnList = (card: any) => {
+        const submission = submissionList?.find((v) => v.id === card.id);
 
-    if (submission?.id) {
-      setSubmission(submission);
-    }
-  };
-
-  useEffect(() => {
-    const params = {
-      eventEditionId: getEventEditionIdStorage() ?? "",
+        if (submission?.id) {
+            setSubmission(submission);
+        }
     };
-    getSubmissions(params);
-  }, []);
 
-  useEffect(() => {
-    const filteredSessions = submissionList.filter((submission) => {
-      const searchMatch = submission.title
-        .toLowerCase()
-        .includes(searchValue.trim().toLowerCase());
+    useEffect(() => {
+        const params = {
+            eventEditionId: getEventEditionIdStorage() ?? "",
+        };
+        getSubmissions(params);
+    }, []);
 
-      if (user?.level !== "Default") {
-        return searchMatch;
-      }
+    useEffect(() => {
+        const filteredSessions = submissionList.filter((submission) => {
+            const searchMatch = submission.title
+                .toLowerCase()
+                .includes(searchValue.trim().toLowerCase());
 
-      return submission.mainAuthorId === user?.id && searchMatch;
-    });
+            if (user?.level !== "Default") {
+                return searchMatch;
+            }
 
-    setSessionsListValues(filteredSessions);
+            return submission.mainAuthorId === user?.id && searchMatch;
+        });
 
-    if (user?.level === "Default") {
-      const hasOwnSubmission = filteredSessions.length > 0;
+        setSessionsListValues(filteredSessions);
 
-      setIsAddButtonDisabled(hasOwnSubmission);
-    }
-  }, [searchValue, submissionList, user]);
+        if (user?.level === "Default") {
+            const hasOwnSubmission = filteredSessions.length > 0;
 
-  const handleDelete = async (submissionId: string) => {
-    if (user?.level !== "Default") {
-      await deleteSubmissionById(submissionId);
+            setIsAddButtonDisabled(hasOwnSubmission);
+        }
+    }, [searchValue, submissionList, user]);
 
-      const updatedSubmissions = sessionsListValues.filter(
-        (submission) => submission.id !== submissionId
-      );
+    const handleDelete = async (submissionId: string) => {
+        if (user?.level !== "Default") {
+            await deleteSubmissionById(submissionId);
 
-      setSessionsListValues(updatedSubmissions);
-    } else {
-      const submission = submissionList.find(
-        (submission) => submission.id === submissionId
-      );
+            const updatedSubmissions = sessionsListValues.filter(
+                (submission) => submission.id !== submissionId
+            );
 
-      if (submission?.mainAuthorId === user?.id) {
-        await deleteSubmissionById(submissionId);
+            setSessionsListValues(updatedSubmissions);
+        } else {
+            const submission = submissionList.find(
+                (submission) => submission.id === submissionId
+            );
 
-        const updatedSubmissions = sessionsListValues.filter(
-          (submission) => submission.id !== submissionId
+            if (submission?.mainAuthorId === user?.id) {
+                await deleteSubmissionById(submissionId);
+
+                const updatedSubmissions = sessionsListValues.filter(
+                    (submission) => submission.id !== submissionId
+                );
+
+                setSessionsListValues(updatedSubmissions);
+            }
+        }
+    };
+
+    const handleEdit = async (submissionId: string) => {
+        const submission = sessionsListValues.find(
+            (s) => s.id === submissionId
         );
+        setSubmission(submission);
+    };
 
-        setSessionsListValues(updatedSubmissions);
-      }
-    }
-  };
-
-  const handleEdit = async (submissionId: string) => {
-    const submission = sessionsListValues.find((s) => s.id === submissionId);
-    setSubmission(submission);
-  };
-
-  return (
-    <ProtectedLayout>
-      <div className="d-flex flex-column before-list">
-        <Listagem
-          idModal="editarApresentacaoModal"
-          title={title}
-          labelAddButton={userArea.add}
-          searchValue={searchValue}
-          onChangeSearchValue={(value) => setSearchValue(value)}
-          searchPlaceholder={userArea.search}
-          cardsList={mapCardList(sessionsListValues, "title", "abstract")}
-          isLoading={loadingSubmissionList}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onClickItem={getSubmissionOnList}
-          onClear={() => setSubmission(null)}
-          isAddButtonDisabled={isAddButtonDisabled}
-        />
-        <ModalEditarCadastro />
-      </div>
-    </ProtectedLayout>
-  );
+    return (
+        <ProtectedLayout>
+            {loadingSubmissionList ? (
+                <IndicadorDeCarregamento />
+            ) : (
+                <div className="d-flex flex-column before-list">
+                    <Listagem
+                        idModal="editarApresentacaoModal"
+                        title={title}
+                        labelAddButton={userArea.add}
+                        searchValue={searchValue}
+                        onChangeSearchValue={(value) => setSearchValue(value)}
+                        searchPlaceholder={userArea.search}
+                        cardsList={mapCardList(
+                            sessionsListValues,
+                            "title",
+                            "abstract"
+                        )}
+                        isLoading={loadingSubmissionList}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        onClickItem={getSubmissionOnList}
+                        onClear={() => setSubmission(null)}
+                        isAddButtonDisabled={isAddButtonDisabled}
+                    />
+                    <ModalEditarCadastro />
+                </div>
+            )}
+        </ProtectedLayout>
+    );
 }
