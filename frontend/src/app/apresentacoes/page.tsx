@@ -15,6 +15,12 @@ export default function Apresentacoes() {
     const { title, userArea } = ApresentacoesMock;
     const { user } = useAuth();
 
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+      setIsMounted(true);
+    }, []);
+
     const {
         submissionList,
         getSubmissions,
@@ -100,7 +106,7 @@ export default function Apresentacoes() {
 
     return (
         <ProtectedLayout>
-            {loadingSubmissionList ? (
+            {!isMounted || loadingSubmissionList ? (
                 <IndicadorDeCarregamento />
             ) : (
                 <div className="d-flex flex-column before-list">
