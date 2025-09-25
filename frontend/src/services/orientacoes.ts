@@ -7,8 +7,7 @@ export const orientacoesApi = {
     getOrientacoes: async () => {
         const instance = axiosInstance;
 
-        const { data } = await instance.get(`${baseUrl}`);
-
+        const { data } = await instance.get(`${baseUrl}`).then(res => res).catch(err => err);
         return data;
     },
 

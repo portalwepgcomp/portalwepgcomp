@@ -79,6 +79,11 @@ O protótipo do sistema está sendo desenvolvido no **Figma**, onde todas as tel
 
 ### Back-end
 
+Para quem possuí o make instalado basta executar:
+```bash
+make run
+```
+
 ```bash
 cd backend
 npm run start

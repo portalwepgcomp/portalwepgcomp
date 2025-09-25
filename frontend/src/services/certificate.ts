@@ -23,7 +23,6 @@ export const useCertificate = () => {
 
             return 200; 
         } catch (error: any) {       
-        console.log(error)
 
             return error.status; 
         }
