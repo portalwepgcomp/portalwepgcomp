@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import ModalEditarCadastro from "@/components/Modals/ModalEdicaoCadastro/ModalEditarCadastro";
 import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSubmission } from "@/hooks/useSubmission";
 import { ApresentacoesMock } from "@/mocks/Apresentacoes";
 import Listagem, { mapCardList } from "@/templates/Listagem/Listagem";
+import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
 
 export default function Apresentacoes() {
   const { title, userArea } = ApresentacoesMock;
@@ -22,78 +23,60 @@ export default function Apresentacoes() {
     setSubmission,
   } = useSubmission();
 
-  const [searchValue, setSearchValue] = useState<string>("");
-  const [sessionsListValues, setSessionsListValues] = useState<any[]>([]);
-  const [isAddButtonDisabled, setIsAddButtonDisabled] =
-    useState<boolean>(false);
-
-  const getSubmissionOnList = (card: any) => {
-    const submission = submissionList?.find((v) => v.id === card.id);
-
-    if (submission?.id) {
-      setSubmission(submission);
-    }
-  };
+  const [searchValue, setSearchValue] = useState("");
+  const [isMounted, setIsMounted] = useState(false);
+  const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(false);
 
   useEffect(() => {
-    const params = {
-      eventEditionId: getEventEditionIdStorage() ?? "",
-    };
-    getSubmissions(params);
+    getSubmissions({ eventEditionId: getEventEditionIdStorage() ?? "" });
+    setIsMounted(true)
   }, []);
 
-  useEffect(() => {
-    const filteredSessions = submissionList.filter((submission) => {
-      const searchMatch = submission.title
-        .toLowerCase()
-        .includes(searchValue.trim().toLowerCase());
+  const filteredSubmissions = useMemo(() => {
+    const search = searchValue.trim().toLowerCase();
 
-      if (user?.level !== "Default") {
-        return searchMatch;
-      }
+    const filtered = submissionList.filter((submission) => {
+      const matchesSearch = submission.title.toLowerCase().includes(search);
 
-      return submission.mainAuthorId === user?.id && searchMatch;
+      if (user?.level !== "Default") return matchesSearch;
+
+      return submission.mainAuthorId === user?.id && matchesSearch;
     });
 
-    setSessionsListValues(filteredSessions);
+    setIsAddButtonDisabled(
+      user?.level === "Default" && filtered.length > 0
+    );
 
-    if (user?.level === "Default") {
-      const hasOwnSubmission = filteredSessions.length > 0;
-
-      setIsAddButtonDisabled(hasOwnSubmission);
-    }
+    return filtered;
   }, [searchValue, submissionList, user]);
 
   const handleDelete = async (submissionId: string) => {
-    if (user?.level !== "Default") {
+    const submission = submissionList.find((s) => s.id === submissionId);
+
+    if (!submission) return;
+
+    if (user?.level !== "Default" || submission.mainAuthorId === user?.id) {
       await deleteSubmissionById(submissionId);
-
-      const updatedSubmissions = sessionsListValues.filter(
-        (submission) => submission.id !== submissionId
-      );
-
-      setSessionsListValues(updatedSubmissions);
-    } else {
-      const submission = submissionList.find(
-        (submission) => submission.id === submissionId
-      );
-
-      if (submission?.mainAuthorId === user?.id) {
-        await deleteSubmissionById(submissionId);
-
-        const updatedSubmissions = sessionsListValues.filter(
-          (submission) => submission.id !== submissionId
-        );
-
-        setSessionsListValues(updatedSubmissions);
-      }
     }
   };
 
-  const handleEdit = async (submissionId: string) => {
-    const submission = sessionsListValues.find((s) => s.id === submissionId);
-    setSubmission(submission);
+  const handleEdit = (submissionId: string) => {
+    const submission = filteredSubmissions.find((s) => s.id === submissionId);
+    if (submission) setSubmission(submission);
   };
+
+  const handleSelect = (card: any) => {
+    const submission = submissionList.find((s) => s.id === card.id);
+    if (submission) setSubmission(submission);
+  };
+
+  if (loadingSubmissionList || !isMounted) {
+    return (
+      <ProtectedLayout>
+        <IndicadorDeCarregamento/>
+      </ProtectedLayout>
+    );
+  }
 
   return (
     <ProtectedLayout>
@@ -103,13 +86,13 @@ export default function Apresentacoes() {
           title={title}
           labelAddButton={userArea.add}
           searchValue={searchValue}
-          onChangeSearchValue={(value) => setSearchValue(value)}
+          onChangeSearchValue={setSearchValue}
           searchPlaceholder={userArea.search}
-          cardsList={mapCardList(sessionsListValues, "title", "abstract")}
+          cardsList={mapCardList(filteredSubmissions, "title", "abstract")}
           isLoading={loadingSubmissionList}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onClickItem={getSubmissionOnList}
+          onClickItem={handleSelect}
           onClear={() => setSubmission(null)}
           isAddButtonDisabled={isAddButtonDisabled}
         />

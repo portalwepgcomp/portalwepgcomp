@@ -9,6 +9,7 @@ import Banner from "@/components/UI/Banner";
 
 import "./style.scss";
 import { useEdicao } from "@/hooks/useEdicao";
+import { useEffect, useState } from "react";
 
 export function mapCardList(
   list: any[],
@@ -68,6 +69,11 @@ export default function Listagem({
 }: Readonly<ListagemProps>) {
   const pathname = usePathname();
   const { Edicao } = useEdicao();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <div className="listagem-template">
@@ -110,7 +116,6 @@ export default function Listagem({
                 value={searchValue}
                 onChange={(e) => onChangeSearchValue(e.target.value)}
               />
-
               <button
                 className="btn btn-outline-secondary"
                 type="button"
@@ -135,6 +140,8 @@ export default function Listagem({
                   key={card.name}
                   title={card?.title || "Sem Título"}
                   subtitle={card.subtitle}
+                  mainAuthor={card.mainAuthor.name}
+                  advisor={card.advisor?.name}
                   generalButtonLabel={generalButtonLabel}
                   idGeneralModal={
                     card?.type == "Presentation" && !!card?.presentations.length
@@ -172,7 +179,9 @@ export default function Listagem({
                 <CardListagem
                   key={card.name}
                   title={card.title}
+                  mainAuthor={card.mainAuthor.name}
                   subtitle={card.subtitle}
+                  advisor={card.advisor?.name}
                   showFavorite
                   onClickItem={() => onClickItem && onClickItem(card)}
                 />
@@ -190,7 +199,7 @@ export default function Listagem({
                 />
               )
             )}
-          {!cardsList.length && (
+          {cardsList.length == 0 && isMounted && (
             <div className="d-flex align-items-center justify-content-center p-3 mt-4 me-5">
               <h4 className="empty-list mb-0">
                 <Image
