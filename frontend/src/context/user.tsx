@@ -17,15 +17,18 @@ interface UserProviderData {
   loadingResetPassword: boolean;
   loadingUserList: boolean;
   loadingAdvisors: boolean;
+  loadingAdmins: boolean;
   loadingSwitchActive: boolean;
   user: User | null;
   userList: User[];
   advisors: User[];
+  admins: User[];
   getUsers: (params: GetUserParams) => void;
   registerUser: (body: RegisterUserParams) => Promise<void>;
   resetPasswordSendEmail: (body: ResetPasswordSendEmailParams) => Promise<void>;
   resetPassword: (body: ResetPasswordParams) => Promise<void>;
   getAdvisors: () => Promise<void>;
+  getAdmins: () => Promise<void>;
   switchActiveUser: (userId: string, activate: boolean) => Promise<void>;
   markAsDefaultUser: (body: SetPermissionParams) => Promise<void>;
   markAsAdminUser: (body: SetPermissionParams) => Promise<void>;
@@ -43,11 +46,13 @@ export const UserProvider = ({ children }: UserProps) => {
   const [loadingResetPassword, setLoadingResetPassword] =
     useState<boolean>(false);
   const [loadingAdvisors, setLoadingAdvisors] = useState<boolean>(false);
+  const [loadingAdmins, setLoadingAdmins] = useState<boolean>(false);
   const [loadingSwitchActive, setLoadingSwitchActive] =
     useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [userList, setUserList] = useState<User[]>([]);
   const [advisors, setAdvisors] = useState<User[]>([]);
+  const [admins, setAdmins] = useState<User[]>([]);
   const { user: authUser } = useContext(AuthContext);
 
 
@@ -315,6 +320,30 @@ export const UserProvider = ({ children }: UserProps) => {
     }
   };
 
+  const getAdmins = async () => {
+    setLoadingAdmins(true);
+
+    try {
+      const response = await userApi.getAdmins();
+      setAdmins(response);
+    } catch (err: any) {
+      console.error(err);
+      setAdmins([]);
+
+      showAlert({
+        icon: "error",
+        title: "Erro ao buscar orientadores",
+        text:
+          err.response?.data?.message?.message ||
+          err.response?.data?.message ||
+          "Ocorreu um erro ao buscar orientadores.",
+        confirmButtonText: "Retornar",
+      });
+    } finally {
+      setLoadingAdmins(false);
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -323,15 +352,18 @@ export const UserProvider = ({ children }: UserProps) => {
         loadingResetPassword,
         loadingUserList,
         loadingAdvisors,
+        loadingAdmins,
         loadingSwitchActive,
         user,
         userList,
         advisors,
+        admins,
         getUsers,
         registerUser,
         resetPasswordSendEmail,
         resetPassword,
         getAdvisors,
+        getAdmins,
         switchActiveUser,
         markAsDefaultUser,
         markAsAdminUser,
