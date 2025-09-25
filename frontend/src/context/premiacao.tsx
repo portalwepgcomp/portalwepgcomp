@@ -157,7 +157,7 @@ export const PremiacaoProvider = ({ children }: SubmissionProps) => {
       .then((response) => {
         setlistPanelists(response);
       })
-      .catch((err) => {
+      .catch((_) => {
         setlistPanelists([]);
       })
       .finally(() => {
