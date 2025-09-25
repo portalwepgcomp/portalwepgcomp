@@ -20,27 +20,23 @@ export default function Cadastro() {
     if (signed) {
       router.push("/home");
     }
-  }, []);
+  }, [signed, router]);
 
   return (
-    <div className='container d-flex flex-column flex-grow-1 text-black cadastro'>
+    <div className='container d-flex flex-column flex-grow-1 text-black cadastro position-relative'>
       {loadingCreateUser && <LoadingPage />}
-      {!loadingCreateUser && (
-        <>
-          <div className='container'>
-            <h1 className='d-flex justify-content-center mt-5 fw-normal ms-2'>
-              {Edicao?.name || "Carregando..."}
-            </h1>
-            <hr />
-            <h2 className='d-flex justify-content-center mb-4 fw-bold text-black'>
-              Cadastro
-            </h2>
-          </div>
-          <div className='container d-flex justify-content-center mb-5'>
-            <FormCadastro />
-          </div>
-        </>
-      )}
+      <div className='container'>
+        <h1 className='d-flex justify-content-center mt-5 fw-normal ms-2'>
+          {Edicao?.name || "Carregando..."}
+        </h1>
+        <hr />
+        <h2 className='d-flex justify-content-center mb-4 fw-bold text-black'>
+          Cadastro
+        </h2>
+      </div>
+      <div className='container d-flex justify-content-center mb-5'>
+        <FormCadastro />
+      </div>
     </div>
   );
 }
