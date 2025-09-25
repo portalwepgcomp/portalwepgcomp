@@ -256,7 +256,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       endDate: final,
       partnersText: "",
     } as EdicaoParams;
-    console.log(edicaoData, body)
+
     if (edicaoData?.id) {
       updateEdicao(edicaoData?.id, body);
       setTimeout(() => {

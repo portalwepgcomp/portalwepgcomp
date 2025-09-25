@@ -1,7 +1,11 @@
 import { createContext, ReactNode, useState } from "react";
 
 import { useSweetAlert } from "@/hooks/useAlert";
-import { submissionFileApi } from "@/services/submissionFile";
+
+import axiosInstance from '@/utils/api';
+
+const baseUrl = "/uploads";
+const instance = axiosInstance;
 
 interface SubmissionFileProps {
   children: ReactNode;
@@ -17,6 +21,7 @@ interface SubmissionFileProviderData {
     file: File,
     idSubmission: string
   ) => Promise<SubmissionFile | null>;
+  deleteFile: (idFile: string) => Promise<any>;
 }
 
 export const SubmissionFileContext = createContext<SubmissionFileProviderData>(
@@ -41,8 +46,8 @@ export const SubmissionFileProvider = ({ children }: SubmissionFileProps) => {
     setLoadingSubmissionFileList(true);
 
     try {
-      const response = await submissionFileApi.getFiles();
-      setSubmissionFileList(response);
+      const { data } = await instance.post(`${baseUrl}/list`);
+      setSubmissionFileList(data);
     } catch (err: any) {
       console.error(err);
       setSubmissionFileList([]);
@@ -65,11 +70,19 @@ export const SubmissionFileProvider = ({ children }: SubmissionFileProps) => {
     setLoadingSubmissionFile(true);
 
     try {
-      const response = await submissionFileApi.sendFile(file, idUser);
+       const formData = new FormData();
+        formData.append("file", file);
+        formData.append("idSubmission", idUser);
 
-      setSubmissionFile(response);
+        const { data } = await instance.post(`${baseUrl}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+      setSubmissionFile(data);
       setLoadingSubmissionFile(false);
-      return response;
+      return data;
     } catch (err: any) {
       console.error(err);
       setSubmissionFile(null);
@@ -80,6 +93,12 @@ export const SubmissionFileProvider = ({ children }: SubmissionFileProps) => {
     }
   };
 
+  const deleteFile = async (idFile: string) => {
+      const { data } = await instance.delete(`${baseUrl}/${idFile}`, {method: 'DELETE'});
+      console.log("DELETE", data)
+      return data;
+    }
+
   return (
     <SubmissionFileContext.Provider
       value={{
@@ -89,6 +108,7 @@ export const SubmissionFileProvider = ({ children }: SubmissionFileProps) => {
         submissionFile,
         getFiles,
         sendFile,
+        deleteFile,
       }}
     >
       {children}
