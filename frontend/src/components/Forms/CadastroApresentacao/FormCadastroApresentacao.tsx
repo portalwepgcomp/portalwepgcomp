@@ -203,7 +203,7 @@ export function FormCadastroApresentacao() {
       } else {
         throw new Error("Falha ao processar submissão");
       }
-    } catch (erro) {
+    } catch (_) {
       if (arquivoEnviadoKey) {
         await limparArquivoOrfao(arquivoEnviadoKey);
       }
