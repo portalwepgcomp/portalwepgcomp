@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import s from './ReadMore.module.scss';
 
 interface ReadMoreProps {
@@ -6,7 +6,7 @@ interface ReadMoreProps {
   maxLength?: number;
 }
 
-export default function ReadMore({ text, maxLength = 100 }: ReadMoreProps) {
+function ReadMoreComponent({ text, maxLength = 100 }: ReadMoreProps) {
   const [expanded, setExpanded] = useState(false);
 
   if (text.length <= maxLength) {
@@ -18,7 +18,7 @@ export default function ReadMore({ text, maxLength = 100 }: ReadMoreProps) {
       {expanded ? text : text.slice(0, maxLength) + '...'}
       <button
         className={s.button}
-        onClick={() => setExpanded((v) => !v)}
+        onClick={() => setExpanded(v => !v)}
         type="button"
       >
         {expanded ? 'Ler menos' : 'Ler mais'}
@@ -26,3 +26,5 @@ export default function ReadMore({ text, maxLength = 100 }: ReadMoreProps) {
     </span>
   );
 }
+
+export default React.memo(ReadMoreComponent);

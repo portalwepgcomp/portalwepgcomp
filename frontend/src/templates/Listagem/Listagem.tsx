@@ -7,9 +7,9 @@ import PresentationCard from "@/components/CardApresentacao/PresentationCard";
 import CardListagem from "@/components/CardListagem/CardListagem";
 import Banner from "@/components/UI/Banner";
 
-import "./style.scss";
 import { useEdicao } from "@/hooks/useEdicao";
 import { useEffect, useState } from "react";
+import "./style.scss";
 
 export function mapCardList(
   list: any[],
@@ -134,17 +134,17 @@ export default function Listagem({
         <div className="listagem-template-cards">
           {!!cardsList.length &&
             !isFavorites &&
-            cardsList?.map((card) =>
+            cardsList?.map((card, i) =>
               !fullInfo ? (
                 <CardListagem
-                  key={card.name}
+                  key={card.id ?? card.name ?? i}
                   title={card?.title || "Sem Título"}
-                  subtitle={card.subtitle}
-                  mainAuthor={card.mainAuthor.name}
-                  advisor={card.advisor?.name}
+                  subtitle={card.subtitle ? card.subtitle : "Sem subtítulo"}
+                  mainAuthor={card.mainAuthor?.name ? card.mainAuthor.name : "Sem nome"}
+                  advisor={card.advisor?.name ? card.advisor.name : "Sem nome"}
                   generalButtonLabel={generalButtonLabel}
                   idGeneralModal={
-                    card?.type == "Presentation" && !!card?.presentations.length
+                    card?.type == "Presentation" && !!card?.presentations?.length
                       ? idGeneralModal
                       : ""
                   }
@@ -159,7 +159,7 @@ export default function Listagem({
                 />
               ) : (
                 <PresentationCard
-                  key={card.name}
+                  key={card.id ?? card.name ?? i}
                   id={card.id}
                   title={card.title}
                   subtitle={card.subtitle}
@@ -174,20 +174,20 @@ export default function Listagem({
             )}
           {!!cardsList.length &&
             isFavorites &&
-            cardsList?.map((card) =>
+            cardsList?.map((card, i) =>
               !fullInfo ? (
                 <CardListagem
-                  key={card.name}
+                  key={card.id ?? card.name ?? i}
                   title={card.title}
-                  mainAuthor={card.mainAuthor.name}
+                  mainAuthor={card.mainAuthor?.name ?? "Sem nome"}
                   subtitle={card.subtitle}
-                  advisor={card.advisor?.name}
+                  advisor={card.advisor?.name ?? "Sem nome"}
                   showFavorite
                   onClickItem={() => onClickItem && onClickItem(card)}
                 />
               ) : (
                 <PresentationCard
-                  key={card.name}
+                  key={card.id ?? card.name ?? i}
                   id={card.id}
                   title={card.title}
                   subtitle={card.subtitle}

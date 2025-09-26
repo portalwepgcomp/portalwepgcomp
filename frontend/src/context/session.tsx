@@ -101,17 +101,20 @@ export const SessionProvider = ({ children }: SessionProps) => {
 
   const listRooms = async (eventEditionId: string) => {
     setLoadingRoomsList(true);
-    sessionApi
-      .listRooms(eventEditionId)
-      .then((response) => {
-        setRoomsList(response);
-      })
-      .catch(() => {
-        setRoomsList([]);
-      })
-      .finally(() => {
-        setLoadingRoomsList(false);
+    try {
+      const response = await sessionApi.listRooms(eventEditionId);
+      setRoomsList(response);
+    } catch {
+      showAlert({
+        icon: "error",
+        title: "Erro ao carregar as salas",
+        text: "Ocorreu um erro ao carregar as salas. Tente novamente mais tarde!",
+        confirmButtonText: "Retornar",
       });
+    } finally {
+      setLoadingRoomsList(false);
+    }
+
   };
 
   const getSessionById = async (idSession: string) => {
