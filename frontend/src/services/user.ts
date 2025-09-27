@@ -20,6 +20,13 @@ export const userApi = {
         return data;
     },
 
+    getAdmins: async () => {
+        
+        const { data } = await instance.get(`${baseUrl}/admins`);
+
+        return data;
+    },
+
     switchActiveUser: async (userId: string, activate: boolean) => {
 
         const { data } = await instance.patch(`${baseUrl}/toggle-activation/${userId}?activate=${activate}`);
