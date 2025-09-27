@@ -38,9 +38,8 @@ const esquemaCadastro = z.object({
   celular: z
     .string()
     .refine((value) => {
-      const celularFormatado = value.replace(/\D/g, "");
-      return celularFormatado.length >= 10 && celularFormatado.length <= 11;
-    }, "O celular deve conter 10 ou 11 dígitos"),
+      return value.length === 15;
+    }, "O celular deve conter 11 dígitos"),
   slide: z.string({ invalid_type_error: "Campo Inválido" }).optional(),
 });
 
@@ -170,6 +169,7 @@ export function FormCadastroApresentacao() {
   };
 
   const aoEnviar = async (data: CadastroFormulario) => {
+    console.log(data)
     if (!user) {
       showAlert({
         icon: "error",
