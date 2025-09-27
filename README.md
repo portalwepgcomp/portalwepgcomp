@@ -4,6 +4,10 @@
 
 Atualmente este projeto é objeto de Trabalho de Conclusão de Curso e inciialmente foi desenvolvido como parte da disciplina **IC045/MATE85 - Tópicos em Sistemas de Informação e Web**, com o objetivo de criar o portal do **Workshop de Estudantes de Pós-Graduação em Computação (WEPGCOMP)**. O sistema permite a gestão de eventos acadêmicos, incluindo o cadastro de participantes, avaliação de apresentações, emissão de certificados, e organização de sessões.
 
+Link deploy dev testes:
+- Front: https://portalwepgcomp-front.vercel.app/
+- Back: https://portalwepgcomp.onrender.com/
+
 ## Tecnologias Utilizadas
 
 - **Back-end**: NodeJS com Nest
@@ -15,7 +19,7 @@ Atualmente este projeto é objeto de Trabalho de Conclusão de Curso e inciialme
 
 A equipe está utilizando a metodologia **Kanban** com o auxílio da plataforma **Jira** para gerenciar as tarefas e acompanhar o progresso. O projeto segue um cronograma de entregas semanais.
 
-- Link para o Notion: <a href="https://wepgcomp.atlassian.net/jira/software/projects/MFLP/boards/1" target="_blank">Jira Board</a>
+- Link para o Jira: <a href="https://wepgcomp.atlassian.net/jira/software/projects/MFLP/boards/1" target="_blank">Jira Board</a>
 - obs: Solicitar acesso aos mantenedores 
 
 ## Requisitos do Sistema
@@ -74,6 +78,11 @@ O protótipo do sistema está sendo desenvolvido no **Figma**, onde todas as tel
 ## Execução
 
 ### Back-end
+
+Para quem possuí o make instalado basta executar:
+```bash
+make run
+```
 
 ```bash
 cd backend

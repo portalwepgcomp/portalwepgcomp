@@ -7,8 +7,9 @@ import PresentationCard from "@/components/CardApresentacao/PresentationCard";
 import CardListagem from "@/components/CardListagem/CardListagem";
 import Banner from "@/components/UI/Banner";
 
-import "./style.scss";
 import { useEdicao } from "@/hooks/useEdicao";
+import { useEffect, useState } from "react";
+import "./style.scss";
 
 export function mapCardList(
   list: any[],
@@ -68,6 +69,11 @@ export default function Listagem({
 }: Readonly<ListagemProps>) {
   const pathname = usePathname();
   const { Edicao } = useEdicao();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <div className="listagem-template">
@@ -110,7 +116,6 @@ export default function Listagem({
                 value={searchValue}
                 onChange={(e) => onChangeSearchValue(e.target.value)}
               />
-
               <button
                 className="btn btn-outline-secondary"
                 type="button"
@@ -129,15 +134,17 @@ export default function Listagem({
         <div className="listagem-template-cards">
           {!!cardsList.length &&
             !isFavorites &&
-            cardsList?.map((card) =>
+            cardsList?.map((card, i) =>
               !fullInfo ? (
                 <CardListagem
-                  key={card.name}
+                  key={card.id ?? card.name ?? i}
                   title={card?.title || "Sem Título"}
-                  subtitle={card.subtitle}
+                  subtitle={card.subtitle ? card.subtitle : "Sem subtítulo"}
+                  mainAuthor={card.mainAuthor?.name ? card.mainAuthor.name : "Sem nome"}
+                  advisor={card.advisor?.name ? card.advisor.name : "Sem nome"}
                   generalButtonLabel={generalButtonLabel}
                   idGeneralModal={
-                    card?.type == "Presentation" && !!card?.presentations.length
+                    card?.type == "Presentation" && !!card?.presentations?.length
                       ? idGeneralModal
                       : ""
                   }
@@ -152,7 +159,7 @@ export default function Listagem({
                 />
               ) : (
                 <PresentationCard
-                  key={card.name}
+                  key={card.id ?? card.name ?? i}
                   id={card.id}
                   title={card.title}
                   subtitle={card.subtitle}
@@ -167,18 +174,20 @@ export default function Listagem({
             )}
           {!!cardsList.length &&
             isFavorites &&
-            cardsList?.map((card) =>
+            cardsList?.map((card, i) =>
               !fullInfo ? (
                 <CardListagem
-                  key={card.name}
+                  key={card.id ?? card.name ?? i}
                   title={card.title}
+                  mainAuthor={card.mainAuthor?.name ?? "Sem nome"}
                   subtitle={card.subtitle}
+                  advisor={card.advisor?.name ?? "Sem nome"}
                   showFavorite
                   onClickItem={() => onClickItem && onClickItem(card)}
                 />
               ) : (
                 <PresentationCard
-                  key={card.name}
+                  key={card.id ?? card.name ?? i}
                   id={card.id}
                   title={card.title}
                   subtitle={card.subtitle}
@@ -190,7 +199,7 @@ export default function Listagem({
                 />
               )
             )}
-          {!cardsList.length && (
+          {cardsList.length == 0 && isMounted && (
             <div className="d-flex align-items-center justify-content-center p-3 mt-4 me-5">
               <h4 className="empty-list mb-0">
                 <Image

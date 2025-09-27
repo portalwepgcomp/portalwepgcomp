@@ -5,6 +5,40 @@
     border: 3px solid #F17F0C;
     border-radius: 10px;
 
+    .card-listagem-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        color: black;
+    }
+
+    .card-listagem-authors {
+        margin-bottom: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .card-listagem-main-author {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0;
+    }
+
+    .card-listagem-advisor {
+        font-size: 0.95rem;
+        color: #666;
+        margin-bottom: 0;
+    }
+
+    .card-listagem-subtitle {
+        font-size: 1rem;
+        color: #444;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+    }
+
     .card-listagem-text{
         color: black;
         cursor: pointer;
