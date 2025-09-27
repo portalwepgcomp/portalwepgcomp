@@ -15,11 +15,11 @@ import { UserContext } from "@/context/user";
 import { useSweetAlert } from "@/hooks/useAlert";
 import { useSubmissionFile } from "@/hooks/useSubmissionFile";
 
-import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
 import { useEdicao } from "@/hooks/useEdicao";
 import "./style.scss";
 
-import InputMask from 'react-input-mask';
+import InputMask from "react-input-mask";
+import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
 
 const esquemaCadastro = z.object({
   id: z.string().optional(),
@@ -38,8 +38,9 @@ const esquemaCadastro = z.object({
   celular: z
     .string()
     .refine((value) => {
-      return value.length === 15;
-    }, "O celular deve conter 11 dígitos"),
+      const celularFormatado = value.replace(/\D/g, "");
+      return celularFormatado.length >= 10 && celularFormatado.length <= 11;
+    }, "O celular deve conter 10 ou 11 dígitos"),
   slide: z.string({ invalid_type_error: "Campo Inválido" }).optional(),
 });
 
@@ -66,7 +67,7 @@ export function FormCadastroApresentacao() {
     formState: { errors },
     setValue,
     reset,
-    control
+    control,
   } = useForm<CadastroFormulario>({
     resolver: zodResolver(esquemaCadastro),
   });
@@ -113,7 +114,7 @@ export function FormCadastroApresentacao() {
 
   const doutorandos = userList.filter(
     (usuario) => usuario.profile === "DoctoralStudent"
-  ).sort((a, b) => a.name.localeCompare(b.name));
+  );
 
   const aoMudarArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const arquivoSelecionado = e.target.files?.[0];
@@ -169,7 +170,6 @@ export function FormCadastroApresentacao() {
   };
 
   const aoEnviar = async (data: CadastroFormulario) => {
-    console.log(data)
     if (!user) {
       showAlert({
         icon: "error",
@@ -235,196 +235,165 @@ export function FormCadastroApresentacao() {
 
   return carregandoEnvio ? (
     <IndicadorDeCarregamento />
-  ) :
-<div className="flex justify-content-center align-items-center" >
-  <form
-    className="row cadastroApresentacao px-4"
-    onSubmit={handleSubmit(aoEnviar, aoErro)}
-  >
-    <div className="modal-title col-12">
-      <h3 className="d-flex fw-bold text-center justify-content-center mb-3">
-        {tituloModal}
-      </h3>
-    </div>
-
-    {user?.level !== "Default" && (
-      <div className="col-md-6 mb-3 ">
-        <label className="form-label form-title">
-          Selecionar doutorando
-          <span className="text-danger ms-1">*</span>
-        </label>
-        <select
-          id="doutorando-select"
-          className="form-control input-title"
-          {...register("doutorando")}
-          disabled={loadingUserList}
-        >
-          <option value="">Selecione um doutorando</option>
-          {doutorandos.length === 0 && !loadingUserList ? (
-            <option value="" disabled>
-              Nenhum doutorando encontrado
-            </option>
-          ) : (
-            doutorandos.map((doutorando) => (
-              <option key={doutorando.id} value={doutorando.id}>
-                {doutorando.name}
-              </option>
-            ))
-          )}
-        </select>
-      </div>
-    )}
-
-    <div className="col-md-6 mb-3">
-      <label className="form-label form-title">
-        Título da pesquisa<span className="text-danger ms-1">*</span>
-      </label>
-      <input
-        type="text"
-        className="form-control input-title"
-        placeholder="Insira o título da pesquisa"
-        {...register("titulo")}
-      />
-      <p className="text-danger error-message">{errors.titulo?.message}</p>
-    </div>
-
-    <div className="col-md-6 mb-3">
-      <label className="form-label form-title">
-        Resumo<span className="text-danger ms-1">*</span>
-      </label>
-      <textarea
-        className="form-control input-title overflow-y-hidden"
-        placeholder="Insira o resumo da pesquisa"
-        {...register("resumo")}
-        onInput={aoMudarTextarea}
-      />
-      <p className="text-danger error-message">{errors.resumo?.message}</p>
-    </div>
-
-    <div className="col-md-6 mb-3">
-      <label className="form-label form-title">
-        Nome do orientador<span className="text-danger ms-1">*</span>
-      </label>
-      <select
-        id="orientador-select"
-        className="form-control input-title"
-        {...register("orientador")}
+  ) : (
+    <div className="d-flex justify-content-center align-items-center">
+      <form
+        className="w-100 px-4 cadastroApresentacao"
+        onSubmit={handleSubmit(aoEnviar, aoErro)}
       >
-        <option value="">Selecione o nome do orientador</option>
-        {advisors
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .map((orientador) => (
-            <option key={orientador.id} value={orientador.id}>
-              {orientador.name}
-            </option>
-          ))}
-      </select>
-      <p className="text-danger error-message">{errors.orientador?.message}</p>
-    </div>
+        <div className="modal-title">
+          <h3 className="d-flex fw-bold text-center justify-content-center mb-4">
+            {tituloModal}
+          </h3>
+        </div>
 
-    <div className="col-md-6 mb-3">
-      <label className="form-label form-title">Nome do coorientador</label>
-      <input
-        type="text"
-        className="form-control input-title"
-        placeholder="Insira o nome do coorientador"
-        {...register("coorientador")}
-      />
-    </div>
-
-    <div className="col-md-6 mb-3">
-      <label className="form-label form-title">
-        Celular <span className="txt-min">(preferência WhatsApp)</span>
-        <span className="text-danger ms-1">*</span>
-      </label>
-      <Controller
-        name="celular"
-        control={control}
-        render={({ field: { onChange, onBlur, value, ref } }) => (
-          <InputMask
-            mask="(99) 99999-9999"
-            value={value || ""}
-            onChange={onChange}
-            onBlur={onBlur}
-            maskChar=" "
-          >
-            {(inputProps) => (
-              <input
-                {...inputProps}
-                ref={ref}
-                className="form-control input-title"
-                placeholder="(XX) XXXXX-XXXX"
-              />
-            )}
-          </InputMask>
-        )}
-      />
-      <p className="text-danger error-message">{errors.celular?.message}</p>
-    </div>
-
-    {/* Div centralizando input arquivo e botão */}
-    <div className="col-12 d-flex flex-column align-items-center mb-3">
-      <label className="form-label form-title text-center">
-        Slide da apresentação <span className="txt-min">(PDF)</span>
-        <span className="text-danger ms-1">*</span>
-      </label>
-      <input
-        type="file"
-        className="form-control input-title mb-2"
-        accept=".pdf"
-        onChange={aoMudarArquivo}
-        style={{ maxWidth: 350 }}
-      />
-      {nomeArquivo && (
-        <p className="file-name text-center">{nomeArquivo}</p>
-      )}
-      <p className="text-danger error-message">{errors.slide?.message}</p>
-
-      <button
-        data-bs-target="#collapse"
-        type="submit"
-        data-bs-toggle="collapse"
-        className="btn text-white fs-5 submit-button mt-2"
-        style={{ minWidth: 180 }}
-        disabled={!Edicao?.isActive}
-      >
-        {submission && submission?.id ? "Alterar" : "Cadastrar"}
-      </button>
-    </div>
-  </form>
-</div>
-}
-
-
-
-/**
- * <div className="col-12 d-flex flex-column align-items-center">
-            <div className="col-md-6 mb-3">
-              <label className="form-label form-title">
-                Slide da apresentação <span className="txt-min">(PDF)</span>
-                <span className="text-danger ms-1">*</span>
-              </label>
-              <input
-                type="file"
-                className="form-control input-title"
-                accept=".pdf"
-                onChange={aoMudarArquivo}
-              />
-              {nomeArquivo && (
-                <p className="file-name">Arquivo selecionado: {nomeArquivo}</p>
+        {user?.level !== "Default" && (
+          <div className="mb-3">
+            <label className="form-label form-title">
+              Selecionar doutorando
+              <span className="text-danger ms-1">*</span>
+            </label>
+            <select
+              id="doutorando-select"
+              className="form-control input-title"
+              {...register("doutorando")}
+              disabled={loadingUserList}
+            >
+              <option value="">Selecione um doutorando</option>
+              {doutorandos.length === 0 && !loadingUserList ? (
+                <option value="" disabled>
+                  Nenhum doutorando encontrado
+                </option>
+              ) : (
+                doutorandos.map((doutorando) => (
+                  <option key={doutorando.id} value={doutorando.id}>
+                    {doutorando.name}
+                  </option>
+                ))
               )}
-              <p className="text-danger error-message">{errors.slide?.message}</p>
-            </div>
+            </select>
+          </div>
+        )}
 
-            <div className="d-grid gap-2 col-3 mx-auto">
-              <button
-                data-bs-target="#collapse"
-                type="submit"
-                data-bs-toggle="collapse"
-                className="btn text-white fs-5 submit-button"
-                disabled={!Edicao?.isActive}
+        <div className="mb-3">
+          <label className="form-label form-title">
+            Título da pesquisa<span className="text-danger ms-1">*</span>
+          </label>
+          <input
+            type="text"
+            className="form-control input-title"
+            placeholder="Insira o título da pesquisa"
+            {...register("titulo")}
+          />
+          <p className="text-danger error-message">{errors.titulo?.message}</p>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label form-title">
+            Resumo<span className="text-danger ms-1">*</span>
+          </label>
+          <textarea
+            className="form-control input-title overflow-y-hidden"
+            placeholder="Insira o resumo da pesquisa"
+            {...register("resumo")}
+            onInput={aoMudarTextarea}
+          />
+          <p className="text-danger error-message">{errors.resumo?.message}</p>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label form-title">
+            Nome do orientador<span className="text-danger ms-1">*</span>
+          </label>
+          <select
+            id="orientador-select"
+            className="form-control input-title"
+            {...register("orientador")}
+          >
+            <option value="">Selecione o nome do orientador</option>
+            {advisors
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((orientador) => (
+                <option key={orientador.id} value={orientador.id}>
+                  {orientador.name}
+                </option>
+              ))}
+          </select>
+          <p className="text-danger error-message">{errors.orientador?.message}</p>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label form-title">Nome do coorientador</label>
+          <input
+            type="text"
+            className="form-control input-title"
+            placeholder="Insira o nome do coorientador"
+            {...register("coorientador")}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label form-title">
+            Slide da apresentação <span className="txt-min">(PDF)</span>
+            <span className="text-danger ms-1">*</span>
+          </label>
+
+          <input
+            type="file"
+            className="form-control input-title"
+            accept=".pdf"
+            onChange={aoMudarArquivo}
+          />
+
+          {nomeArquivo && (
+            <p className="file-name text-center">Arquivo selecionado: {nomeArquivo}</p>
+          )}
+
+          <p className="text-danger error-message">{errors.slide?.message}</p>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label form-title">
+            Celular <span className="txt-min">(preferência WhatsApp)</span>
+            <span className="text-danger ms-1">*</span>
+          </label>
+          <Controller
+            name="celular"
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <InputMask
+                mask="(99) 99999-9999"
+                value={value || ""}
+                onChange={onChange}
+                onBlur={onBlur}
+                maskChar=" "
               >
-                {submission && submission?.id ? "Alterar" : "Cadastrar"}
-              </button>
-            </div>
- */
+                {(inputProps) => (
+                  <input
+                    {...inputProps}
+                    ref={ref}
+                    className="form-control input-title"
+                    placeholder="(XX) XXXXX-XXXX"
+                  />
+                )}
+              </InputMask>
+            )}
+          />
+          <p className="text-danger error-message">{errors.celular?.message}</p>
+        </div>
+
+        <div className="d-grid gap-2 col-3 mx-auto mb-4">
+          <button
+            data-bs-target="#collapse"
+            type="submit"
+            data-bs-toggle="collapse"
+            className="btn text-white fs-5 submit-button"
+            disabled={!Edicao?.isActive}
+          >
+            {submission && submission?.id ? "Alterar" : "Cadastrar"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
