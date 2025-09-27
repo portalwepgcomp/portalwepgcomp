@@ -191,17 +191,6 @@ export default function Header() {
                     Início
                   </Link>
                 </div>
-                {!signed && (
-                  <li className="nav-item">
-                    <Link
-                      className="nav-link active text-black"
-                      aria-current="page"
-                      href="/cadastro"
-                    >
-                      Inscrição
-                    </Link>
-                  </li>
-                )}
 
                 <div
                   className={`nav-item ${
@@ -238,7 +227,19 @@ export default function Header() {
                     Contato
                   </Link>
                 </div>
-
+                
+                {!signed && (
+                  <li className="nav-item">
+                    <Link
+                      className="nav-link active text-black"
+                      aria-current="page"
+                      href="/cadastro"
+                    >
+                      Cadastro
+                    </Link>
+                  </li>
+                )}
+                
                 <li className="nav-item">
                   {signed ? (
                     <div className="welcome-user">
