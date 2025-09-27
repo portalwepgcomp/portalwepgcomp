@@ -18,61 +18,55 @@ const formCadastroSchema = z
       .regex(/^[a-zA-ZÀ-ÿ\s]+$/, {
         message: "Preenchimento obrigatório.",
       }),
-
     perfil: z.enum(["doutorando", "professor", "ouvinte"], {
       required_error: "A escolha do perfil é obrigatória!",
       invalid_type_error: "Campo inválido!",
     }),
-
     matricula: z.string().optional(),
-
     email: z
-      .string({
-        invalid_type_error: "Campo inválido!",
-      })
+      .string({ invalid_type_error: "Campo inválido!" })
       .min(1, "O email é obrigatório.")
-      .email({
-        message: "E-mail inválido!",
-      }),
-
+      .email({ message: "E-mail inválido!" }),
     senha: z
-      .string({
-        invalid_type_error: "Campo inválido",
-      })
+      .string({ invalid_type_error: "Campo inválido" })
       .min(8, {
         message: "A senha é obrigatória e deve ter, pelo menos, 8 caracteres.",
       }),
-
     confirmaSenha: z
-      .string({
-        invalid_type_error: "Campo inválido",
-      })
-      .min(1, {
-        message: "Confirmação de senha é obrigatória!",
-      }),
+      .string({ invalid_type_error: "Campo inválido" })
+      .min(1, { message: "Confirmação de senha é obrigatória!" }),
   })
   .superRefine((data, ctx) => {
-    if (data.perfil !== "ouvinte" && (!data.matricula || data.matricula.trim() === "")) {
-      ctx.addIssue({
-        path: ["matricula"],
-        message: "A matrícula é obrigatória.",
-        code: z.ZodIssueCode.custom,
-      });
-    }
-
-    if (
-      data.perfil !== "ouvinte" &&
-      data.matricula &&
-      !/^\d{1,19}$/.test(data.matricula)
-    ) {
+    const raw = (data.matricula ?? "").trim();
+    if (!raw) {
       ctx.addIssue({
         path: ["matricula"],
         message:
-          "Matricula inválida, insira uma matrícula válida.",
+          data.perfil === "ouvinte"
+            ? "CPF é obrigatório."
+            : "Matrícula é obrigatória.",
         code: z.ZodIssueCode.custom,
       });
+      return;
     }
-
+    if (data.perfil === "ouvinte") {
+      const digits = raw.replace(/\D/g, "");
+      if (!/^\d{11}$/.test(digits)) {
+        ctx.addIssue({
+          path: ["matricula"],
+          message: "CPF inválido. Deve conter 11 dígitos.",
+          code: z.ZodIssueCode.custom,
+        });
+      }
+    } else {
+      if (!/^\d{1,19}$/.test(raw)) {
+        ctx.addIssue({
+          path: ["matricula"],
+          message: "Matrícula inválida. Use somente dígitos (até 19).",
+          code: z.ZodIssueCode.custom,
+        });
+      }
+    }
     if (
       data.perfil !== "ouvinte" &&
       data.email &&
@@ -90,6 +84,8 @@ const formCadastroSchema = z
     path: ["confirmaSenha"],
   });
 
+type FormCadastroSchema = z.infer<typeof formCadastroSchema>; // movido para fora da função
+
 export function FormCadastro() {
   const { registerUser } = useUsers();
   const {
@@ -101,10 +97,9 @@ export function FormCadastro() {
     resolver: zodResolver(formCadastroSchema),
     defaultValues: {
       perfil: "doutorando",
+      matricula: "", // evita undefined
     },
   });
-
-  type FormCadastroSchema = z.infer<typeof formCadastroSchema>;
 
   const [senha, setSenha] = useState("");
   const [requisitos, setRequisitos] = useState({
@@ -114,33 +109,37 @@ export function FormCadastro() {
   });
 
   const handleFormCadastro = (data: FormCadastroSchema) => {
-    const { nome, email, senha, matricula, perfil } = data;
+    const { nome, email, senha, perfil, matricula = "" } = data; // default assegura string
 
-    const profileFormated = {
+    const profileFormated: Record<string, ProfileType> = {
       doutorando: "DoctoralStudent",
       professor: "Professor",
       ouvinte: "Listener",
     };
 
+    const raw = matricula.trim();
+    const registrationNumber =
+      perfil === "ouvinte" ? raw.replace(/\D/g, "") : raw;
+
     const body = {
       name: nome,
-      email: email,
+      email,
       password: senha,
-      registrationNumber: matricula,
-      profile: profileFormated[perfil] as ProfileType,
+      registrationNumber,
+      profile: profileFormated[perfil],
+      registrationNumberType: perfil === "ouvinte" ? "CPF" : "MATRICULA",
     };
 
     registerUser(body);
   };
 
-  const handleChangeSenha = (e) => {
+  const handleChangeSenha = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSenha(value);
-
     setRequisitos({
       minLength: value.length >= 8,
       hasLetter: /[a-zA-Z]/.test(value),
-      number: /\d/.test(value)
+      number: /\d/.test(value),
     });
   };
 
@@ -238,17 +237,21 @@ export function FormCadastro() {
 
       <div className="col-12 mb-1">
         <label className="form-label fw-bold fs-5">
-          {perfil === "professor" ? "Matrícula SIAPE" : "Matrícula"}
-          {perfil !== "ouvinte" && (
-            <span className="text-danger ms-1 fs-5">*</span>
-          )}
+          {perfil === "ouvinte"
+            ? "CPF"
+            : perfil === "professor"
+            ? "Matrícula SIAPE"
+            : "Matrícula"}
+          <span className="text-danger ms-1 fs-5">*</span>
         </label>
         <input
           type="text"
           className="form-control input-title"
           id="matricula"
           placeholder={
-            perfil === "professor"
+            perfil === "ouvinte"
+              ? "Digite seu CPF"
+              : perfil === "professor"
               ? "Insira sua matrícula SIAPE"
               : "Insira sua matrícula"
           }
