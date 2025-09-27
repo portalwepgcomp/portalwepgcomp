@@ -1,25 +1,21 @@
 "use client";
 
+import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
+import { useEdicao } from "@/hooks/useEdicao";
+import { useSession } from "@/hooks/useSession";
+import { useSubmission } from "@/hooks/useSubmission";
+import { useUsers } from "@/hooks/useUsers";
 import { ModalSessaoMock } from "@/mocks/ModalSessoes";
-
+import { formatOptions } from "@/utils/formatOptions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Select from "react-select";
-
+import dayjs from "dayjs";
+import { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Controller, useForm } from "react-hook-form";
+import Select from "react-select";
 import { z } from "zod";
-
-import { useSession } from "@/hooks/useSession";
-
 import "./style.scss";
-import { formatOptions } from "@/utils/formatOptions";
-import { useUsers } from "@/hooks/useUsers";
-import { useEdicao } from "@/hooks/useEdicao";
-import { useEffect } from "react";
-import { useSubmission } from "@/hooks/useSubmission";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
-import dayjs from "dayjs";
 
 const formSessaoApresentacoesSchema = z.object({
   apresentacoes: z
@@ -32,7 +28,6 @@ const formSessaoApresentacoesSchema = z.object({
       })
     )
     .optional(),
-
   n_apresentacoes: z
     .number({
       invalid_type_error: "Campo inválido!",
@@ -41,13 +36,11 @@ const formSessaoApresentacoesSchema = z.object({
       message:
         "Número de apresentações é obrigatório e deve ser maior que zero!",
     }),
-
   sala: z
     .string({
       invalid_type_error: "Campo inválido!",
     })
     .min(1, "Sala é obrigatória!"),
-
   inicio: z
     .string({
       invalid_type_error: "Campo inválido!",
@@ -57,7 +50,6 @@ const formSessaoApresentacoesSchema = z.object({
     })
     .min(1, "Data e horário de início são obrigatórios!")
     .nullable(),
-
   avaliadores: z
     .array(
       z.object({
@@ -108,14 +100,10 @@ export default function FormSessaoApresentacoes() {
   });
 
   const salasOptions = formatOptions(roomsList, "name");
-
-  const apresentacoesOptions = submissionList?.map((v) => {
-    return {
-      value: v.id,
-      label: v?.title || "",
-    };
-  });
-
+  const apresentacoesOptions = submissionList?.map((v) => ({
+    value: v.id,
+    label: v?.title || "",
+  }));
   const avaliadoresOptions = formatOptions(userList, "name");
 
   const filterTimes = (time: Date) => {
@@ -127,7 +115,6 @@ export default function FormSessaoApresentacoes() {
     data: FormSessaoApresentacoesSchema
   ) => {
     const { apresentacoes, sala, inicio, n_apresentacoes, avaliadores } = data;
-
     const eventEditionId = getEventEditionIdStorage();
 
     if (!sala || !inicio) {
@@ -170,174 +157,172 @@ export default function FormSessaoApresentacoes() {
     if (sessao) {
       setValue(
         "apresentacoes",
-        sessao?.presentations?.map((v) => {
-          return {
-            value: v.submission?.id ?? "",
-            label: v.submission?.title ?? "",
-          };
-        })
+        sessao?.presentations?.map((v) => ({
+          value: v.submission?.id ?? "",
+          label: v.submission?.title ?? "",
+        }))
       );
       setValue("n_apresentacoes", sessao?.numPresentations ?? 3);
       setValue("sala", sessao?.roomId);
       setValue("inicio", sessao?.startTime);
       setValue(
         "avaliadores",
-        sessao?.panelists?.map((v) => {
-          return { value: v.userId, label: v.user?.name ?? "" };
-        })
+        sessao?.panelists?.map((v) => ({
+          value: v.userId,
+          label: v.user?.name ?? "",
+        }))
       );
     } else {
-      setValue("apresentacoes", []);
-      setValue("n_apresentacoes", 0);
-      setValue("sala", "");
-      setValue("inicio", "");
-      setValue("avaliadores", []);
+      reset({
+        apresentacoes: [],
+        n_apresentacoes: 0,
+        sala: "",
+        inicio: null,
+        avaliadores: [],
+      });
     }
-  }, [sessao?.id]);
+  }, [sessao, setValue, reset]);
 
   return (
-    <form
-      className="row g-3 form-sessao"
-      onSubmit={handleSubmit(handleFormSessaoApresentacoes)}
-    >
-      <div className="col-12 mb-1">
-        <label className="form-label fw-bold form-title">
-          {formApresentacoesFields.apresentacoes.label}
-        </label>
-        <Controller
-          name="apresentacoes"
-          control={control}
-          render={({ field }) => (
-            <Select
-              {...field}
-              isMulti
-              id="sa-apresentacoes-select"
-              isClearable
-              placeholder={formApresentacoesFields.apresentacoes.placeholder}
-              options={apresentacoesOptions}
-            />
-          )}
-        />
-
-        <p className="text-danger error-message">
-          {errors.apresentacoes?.message}
-        </p>
-      </div>
-
-      <div className="col-12 mb-1">
-        <label className="form-label fw-bold form-title ">
-          {formApresentacoesFields.n_apresentacoes.label}
-          <span className="text-danger ms-1 form-title">*</span>
-        </label>
-        <input
-          type="number"
-          className="form-control input-title"
-          id="sg-titulo-input"
-          placeholder={formApresentacoesFields.n_apresentacoes.placeholder}
-          {...register("n_apresentacoes", { valueAsNumber: true })}
-        />
-        <p className="text-danger error-message">
-          {errors.n_apresentacoes?.message}
-        </p>
-      </div>
-
-      <div className="col-12 mb-1">
-        <label className="form-label fw-bold form-title">
-          {formApresentacoesFields.sala.label}
-          <span className="text-danger ms-1 form-title">*</span>
-        </label>
-        <select
-          id="sa-sala-select"
-          className="form-select"
-          {...register("sala")}
-        >
-          <option value="" hidden>
-            {formApresentacoesFields.sala.placeholder}
-          </option>
-          {salasOptions?.map((op, i) => (
-            <option id={`sala-op${i}`} key={op.value} value={op.value}>
-              {op.label}
-            </option>
-          ))}
-        </select>
-
-        <p className="text-danger error-message">{errors.sala?.message}</p>
-      </div>
-
-      <div className="col-12 mb-1">
-        <label
-          htmlFor="datetime-local"
-          className="form-label fw-bold form-title"
-        >
-          {formApresentacoesFields.inicio.label}
-          <span className="text-danger ms-1 form-title">*</span>
-        </label>
-        <div className="input-group listagem-template-content-input">
+    <div className="d-flex justify-content-center">
+      <form
+        className="row g-2 form-sessao p-3"
+        onSubmit={handleSubmit(handleFormSessaoApresentacoes)}
+      >
+        <div className="col-12 mb-1">
+          <label className="form-label fw-bold form-title">
+            {formApresentacoesFields.apresentacoes.label}
+          </label>
           <Controller
+            name="apresentacoes"
             control={control}
-            name="inicio"
             render={({ field }) => (
-              <DatePicker
-                id="sa-inicio-data"
-                showIcon
-                onChange={(date) => field.onChange(date?.toISOString() || null)}
-                selected={field.value ? new Date(field.value) : null}
-                showTimeSelect
-                className="form-control datepicker"
-                timeFormat="HH:mm"
-                timeIntervals={15}
-                dateFormat="dd/MM/yyyy HH:mm"
-                minDate={dayjs(Edicao?.startDate || "")
-                  .add(1, "day")
-                  .tz("America/Sao_Paulo", true)
-                  .toDate()}
-                maxDate={dayjs(Edicao?.endDate || "")
-                  .tz("America/Sao_Paulo", true)
-                  .toDate()}
+              <Select
+                {...field}
+                isMulti
+                id="sa-apresentacoes-select"
                 isClearable
-                filterTime={filterTimes}
-                placeholderText={formApresentacoesFields.inicio.placeholder}
-                toggleCalendarOnIconClick
+                placeholder={formApresentacoesFields.apresentacoes.placeholder}
+                options={apresentacoesOptions}
               />
             )}
           />
+          <p className="text-danger error-message">
+            {errors.apresentacoes?.message}
+          </p>
         </div>
-        <p className="text-danger error-message">{errors.inicio?.message}</p>
-      </div>
 
-      <div className="col-12 mb-1">
-        <label className="form-label fw-bold form-title">
-          {formApresentacoesFields.avaliadores.label}
-        </label>
-        <Controller
-          name="avaliadores"
-          control={control}
-          render={({ field }) => (
-            <Select
-              {...field}
-              isMulti
-              id="sa-avaliadores-select"
-              isClearable
-              placeholder={formApresentacoesFields.avaliadores.placeholder}
-              options={avaliadoresOptions}
+        <div className="col-md-6 mb-1">
+          <label className="form-label fw-bold form-title">
+            {formApresentacoesFields.n_apresentacoes.label}
+            <span className="text-danger ms-1 form-title">*</span>
+          </label>
+          <input
+            type="number"
+            className="form-control input-title"
+            id="sg-titulo-input"
+            placeholder={formApresentacoesFields.n_apresentacoes.placeholder}
+            {...register("n_apresentacoes", { valueAsNumber: true })}
+          />
+          <p className="text-danger error-message">
+            {errors.n_apresentacoes?.message}
+          </p>
+        </div>
+
+        <div className="col-md-6 mb-1">
+          <label className="form-label fw-bold form-title">
+            {formApresentacoesFields.sala.label}
+            <span className="text-danger ms-1 form-title">*</span>
+          </label>
+          <select
+            id="sa-sala-select"
+            className="form-select"
+            {...register("sala")}
+          >
+            <option value="" hidden>
+              {formApresentacoesFields.sala.placeholder}
+            </option>
+            {salasOptions?.map((op, i) => (
+              <option id={`sala-op${i}`} key={op.value} value={op.value}>
+                {op.label}
+              </option>
+            ))}
+          </select>
+          <p className="text-danger error-message">{errors.sala?.message}</p>
+        </div>
+
+        <div className="col-12 mb-1">
+          <label
+            htmlFor="datetime-local"
+            className="form-label fw-bold form-title"
+          >
+            {formApresentacoesFields.inicio.label}
+            <span className="text-danger ms-1 form-title">*</span>
+          </label>
+          <div className="input-group">
+            <Controller
+              control={control}
+              name="inicio"
+              render={({ field }) => (
+                <DatePicker
+                  id="sa-inicio-data"
+                  showIcon
+                  onChange={(date) =>
+                    field.onChange(date?.toISOString() || null)
+                  }
+                  selected={field.value ? new Date(field.value) : null}
+                  showTimeSelect
+                  className="form-control datepicker"
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  dateFormat="dd/MM/yyyy HH:mm"
+                  minDate={dayjs(Edicao?.startDate || "").toDate()}
+                  maxDate={dayjs(Edicao?.endDate || "").toDate()}
+                  isClearable
+                  filterTime={filterTimes}
+                  placeholderText={formApresentacoesFields.inicio.placeholder}
+                  toggleCalendarOnIconClick
+                />
+              )}
             />
-          )}
-        />
-        <p className="text-danger error-message">
-          {errors.avaliadores?.message}
-        </p>
-      </div>
+          </div>
+          <p className="text-danger error-message">{errors.inicio?.message}</p>
+        </div>
 
-      <div className="d-flex justify-content-center">
-        <button
-          type="submit"
-          id="sa-submit-button"
-          className="btn btn-primary button-modal-component button-sessao-geral"
-          disabled={!Edicao?.isActive}
-        >
-          {confirmButton.label}
-        </button>
-      </div>
-    </form>
+        <div className="col-12 mb-1">
+          <label className="form-label fw-bold form-title">
+            {formApresentacoesFields.avaliadores.label}
+          </label>
+          <Controller
+            name="avaliadores"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                isMulti
+                id="sa-avaliadores-select"
+                isClearable
+                placeholder={formApresentacoesFields.avaliadores.placeholder}
+                options={avaliadoresOptions}
+              />
+            )}
+          />
+          <p className="text-danger error-message">
+            {errors.avaliadores?.message}
+          </p>
+        </div>
+
+        <div className="col-12 d-flex justify-content-center">
+          <button
+            type="submit"
+            id="sa-submit-button"
+            className="btn btn-primary button-modal-component button-sessao-geral"
+            disabled={!Edicao?.isActive}
+          >
+            {confirmButton.label}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

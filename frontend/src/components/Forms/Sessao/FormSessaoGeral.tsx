@@ -1,24 +1,21 @@
 "use client";
 
+import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
+import { useEdicao } from "@/hooks/useEdicao";
+import { useSession } from "@/hooks/useSession";
 import { ModalSessaoMock } from "@/mocks/ModalSessoes";
+import { getDurationInMinutes } from "@/utils/formatDate";
+import { formatOptions } from "@/utils/formatOptions";
 import { zodResolver } from "@hookform/resolvers/zod";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-
-import { useSession } from "@/hooks/useSession";
-
 import "./style.scss";
-import { getDurationInMinutes } from "@/utils/formatDate";
-import { formatOptions } from "@/utils/formatOptions";
-import { useEffect } from "react";
-import { useEdicao } from "@/hooks/useEdicao";
-import dayjs from "dayjs";
-
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -105,7 +102,6 @@ export default function FormSessaoAuxiliar() {
 
   const handleFormSessaoAuxiliar = (data: FormSessaoAuxiliarSchema) => {
     const { titulo, nome, sala, inicio, final } = data;
-
     const eventEditionId = getEventEditionIdStorage();
 
     if (!titulo || !sala || !inicio || !final) {
@@ -155,21 +151,23 @@ export default function FormSessaoAuxiliar() {
           .toISOString()
       );
     } else {
-      setValue("titulo", "");
-      setValue("nome", "");
-      setValue("sala", "");
-      setValue("inicio", "");
-      setValue("final", "");
+      reset({
+        titulo: "",
+        nome: "",
+        sala: "",
+        inicio: null,
+        final: null,
+      });
     }
-  }, [sessao?.id]);
+  }, [sessao, setValue, reset]);
 
   return (
     <form
       className="row g-3 form-sessao"
       onSubmit={handleSubmit(handleFormSessaoAuxiliar)}
     >
-      <div className="col-12 mb-1">
-        <label className="form-label fw-bold form-title ">
+      <div className="col-12 mb-3">
+        <label className="form-label fw-bold form-title">
           {formAuxiliarFields.titulo.label}
           <span className="text-danger ms-1 form-title">*</span>
         </label>
@@ -183,7 +181,7 @@ export default function FormSessaoAuxiliar() {
         <p className="text-danger error-message">{errors.titulo?.message}</p>
       </div>
 
-      <div className="col-12 mb-1">
+      <div className="col-md-6 mb-3">
         <label className="form-label fw-bold form-title">
           {formAuxiliarFields.nome.label}
         </label>
@@ -197,9 +195,10 @@ export default function FormSessaoAuxiliar() {
         <p className="text-danger error-message">{errors.nome?.message}</p>
       </div>
 
-      <div className="col-12 mb-1">
+      <div className="col-md-6 mb-3">
         <label className="form-label fw-bold form-title">
           {formAuxiliarFields.sala.label}
+          <span className="text-danger ms-1 form-title">*</span>
         </label>
         <select
           id="sg-sala-select"
@@ -218,7 +217,7 @@ export default function FormSessaoAuxiliar() {
         <p className="text-danger error-message">{errors.sala?.message}</p>
       </div>
 
-      <div className="col-12 mb-1">
+      <div className="col-md-6 mb-3">
         <label
           htmlFor="datetime-local"
           className="form-label fw-bold form-title"
@@ -226,8 +225,7 @@ export default function FormSessaoAuxiliar() {
           {formAuxiliarFields.inicio.label}
           <span className="text-danger ms-1 form-title">*</span>
         </label>
-
-        <div className="input-group listagem-template-content-input">
+        <div className="input-group">
           <Controller
             control={control}
             name="inicio"
@@ -242,13 +240,8 @@ export default function FormSessaoAuxiliar() {
                 timeFormat="HH:mm"
                 timeIntervals={15}
                 dateFormat="dd/MM/yyyy HH:mm"
-                minDate={dayjs(Edicao?.startDate || "")
-                  .add(1, "day")
-                  .tz("America/Sao_Paulo", true)
-                  .toDate()}
-                maxDate={dayjs(Edicao?.endDate || "")
-                  .tz("America/Sao_Paulo", true)
-                  .toDate()}
+                minDate={dayjs(Edicao?.startDate || "").toDate()}
+                maxDate={dayjs(Edicao?.endDate || "").toDate()}
                 isClearable
                 filterTime={filterTimes}
                 placeholderText={formAuxiliarFields.inicio.placeholder}
@@ -260,7 +253,7 @@ export default function FormSessaoAuxiliar() {
         <p className="text-danger error-message">{errors.inicio?.message}</p>
       </div>
 
-      <div className="col-12 mb-1">
+      <div className="col-md-6 mb-3">
         <label
           htmlFor="datetime-local"
           className="form-label fw-bold form-title"
@@ -268,8 +261,7 @@ export default function FormSessaoAuxiliar() {
           {formAuxiliarFields.final.label}
           <span className="text-danger ms-1 form-title">*</span>
         </label>
-
-        <div className="input-group listagem-template-content-input">
+        <div className="input-group">
           <Controller
             control={control}
             name="final"
@@ -284,13 +276,8 @@ export default function FormSessaoAuxiliar() {
                 timeFormat="HH:mm"
                 timeIntervals={15}
                 dateFormat="dd/MM/yyyy HH:mm"
-                minDate={dayjs(Edicao?.startDate || "")
-                  .add(1, "day")
-                  .tz("America/Sao_Paulo", true)
-                  .toDate()}
-                maxDate={dayjs(Edicao?.endDate || "")
-                  .tz("America/Sao_Paulo", true)
-                  .toDate()}
+                minDate={dayjs(Edicao?.startDate || "").toDate()}
+                maxDate={dayjs(Edicao?.endDate || "").toDate()}
                 isClearable
                 filterTime={filterTimes}
                 placeholderText={formAuxiliarFields.final.placeholder}
@@ -301,7 +288,8 @@ export default function FormSessaoAuxiliar() {
         </div>
         <p className="text-danger error-message">{errors.final?.message}</p>
       </div>
-      <div className="d-flex justify-content-center">
+
+      <div className="col-12 d-flex justify-content-center">
         <button
           type="submit"
           id="sg-submit-button"

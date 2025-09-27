@@ -6,7 +6,6 @@ const instance = axiosInstance;
 export const submissionApi = {
     getSubmissions: async (params: GetSubmissionParams) => {
         const { data } = await instance.get(`${baseUrl}`, { params });
-
         return data;
     },
 
