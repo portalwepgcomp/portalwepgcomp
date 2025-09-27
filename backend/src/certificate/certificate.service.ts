@@ -109,7 +109,7 @@ export class CertificateService {
     );
     let texto = '';
     let panelistText = '';
-    if (panelistBlocks.length > 0) {
+    if (panelistBlocks.length > 0 || panelistBlocks !== null) {
       panelistText = 'nos blocos de apresentação '
       if (panelistBlocks.length == 1) {
         panelistText = 'no bloco de apresentação '
