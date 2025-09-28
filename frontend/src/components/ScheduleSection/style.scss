@@ -20,6 +20,10 @@
 
 	.programacao-dias {
 		gap: 2.5rem;
+		display: flex;
+		overflow-x: auto;
+		padding: 1rem;
+		white-space: nowrap;
 	}
 
 	.date-button {
