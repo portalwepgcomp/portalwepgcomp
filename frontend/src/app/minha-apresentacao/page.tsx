@@ -44,6 +44,7 @@ export default function MinhasApresentacoes() {
   useEffect(() => {
     const params = {
       eventEditionId: getEventEditionIdStorage() ?? "",
+      mainAuthorId: user?.id
     };
 
     getSubmissions(params);

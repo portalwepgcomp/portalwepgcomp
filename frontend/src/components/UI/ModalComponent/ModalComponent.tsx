@@ -34,12 +34,12 @@ export default function ModalComponent({
     <div
       className={`modal fade ${
         isShortModal ? "modal-sm" : "modal-lg"
-      } modal-component`}
+      } modal-component` }
       id={id}
       tabIndex={-1}
       onBlur={onClose}
     >
-      <div className="modal-dialog">
+      <div className="modal-dialog centered">
         <div className="modal-content">
           {loading && <LoadingPage />}
           {!loading && (

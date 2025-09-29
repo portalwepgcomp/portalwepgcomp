@@ -130,10 +130,13 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
   const { getCommitterAll, committerList } = useCommittee();
   const { user } = useContext(AuthContext);
   const { getAdvisors, advisors } = useContext(UserContext);
+  const { getAdmins, admins } = useContext(UserContext);
   const [advisorsLoaded, setAdvisorsLoaded] = useState(false);
+  const [adminsLoaded, setAdminsLoaded] = useState(false);
   const [avaliadoresOptions, setAvaliadoresOptions] = useState<OptionType[]>(
     []
   );
+  const [comissaoOptions, setComissaoOptions] = useState<OptionType[]>([])
   const router = useRouter();
   const { confirmButton } = ModalSessaoMock;
   registerLocale("pt-BR", ptBR);
@@ -209,6 +212,13 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
     }
   }, [advisorsLoaded, getAdvisors]);
 
+  useEffect(() => {
+    if (!adminsLoaded) {
+      getAdmins();
+      setAdminsLoaded(true);
+    }
+  }, [adminsLoaded, getAdmins]);
+
   const handleFormEdicao = async (data: FormEdicaoSchema) => {
     const {
       titulo,
@@ -256,7 +266,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       endDate: final,
       partnersText: "",
     } as EdicaoParams;
-    console.log(edicaoData, body)
     if (edicaoData?.id) {
       updateEdicao(edicaoData?.id, body);
       setTimeout(() => {
@@ -280,6 +289,16 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       setAvaliadoresOptions(users);
     }
   }, [advisors]);
+
+  useEffect(() => {
+    if (admins.length > 0) {
+      const users = admins.map((v) => ({
+        value: v.id ?? "",
+        label: v.name ?? "",
+      }));
+      setComissaoOptions(users)
+    }
+  }, [admins]);
 
   useEffect(() => {
     if (edicaoData?.id) {
@@ -433,7 +452,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                 {...field}
                 id="comissao-select"
                 isMulti
-                options={avaliadoresOptions}
+                options={comissaoOptions}
                 placeholder="Escolha o(s) usuário(s)"
                 isClearable
               />
@@ -521,7 +540,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       <div className="d-flex flex-column justify-content-start">
         <div className="fs-4"> Sessões e apresentações </div>
 
-        <div className="d-flex flex-row justify-content-start w-50 gap-3">
+        <div className="d-flex flex-column justify-content-start gap-3">
           <div className="col-12 mb-1">
             <label className="form-label form-title">
               Número de sessões

@@ -2,20 +2,25 @@
 
 ## Descrição
 
-Este projeto é desenvolvido como parte da disciplina **IC045/MATE85 - Tópicos em Sistemas de Informação e Web**, com o objetivo de criar o portal do **Workshop de Estudantes de Pós-Graduação em Computação (WEPGCOMP)**. O sistema permite a gestão de eventos acadêmicos, incluindo o cadastro de participantes, avaliação de apresentações, emissão de certificados, e organização de sessões.
+Atualmente este projeto é objeto de Trabalho de Conclusão de Curso e inciialmente foi desenvolvido como parte da disciplina **IC045/MATE85 - Tópicos em Sistemas de Informação e Web**, com o objetivo de criar o portal do **Workshop de Estudantes de Pós-Graduação em Computação (WEPGCOMP)**. O sistema permite a gestão de eventos acadêmicos, incluindo o cadastro de participantes, avaliação de apresentações, emissão de certificados, e organização de sessões.
+
+Link deploy dev testes:
+- Front: https://portalwepgcomp-front.vercel.app/
+- Back: https://portalwepgcomp.onrender.com/
 
 ## Tecnologias Utilizadas
 
 - **Back-end**: NodeJS com Nest
-- **Front-end**: React/Next, Bootstrap
+- **Front-end**: React/Next, <a href="https://getbootstrap.com/docs/5.0/getting-started/introduction/" target="_blank"> Bootstrap 5.0</a>, SCSS
 - **Banco de Dados**: PostgreSQL
-- **Cloud**: Vercel
+- **Cloud**: Servidor do IC
 
 ## Metodologia de Desenvolvimento
 
-A equipe está utilizando a metodologia **Kanban** com o auxílio da plataforma **Notion** para gerenciar as tarefas e acompanhar o progresso. O projeto segue um cronograma de entregas semanais.
+A equipe está utilizando a metodologia **Kanban** com o auxílio da plataforma **Jira** para gerenciar as tarefas e acompanhar o progresso. O projeto segue um cronograma de entregas semanais.
 
-- Link para o Notion: <a href="https://www.notion.so/119c125c059980578b0eed38349acd82?v=119c125c059980bf8e95000c9a20dde6" target="_blank">Notion Board</a>
+- Link para o Jira: <a href="https://wepgcomp.atlassian.net/jira/software/projects/MFLP/boards/1" target="_blank">Jira Board</a>
+- obs: Solicitar acesso aos mantenedores 
 
 ## Requisitos do Sistema
 
@@ -25,8 +30,9 @@ Os requisitos completos do sistema estão documentados no link abaixo:
 
 ## Arquitetura
 
-- Diagrama de classe: <a href="https://cdn.discordapp.com/attachments/1293365993137115136/1296668731837120514/DER-WEPGCOMP.drawio.png?ex=6717bd9c&is=67166c1c&hm=9f53e124314a9a84b6f20d8cc89607a0221fe3bfc9968fb3381e2910bb5d6ca5&" target="_blank">Banco</a>
-- Arquitetura do sistema: <a href="https://drive.google.com/file/d/10DCdoz47Gm00mArdla0npXITgNYR1KtJ/view" target="_blank">Arquitetura</a>
+Ambos desatualizados, a refazer.
+~~- Diagrama de classe: <a href="https://cdn.discordapp.com/attachments/1293365993137115136/1296668731837120514/DER-WEPGCOMP.drawio.png?ex=6717bd9c&is=67166c1c&hm=9f53e124314a9a84b6f20d8cc89607a0221fe3bfc9968fb3381e2910bb5d6ca5&" target="_blank">Banco</a>~~
+~~- Arquitetura do sistema: <a href="https://drive.google.com/file/d/10DCdoz47Gm00mArdla0npXITgNYR1KtJ/view" target="_blank">Arquitetura</a>~~
 
 ## Protótipo
 
@@ -61,7 +67,7 @@ O protótipo do sistema está sendo desenvolvido no **Figma**, onde todas as tel
    cp .env.example .env
    ```
 
-   Obs.: As variáveis com dados sensíveis estarão sem valor atribuído, e deverão ser consultadas na documentação via Notion.
+   Obs.: As variáveis com dados sensíveis estarão sem valor atribuído, e deverão ser consultadas aos mantenedores atuais.
 
    ### Front-end
 
@@ -69,12 +75,14 @@ O protótipo do sistema está sendo desenvolvido no **Figma**, onde todas as tel
    cd frontend
    npm install
    ```
-
-3. O projeto será hospedado na **Vercel** para deploy contínuo e fácil acesso.
-
 ## Execução
 
 ### Back-end
+
+Para quem possuí o make instalado basta executar:
+```bash
+make run
+```
 
 ```bash
 cd backend
@@ -84,22 +92,20 @@ npm run start
 ### **Front-end**:
 
 ```bash
-npm run start-frontend
-
+npm run dev
 ```
 
 ## Ambientes
 
-- **Frontend**
-- Produção: https://wepgcomp.app.ic.ufba.br/
-- Desenvolvimento: https://wepgcomp.netlify.app/
+### Testes
+* **Front-End:** https://wepgcomp.netlify.app/
+* **Backend:** https://wepgcomp-api.onrender.com/
 
-- **Backend**
-- Produção: https://wepgcomp-api.app.ic.ufba.br/
-- Swagger produção: https://wepgcomp-api.app.ic.ufba.br//docs
-- Desenvolvimento: https://wepgcomp-api.onrender.com/
-- Swagger desenvolvimento: https://wepgcomp-api.onrender.com/docs
-
+### Produção
+* **Front-End:** https://wepgcomp.app.ic.ufba.br/
+* **Backend:** https://wepgcomp-api.app.ic.ufba.br
+  
+  
 ## Colaboradores
 
 - **Alexandre Cury Lima** - [alexandre.cury@ufba.br](mailto:alexandre.cury@ufba.br)
