@@ -244,7 +244,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
       <div className="col-12 mb-1">
         <label className="form-label fw-bold fs-5">
           {perfil === "ouvinte"
-            ? "CPF"
+            ? "CPF (Digite apenas números)"
             : perfil === "professor"
             ? "Matrícula SIAPE"
             : "Matrícula"}
