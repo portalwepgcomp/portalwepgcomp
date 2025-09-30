@@ -346,6 +346,9 @@ export class UserService {
 
     const users = await this.prismaClient.userAccount.findMany({
       where: whereClause,
+       orderBy: {
+          name: 'asc', 
+      },
       select: {
         id: true,
         name: true,
