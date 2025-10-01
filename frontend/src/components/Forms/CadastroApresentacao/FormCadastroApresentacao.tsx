@@ -5,7 +5,7 @@ import { UUID } from "crypto";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { AuthContext } from "@/context/AuthProvider/authProvider";
@@ -15,17 +15,20 @@ import { UserContext } from "@/context/user";
 import { useSweetAlert } from "@/hooks/useAlert";
 import { useSubmissionFile } from "@/hooks/useSubmissionFile";
 
-import "./style.scss";
 import { useEdicao } from "@/hooks/useEdicao";
+import "./style.scss";
 
-const formCadastroSchema = z.object({
+import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
+import InputMask from "react-input-mask";
+
+const esquemaCadastro = z.object({
   id: z.string().optional(),
   titulo: z
     .string({ invalid_type_error: "Campo Inválido" })
     .min(1, "O título é obrigatório"),
-  abstract: z
+  resumo: z
     .string({ invalid_type_error: "Campo Inválido" })
-    .min(1, "O abstract é obrigatório"),
+    .min(1, "O resumo é obrigatório"),
   doutorando: z.string({ invalid_type_error: "Campo Inválido" }).optional(),
   orientador: z
     .string({ invalid_type_error: "Campo Inválido" })
@@ -35,27 +38,28 @@ const formCadastroSchema = z.object({
   celular: z
     .string()
     .refine((value) => {
-      const formatCellPhone = value.replace(/\D/g, "");
-      return formatCellPhone.length >= 10 && formatCellPhone.length <= 11;
+      const celularFormatado = value.replace(/\D/g, "");
+      return celularFormatado.length >= 10 && celularFormatado.length <= 11;
     }, "O celular deve conter 10 ou 11 dígitos"),
-  slide: z.string({ invalid_type_error: "Campo Inválido" }).optional(), //temporário para a entrega,
+  slide: z.string({ invalid_type_error: "Campo Inválido" }).optional(),
 });
 
-type formCadastroSchema = z.infer<typeof formCadastroSchema>;
+type CadastroFormulario = z.infer<typeof esquemaCadastro>;
 
 export function FormCadastroApresentacao() {
-  const router = useRouter();
+  const roteador = useRouter();
   const { showAlert } = useSweetAlert();
   const { user } = useContext(AuthContext);
   const { createSubmission, updateSubmissionById, submission, setSubmission } =
     useContext(SubmissionContext);
   const { getAdvisors, advisors, getUsers, userList, loadingUserList } =
     useContext(UserContext);
-  const { sendFile } = useSubmissionFile();
-  const [advisorsLoaded, setAdvisorsLoaded] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const { sendFile, deleteFile } = useSubmissionFile();
+  const [professoresCarregou, setProfessoresCarregou] = useState(false);
+  const [arquivo, setArquivo] = useState<File | null>(null);
+  const [nomeArquivo, setNomeArquivo] = useState<string | null>(null);
   const { Edicao } = useEdicao();
+  const [carregandoEnvio, setCarregandoEnvio] = useState(false);
 
   const {
     register,
@@ -63,25 +67,26 @@ export function FormCadastroApresentacao() {
     formState: { errors },
     setValue,
     reset,
-  } = useForm<formCadastroSchema>({
-    resolver: zodResolver(formCadastroSchema),
+    control,
+  } = useForm<CadastroFormulario>({
+    resolver: zodResolver(esquemaCadastro),
   });
 
   useEffect(() => {
     if (submission && Object.keys(submission).length) {
       setValue("id", submission.id);
       setValue("titulo", submission?.title);
-      setValue("abstract", submission?.abstract ?? "");
+      setValue("resumo", submission?.abstract ?? "");
       setValue("doutorando", submission?.mainAuthorId);
       setValue("orientador", submission?.advisorId);
       setValue("coorientador", submission?.coAdvisor);
       setValue("slide", submission?.pdfFile);
-      setFileName(submission?.pdfFile);
+      setNomeArquivo(submission?.pdfFile);
       setValue("celular", submission?.phoneNumber);
     } else {
       setValue("id", "");
       setValue("titulo", "");
-      setValue("abstract", "");
+      setValue("resumo", "");
       setValue("doutorando", "");
       setValue("orientador", "");
       setValue("coorientador", "");
@@ -89,17 +94,17 @@ export function FormCadastroApresentacao() {
       setValue("slide", "");
       setValue("celular", "");
 
-      setFile(null);
-      setFileName(null);
+      setArquivo(null);
+      setNomeArquivo(null);
     }
   }, [submission, setValue]);
 
   useEffect(() => {
-    if (!advisorsLoaded) {
+    if (!professoresCarregou) {
       getAdvisors();
-      setAdvisorsLoaded(true);
+      setProfessoresCarregou(true);
     }
-  }, [advisorsLoaded, getAdvisors]);
+  }, [professoresCarregou, getAdvisors]);
 
   useEffect(() => {
     if (user?.level !== "Default" && userList.length === 0) {
@@ -107,112 +112,139 @@ export function FormCadastroApresentacao() {
     }
   }, [user?.level, userList.length, getUsers]);
 
-  const doctoralStudents = userList.filter(
-    (user) => user.profile === "DoctoralStudent"
-  );
+  const doutorandos = userList
+    .filter((usuario) => usuario.profile === "DoctoralStudent")
+    .sort((a, b) => a.name.localeCompare(b.name));
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
+  const aoMudarArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const arquivoSelecionado = e.target.files?.[0];
 
-    if (selectedFile) {
-      setFile(selectedFile);
-      setFileName(selectedFile.name);
-      setValue("slide", selectedFile.name);
+    if (arquivoSelecionado) {
+      setArquivo(arquivoSelecionado);
+      setNomeArquivo(arquivoSelecionado.name);
+      setValue("slide", arquivoSelecionado.name);
     }
   };
 
-  const onSubmit = async (data: formCadastroSchema) => {
+  const criarDadosSubmissao = (data: CadastroFormulario, arquivoPdf: string) => {
+    return {
+      ...submission,
+      eventEditionId: getEventEditionIdStorage() ?? "",
+      mainAuthorId: data.doutorando || user?.id,
+      title: data.titulo,
+      abstractText: data.resumo,
+      advisorId: data.orientador as UUID,
+      coAdvisor: data.coorientador || "",
+      dateSuggestion: data.data ? new Date(data.data) : undefined,
+      pdfFile: arquivoPdf,
+      phoneNumber: data.celular,
+    };
+  };
+
+  const processarSubmissao = async (dadosSubmissao: any): Promise<boolean> => {
+    setCarregandoEnvio(true);
+    try {
+      if (submission?.id) {
+        return await updateSubmissionById(submission.id, dadosSubmissao);
+      } else {
+        const sucesso = await createSubmission(dadosSubmissao);
+        if (sucesso && user?.profile === "DoctoralStudent") {
+          roteador.push("/minha-apresentacao");
+        }
+        return sucesso;
+      }
+    } catch (erro) {
+      console.error("Erro ao processar submissão:", erro);
+      return false;
+    } finally {
+      setCarregandoEnvio(false);
+    }
+  };
+
+  const limparArquivoOrfao = async (arquivoKey: string) => {
+    try {
+      await deleteFile(arquivoKey);
+    } catch (erro) {
+      console.debug("Erro ao remover arquivo órfão:", erro);
+    }
+  };
+
+  const aoEnviar = async (data: CadastroFormulario) => {
     if (!user) {
       showAlert({
         icon: "error",
         text: "Você precisa estar logado para realizar a submissão.",
         confirmButtonText: "Retornar",
       });
-
       return;
     }
 
-    if (file) {
-      const response = await sendFile(file, user.id);
+    let arquivoEnviadoKey: string | null = null;
 
-      if (response?.key) {
-        const submissionData = {
-          ...submission,
-          eventEditionId: getEventEditionIdStorage() ?? "",
-          mainAuthorId: data.doutorando || user.id,
-          title: data.titulo,
-          abstractText: data.abstract,
-          advisorId: data.orientador as UUID,
-          coAdvisor: data.coorientador || "",
-          dateSuggestion: data.data ? new Date(data.data) : undefined,
-          pdfFile: response?.key ?? file.name,
-          phoneNumber: data.celular,
-        };
-
-        if (submission && submission?.id) {
-          updateSubmissionById(submission.id, submissionData).then((status) => {
-            if (status) {
-              reset();
-              setSubmission(null);
-            }
-          });
-        } else {
-          createSubmission(submissionData).then((status) => {
-            if (status) {
-              reset();
-              setSubmission(null);
-
-              if (user?.profile == "DoctoralStudent") {
-                router.push("/minha-apresentacao");
-              }
-            }
-          });
+    try {
+      if (arquivo) {
+        const respostaUpload = await sendFile(arquivo, user.id);
+        if (!respostaUpload?.key) {
+          throw new Error("Falha no upload do arquivo");
         }
+        arquivoEnviadoKey = respostaUpload.key;
       }
-    } else {
-      const submissionData = {
-        ...submission,
-        eventEditionId: getEventEditionIdStorage() ?? "",
-        mainAuthorId: data.doutorando || user.id,
-        title: data.titulo,
-        abstractText: data.abstract,
-        advisorId: data.orientador as UUID,
-        coAdvisor: data.coorientador || "",
-        dateSuggestion: data.data ? new Date(data.data) : undefined,
-        pdfFile: data.slide ?? "",
-        phoneNumber: data.celular,
-      };
 
-      if (submission && submission?.id) {
-        updateSubmissionById(submission.id, submissionData).then((status) => {
-          if (status) {
-            reset();
-            setSubmission(null);
-          }
+      const dadosSubmissao = criarDadosSubmissao(
+        data,
+        arquivoEnviadoKey || data.slide || ""
+      );
+
+      const sucesso = await processarSubmissao(dadosSubmissao);
+
+      if (sucesso) {
+        reset();
+        setSubmission(null);
+        setArquivo(null);
+        setNomeArquivo("");
+
+        showAlert({
+          icon: "success",
+          text: "Submissão realizada com sucesso!",
+          confirmButtonText: "OK",
         });
+      } else {
+        throw new Error("Falha ao processar submissão");
       }
+    } catch (_) {
+      if (arquivoEnviadoKey) {
+        await limparArquivoOrfao(arquivoEnviadoKey);
+      }
+      showAlert({
+        icon: "error",
+        text: "Erro ao processar submissão. Tente novamente.",
+        confirmButtonText: "OK",
+      });
     }
   };
-  const onInvalid = (errors) => console.error(errors);
 
-  const modalTitle =
+  const aoErro = (erros) => console.error(erros);
+
+  const tituloModal =
     submission && submission.id
       ? "Editar Apresentação"
       : "Cadastrar Apresentação";
 
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const aoMudarTextarea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = "auto";
     e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
-  return (
+  return carregandoEnvio ? (
+    <IndicadorDeCarregamento />
+  ) : (
     <form
       className="row cadastroApresentacao"
-      onSubmit={handleSubmit(onSubmit, onInvalid)}
+      onSubmit={handleSubmit(aoEnviar, aoErro)}
     >
       <div className="modal-title">
         <h3 className="d-flex fw-bold text-center justify-content-center mb-4">
-          {modalTitle}
+          {tituloModal}
         </h3>
       </div>
 
@@ -229,14 +261,14 @@ export function FormCadastroApresentacao() {
             disabled={loadingUserList}
           >
             <option value="">Selecione um doutorando</option>
-            {doctoralStudents.length === 0 && !loadingUserList ? (
+            {doutorandos.length === 0 && !loadingUserList ? (
               <option value="" disabled>
                 Nenhum doutorando encontrado
               </option>
             ) : (
-              doctoralStudents.map((student) => (
-                <option key={student.id} value={student.id}>
-                  {student.name}
+              doutorandos.map((doutorando) => (
+                <option key={doutorando.id} value={doutorando.id}>
+                  {doutorando.name}
                 </option>
               ))
             )}
@@ -259,15 +291,15 @@ export function FormCadastroApresentacao() {
 
       <div className="col-12 mb-1">
         <label className="form-label form-title">
-          Abstract<span className="text-danger ms-1">*</span>
+          Resumo<span className="text-danger ms-1">*</span>
         </label>
         <textarea
           className="form-control input-title overflow-y-hidden"
           placeholder="Insira o resumo da pesquisa"
-          {...register("abstract")}
-          onInput={handleTextareaChange}
+          {...register("resumo")}
+          onInput={aoMudarTextarea}
         />
-        <p className="text-danger error-message">{errors.abstract?.message}</p>
+        <p className="text-danger error-message">{errors.resumo?.message}</p>
       </div>
 
       <div className="col-12 mb-1">
@@ -280,11 +312,13 @@ export function FormCadastroApresentacao() {
           {...register("orientador")}
         >
           <option value="">Selecione o nome do orientador</option>
-          {advisors.map((advisor) => (
-            <option key={advisor.id} value={advisor.id}>
-              {advisor.name}
-            </option>
-          ))}
+          {advisors
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((orientador) => (
+              <option key={orientador.id} value={orientador.id}>
+                {orientador.name}
+              </option>
+            ))}
         </select>
         <p className="text-danger error-message">
           {errors.orientador?.message}
@@ -306,18 +340,15 @@ export function FormCadastroApresentacao() {
           Slide da apresentação <span className="txt-min">(PDF)</span>
           <span className="text-danger ms-1">*</span>
         </label>
-
         <input
           type="file"
           className="form-control input-title"
           accept=".pdf"
-          onChange={handleFileChange}
+          onChange={aoMudarArquivo}
         />
-
-        {fileName && (
-          <p className="file-name">Arquivo selecionado: {fileName}</p>
+        {nomeArquivo && (
+          <p className="file-name">Arquivo selecionado: {nomeArquivo}</p>
         )}
-
         <p className="text-danger error-message">{errors.slide?.message}</p>
       </div>
 
@@ -326,10 +357,27 @@ export function FormCadastroApresentacao() {
           Celular <span className="txt-min">(preferência WhatsApp)</span>
           <span className="text-danger ms-1">*</span>
         </label>
-        <input
-          className="form-control input-title"
-          placeholder="(XX) XXXXX-XXXX"
-          {...register("celular")}
+        <Controller
+          name="celular"
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <InputMask
+              mask="(99) 99999-9999"
+              value={value || ""}
+              onChange={onChange}
+              onBlur={onBlur}
+              maskChar=" "
+            >
+              {(inputProps) => (
+                <input
+                  {...inputProps}
+                  ref={ref}
+                  className="form-control input-title"
+                  placeholder="(XX) XXXXX-XXXX"
+                />
+              )}
+            </InputMask>
+          )}
         />
         <p className="text-danger error-message">{errors.celular?.message}</p>
       </div>

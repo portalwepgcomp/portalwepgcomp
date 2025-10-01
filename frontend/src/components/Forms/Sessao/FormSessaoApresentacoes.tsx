@@ -12,14 +12,14 @@ import { z } from "zod";
 
 import { useSession } from "@/hooks/useSession";
 
-import "./style.scss";
-import { formatOptions } from "@/utils/formatOptions";
-import { useUsers } from "@/hooks/useUsers";
-import { useEdicao } from "@/hooks/useEdicao";
-import { useEffect } from "react";
-import { useSubmission } from "@/hooks/useSubmission";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
+import { useEdicao } from "@/hooks/useEdicao";
+import { useSubmission } from "@/hooks/useSubmission";
+import { useUsers } from "@/hooks/useUsers";
+import { formatOptions } from "@/utils/formatOptions";
 import dayjs from "dayjs";
+import { useEffect } from "react";
+import "./style.scss";
 
 const formSessaoApresentacoesSchema = z.object({
   apresentacoes: z

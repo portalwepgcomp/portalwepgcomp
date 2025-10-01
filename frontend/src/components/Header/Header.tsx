@@ -241,23 +241,35 @@ export default function Header() {
                 </Link>
               </div>
 
-              <li className="nav-item">
-                {signed ? (
-                  <div className="welcome-user">
-                    Olá, {user?.name.split(" ")[0]}!{perfil()}
-                  </div>
-                ) : (
-                  <Link
-                    className="nav-link active text-black"
-                    aria-current="page"
-                    href="/login"
-                  >
-                    Login
-                  </Link>
+                {!signed && (
+                  <li className="nav-item">
+                    <Link
+                      className="nav-link active text-black"
+                      aria-current="page"
+                      href="/cadastro"
+                    >
+                      Cadastro
+                    </Link>
+                  </li>
                 )}
-              </li>
-            </ul>
-          </div>
+                
+                <li className="nav-item">
+                  {signed ? (
+                    <div className="welcome-user">
+                      Olá, {user?.name.split(" ")[0]}!{perfil()}
+                    </div>
+                  ) : (
+                    <Link
+                      className="nav-link active text-black"
+                      aria-current="page"
+                      href="/login"
+                    >
+                      Login
+                    </Link>
+                  )}
+                </li>
+              </ul>
+            </div>
         </div>
       </nav>
     </>

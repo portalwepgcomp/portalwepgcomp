@@ -3,6 +3,7 @@ const nextConfig = {
   eslint: {
     dirs: ['src', '__tests__'], 
   },
+  output: "standalone",
 };
 
 
