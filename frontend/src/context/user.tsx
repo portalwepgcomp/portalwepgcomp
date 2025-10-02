@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useState } from "react";
 
 import { useSweetAlert } from "@/hooks/useAlert";
 import { userApi } from "@/services/user";
@@ -66,7 +66,7 @@ export const UserProvider = ({ children }: UserProps) => {
   const { showAlert } = useSweetAlert();
   const router = useRouter();
 
-  const getUsers = async (params: GetUserParams) => {
+  const getUsers = useCallback(async (params: GetUserParams) => {
     setLoadingUserList(true);
     
     if(authUser){
@@ -92,7 +92,7 @@ export const UserProvider = ({ children }: UserProps) => {
           setLoadingUserList(false);
         });
     };
-    }
+  }, [authUser, showAlert]);
 
   const registerUser = async (body: RegisterUserParams) => {
     setLoadingCreateUser(true);

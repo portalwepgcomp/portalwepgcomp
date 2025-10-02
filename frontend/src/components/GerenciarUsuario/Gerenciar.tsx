@@ -259,17 +259,17 @@ export default function Gerenciar() {
   // Load users on component mount with stable dependency
   useEffect(() => {
     getUsers({});
-  }, [getUsers]);
+  }, []); // Remove getUsers dependency to prevent infinite loops
 
-  // Don't trigger API calls on every filter change - use debounced effect
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // Only trigger API call if needed for server-side filtering
-      // For now, we're doing client-side filtering for better UX
-    }, 300);
+  // Remove the debounced effect that was causing unnecessary renders
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     // Only trigger API call if needed for server-side filtering
+  //     // For now, we're doing client-side filtering for better UX
+  //   }, 300);
 
-    return () => clearTimeout(timer);
-  }, [filters]);
+  //   return () => clearTimeout(timer);
+  // }, [filters]);
 
   return (
     <div className="gerenciador">
@@ -360,77 +360,84 @@ export default function Gerenciar() {
         </div>
       </div>
 
-      <div className="d-flex flex-column w-100 justify-content-center m-0 listagem">
-        {loadingUserList && <LoadingPage />}
+      <div className="listagem">
+        {loadingUserList && (
+          <div className="loading-container">
+            <LoadingPage />
+          </div>
+        )}
 
-        {!loadingUserList && filteredUsers.length > 0 &&
-          filteredUsers.map((userValue) => {
-            const userStatus = getUserStatus(userValue);
-            const userPermission = getUserPermission(userValue);
-            const actionButtons = getActionButtons(userValue);
-            const userBadges = getUserBadges(userValue);
+        {!loadingUserList && filteredUsers.length > 0 && (
+          <div className="user-list">
+            {filteredUsers.map((userValue) => {
+              const userStatus = getUserStatus(userValue);
+              const userPermission = getUserPermission(userValue);
+              const actionButtons = getActionButtons(userValue);
+              const userBadges = getUserBadges(userValue);
 
-            return (
-              <div key={userValue.id} className="user-card">
-                <div className="user-info">
-                  <div className="user-header">
-                    <div className="user-name">{userValue.name}</div>
-                    <div className="user-email">{userValue.email}</div>
-                  </div>
-                  <div className="user-badges">{userBadges}</div>
-                </div>
-                
-                <div className="user-controls">
-                  <div className="control-section">
-                    <div className="control-label">Status:</div>
-                    <select
-                      className={`control-select ${statusClassNames[userStatus]}`}
-                      disabled={!Edicao?.isActive || loadingRoleAction}
-                      onChange={(e) => {
-                        switchActiveUser(
-                          userValue.id,
-                          e.target.value === "ATIVO"
-                        );
-                      }}
-                      value={userStatus}
-                    >
-                      <option value="ATIVO">ATIVO</option>
-                      <option value="INATIVO">INATIVO</option>
-                    </select>
-                  </div>
-
-                  <div className="control-section">
-                    <div className="control-label">Permissão:</div>
-                    <div className="permission-badge">
-                      <span className={`badge ${
-                        userPermission === 'SUPERADMIN' ? 'badge-superadmin' :
-                        userPermission === 'ADMIN' ? 'badge-admin' : 'badge-normal'
-                      }`}>
-                        {userPermission}
-                      </span>
+              return (
+                <div key={userValue.id} className="user-card">
+                  <div className="user-info">
+                    <div className="user-header">
+                      <div className="user-name">{userValue.name}</div>
+                      <div className="user-email">{userValue.email}</div>
                     </div>
+                    <div className="user-badges">{userBadges}</div>
+                  </div>
+                  
+                  <div className="user-controls">
+                    <div className="control-section">
+                      <div className="control-label">Status:</div>
+                      <select
+                        className={`control-select ${statusClassNames[userStatus]}`}
+                        disabled={!Edicao?.isActive || loadingRoleAction}
+                        onChange={(e) => {
+                          switchActiveUser(
+                            userValue.id,
+                            e.target.value === "ATIVO"
+                          );
+                        }}
+                        value={userStatus}
+                      >
+                        <option value="ATIVO">ATIVO</option>
+                        <option value="INATIVO">INATIVO</option>
+                      </select>
+                    </div>
+
+                    <div className="control-section">
+                      <div className="control-label">Permissão:</div>
+                      <div className="permission-badge">
+                        <span className={`badge ${
+                          userPermission === 'SUPERADMIN' ? 'badge-superadmin' :
+                          userPermission === 'ADMIN' ? 'badge-admin' : 'badge-normal'
+                        }`}>
+                          {userPermission}
+                        </span>
+                      </div>
+                    </div>
+
+                    {actionButtons.length > 0 && (
+                      <div className="control-section">
+                        <div className="control-label">Ações:</div>
+                        <div className="action-buttons">
+                          {actionButtons}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {actionButtons.length > 0 && (
-                    <div className="control-section">
-                      <div className="control-label">Ações:</div>
-                      <div className="action-buttons">
-                        {actionButtons}
+                  {loadingRoleAction && (
+                    <div className="loading-overlay">
+                      <div className="spinner-border spinner-border-sm" role="status">
+                        <span className="visually-hidden">Loading...</span>
                       </div>
                     </div>
                   )}
                 </div>
-
-                {loadingRoleAction && (
-                  <div className="loading-overlay">
-                    <div className="spinner-border spinner-border-sm" role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+        )}
 
         {!loadingUserList && filteredUsers.length === 0 && (
           <div className="empty-state">
