@@ -387,6 +387,9 @@ export class UserService {
         level: true,
         isVerified: true,
         isActive: true,
+        isTeacherActive: true,
+        isAdmin: true,
+        isSuperadmin: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -456,43 +459,251 @@ export class UserService {
     });
   }
 
-  // --- LOGIC FOR APPROVING TEACHERS ---
-  // 👇 FIX 1: The 'id' is a string, not a number.
+  // --- ENHANCED ROLE MANAGEMENT SYSTEM ---
+
+  /**
+   * Approves a teacher - sets isTeacherActive to true
+   * Only Admin and Superadmin can approve teachers
+   */
   async approveTeacher(id: string): Promise<UserAccount> {
-    // 👇 FIX 2: Use the correct model name 'userAccount'.
     const user = await this.prismaClient.userAccount.findUnique({
       where: { id },
     });
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found.`);
+      throw new NotFoundException('Usuário não encontrado.');
+    }
+
+    if (user.profile !== Profile.Professor) {
+      throw new BadRequestException('Apenas professores podem ser aprovados.');
     }
 
     return this.prismaClient.userAccount.update({
       where: { id: id },
-      // Use the correct field name 'isTeacherActive' from the schema
       data: { isTeacherActive: true },
     });
   }
 
-  // --- LOGIC FOR PROMOTING TO SUPERADMIN ---
-  // 👇 FIX 1: The 'id' is a string, not a number.
+  /**
+   * Promotes a user to Admin - sets isAdmin to true and level to Admin
+   * Only Superadmin can promote to Admin
+   * User must be an approved teacher to become Admin
+   */
+  async promoteToAdmin(id: string): Promise<UserAccount> {
+    const user = await this.prismaClient.userAccount.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado.');
+    }
+
+    // Business rule: Only approved teachers can become admins
+    if (user.profile !== Profile.Professor || !user.isTeacherActive) {
+      throw new BadRequestException(
+        'Apenas professores aprovados podem ser promovidos a administradores.',
+      );
+    }
+
+    // Business rule: Cannot promote someone who is already an admin or superadmin
+    if (user.isAdmin || user.isSuperadmin) {
+      throw new BadRequestException('Usuário já possui cargo administrativo.');
+    }
+
+    return this.prismaClient.userAccount.update({
+      where: { id: id },
+      data: {
+        isAdmin: true,
+        level: UserLevel.Admin,
+      },
+    });
+  }
+
+  /**
+   * Promotes a user to Superadmin - sets isSuperadmin to true and level to Superadmin
+   * Only existing Superadmin can promote to Superadmin
+   * User must be an Admin to become Superadmin
+   */
   async promoteToSuperadmin(id: string): Promise<UserAccount> {
     const user = await this.prismaClient.userAccount.findUnique({
       where: { id },
     });
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found.`);
+      throw new NotFoundException('Usuário não encontrado.');
+    }
+
+    // Business rule: Only Admins can become Superadmins
+    if (!user.isAdmin) {
+      throw new BadRequestException(
+        'Apenas administradores podem ser promovidos a superadministradores.',
+      );
+    }
+
+    // Business rule: Cannot promote someone who is already a superadmin
+    if (user.isSuperadmin) {
+      throw new BadRequestException('Usuário já é superadministrador.');
     }
 
     return this.prismaClient.userAccount.update({
       where: { id: id },
-      // 👇 FIX 4: Assuming 'isSuperadmin' is correct. Please verify this field name in your 'schema.prisma'
       data: {
         isSuperadmin: true,
-        level: UserLevel.Superadmin, // Assuming 'level' is your role field
+        level: UserLevel.Superadmin,
       },
+    });
+  }
+
+  /**
+   * Demotes a user by one level in the hierarchy
+   * Hierarchy: Superadmin → Admin → Approved Teacher → Default User
+   * Only Superadmin can demote other users
+   * Cannot demote the last Superadmin
+   */
+  async demoteUser(id: string): Promise<UserAccount> {
+    const user = await this.prismaClient.userAccount.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado.');
+    }
+
+    // Prevent demoting the last superadmin
+    if (user.isSuperadmin) {
+      const superadminCount = await this.prismaClient.userAccount.count({
+        where: { isSuperadmin: true },
+      });
+
+      if (superadminCount <= 1) {
+        throw new BadRequestException(
+          'Não é possível rebaixar o último superadministrador do sistema.',
+        );
+      }
+    }
+
+    // Determine current role and demotion target
+    let updateData: any = {};
+    let demotionMessage = '';
+
+    if (user.isSuperadmin) {
+      // Superadmin → Admin (keep admin status)
+      updateData = {
+        isSuperadmin: false,
+        level: UserLevel.Admin,
+        // Keep isAdmin: true, isTeacherActive as is
+      };
+      demotionMessage = 'Superadministrador rebaixado para Administrador';
+    } else if (user.isAdmin) {
+      // Admin → Approved Teacher (if they are a professor) or Default User
+      if (user.profile === Profile.Professor) {
+        updateData = {
+          isAdmin: false,
+          level: UserLevel.Default,
+          // Keep isTeacherActive: true if they were approved
+        };
+        demotionMessage = 'Administrador rebaixado para Professor Aprovado';
+      } else {
+        // Non-professor admin becomes default user
+        updateData = {
+          isAdmin: false,
+          level: UserLevel.Default,
+          isTeacherActive: false, // Non-professors shouldn't have teacher status
+        };
+        demotionMessage = 'Administrador rebaixado para Usuário Padrão';
+      }
+    } else if (user.isTeacherActive && user.profile === Profile.Professor) {
+      // Approved Teacher → Default User (remove teacher approval)
+      updateData = {
+        isTeacherActive: false,
+        level: UserLevel.Default,
+      };
+      demotionMessage = 'Professor aprovado rebaixado para Usuário Padrão';
+    } else {
+      throw new BadRequestException(
+        'Usuário já está no nível mais baixo ou não possui cargo para ser rebaixado.',
+      );
+    }
+
+    const updatedUser = await this.prismaClient.userAccount.update({
+      where: { id: id },
+      data: updateData,
+    });
+
+    // Log the demotion for audit purposes
+    console.log(`Demotion: ${demotionMessage} - User ID: ${id}`);
+
+    return updatedUser;
+  }
+
+  /**
+   * Demotes a user to a specific level (for advanced use cases)
+   * Allows skipping levels in the hierarchy
+   */
+  async demoteUserToLevel(
+    id: string,
+    targetLevel: 'default' | 'teacher' | 'admin',
+  ): Promise<UserAccount> {
+    const user = await this.prismaClient.userAccount.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado.');
+    }
+
+    // Prevent demoting the last superadmin unless target is admin
+    if (user.isSuperadmin && targetLevel !== 'admin') {
+      const superadminCount = await this.prismaClient.userAccount.count({
+        where: { isSuperadmin: true },
+      });
+
+      if (superadminCount <= 1) {
+        throw new BadRequestException(
+          'Não é possível rebaixar o último superadministrador para níveis inferiores a administrador.',
+        );
+      }
+    }
+
+    let updateData: any = {};
+
+    switch (targetLevel) {
+      case 'default':
+        updateData = {
+          isSuperadmin: false,
+          isAdmin: false,
+          isTeacherActive: false,
+          level: UserLevel.Default,
+        };
+        break;
+      case 'teacher':
+        if (user.profile !== Profile.Professor) {
+          throw new BadRequestException(
+            'Apenas professores podem ser rebaixados para nível de professor aprovado.',
+          );
+        }
+        updateData = {
+          isSuperadmin: false,
+          isAdmin: false,
+          isTeacherActive: true,
+          level: UserLevel.Default,
+        };
+        break;
+      case 'admin':
+        updateData = {
+          isSuperadmin: false,
+          isAdmin: true,
+          level: UserLevel.Admin,
+          // Keep isTeacherActive as is
+        };
+        break;
+      default:
+        throw new BadRequestException('Nível de rebaixamento inválido.');
+    }
+
+    return this.prismaClient.userAccount.update({
+      where: { id: id },
+      data: updateData,
     });
   }
 }

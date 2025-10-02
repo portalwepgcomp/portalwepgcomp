@@ -21,8 +21,9 @@ model UserAccount {
   updatedAt               DateTime                @updatedAt @map("updated_at")
   isVerified              Boolean                 @default(false) @map("is_verified")
   registrationNumberType  RegistrationNumberType? @map("registration_number_type")
-  isSuperadmin            Boolean                 @default(false)
-  isTeacherActive         Boolean                 @default(false)
+  isAdmin                 Boolean                 @default(false) @map("is_admin")
+  isSuperadmin            Boolean                 @default(false) @map("is_superadmin")
+  isTeacherActive         Boolean                 @default(false) @map("is_teacher_active")
   panelistAwards          AwardedPanelist[]
   certificates            Certificate[]
   committeeMemberships    CommitteeMember[]

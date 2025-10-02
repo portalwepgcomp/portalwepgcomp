@@ -1,8 +1,8 @@
-# Quick Testing Guide: Teacher Approval & Superadmin Features
+# Quick Testing Guide: Enhanced Role Management System
 
-## 🚀 Fast Track Testing - 15 Minutes
+## 🚀 Fast Track Testing - 20 Minutes
 
-This guide provides essential tests to quickly verify the new `isTeacherActive` and `isSuperadmin` features are working correctly.
+This guide provides essential tests to quickly verify the enhanced role management system with `isTeacherActive`, `isAdmin`, and `isSuperadmin` features.
 
 ## Prerequisites (2 minutes)
 
@@ -17,9 +17,9 @@ npx prisma migrate deploy
 
 **You need:**
 - 1 Superadmin user token 🔑
-- 1 Regular user ID to test with 👤
+- 1 Regular professor user ID to test with 👤
 
-## Core Tests (10 minutes)
+## Core Tests (15 minutes)
 
 ### ✅ Test 1: Verify New Fields in User Response (1 min)
 ```bash
@@ -27,37 +27,59 @@ npx prisma migrate deploy
 curl -H "Authorization: Bearer YOUR_TOKEN" \
      http://localhost:3001/users
 
-# ✓ Look for: "isTeacherActive": false, "isSuperadmin": false
+# ✓ Look for: "isTeacherActive": false, "isAdmin": false, "isSuperadmin": false
 ```
 
-### ✅ Test 2: Teacher Approval Endpoint (2 mins)
+### ✅ Test 2: Teacher Approval Flow (3 mins)
 ```bash
-# Approve a teacher
+# Step 1: Approve a teacher
 curl -X PATCH \
      -H "Authorization: Bearer SUPERADMIN_TOKEN" \
-     http://localhost:3001/users/USER_ID/approve
+     http://localhost:3001/users/PROFESSOR_ID/approve
 
 # ✓ Expected: "isTeacherActive": true in response
 # ✓ Status: 200 OK
 ```
 
-### ✅ Test 3: Superadmin Promotion Endpoint (2 mins)
+### ✅ Test 3: Admin Promotion Flow (3 mins)
 ```bash
-# Promote to superadmin  
+# Step 2: Promote approved teacher to admin
 curl -X PATCH \
      -H "Authorization: Bearer SUPERADMIN_TOKEN" \
-     http://localhost:3001/users/USER_ID/promote
+     http://localhost:3001/users/PROFESSOR_ID/promote-admin
+
+# ✓ Expected: "isAdmin": true, "level": "Admin"
+# ✓ Status: 200 OK
+```
+
+### ✅ Test 4: Superadmin Promotion Flow (3 mins)
+```bash
+# Step 3: Promote admin to superadmin
+curl -X PATCH \
+     -H "Authorization: Bearer SUPERADMIN_TOKEN" \
+     http://localhost:3001/users/PROFESSOR_ID/promote-superadmin
 
 # ✓ Expected: "isSuperadmin": true, "level": "Superadmin"
 # ✓ Status: 200 OK
 ```
 
-### ✅ Test 4: Authorization Check (2 mins)
+### ✅ Test 5: Demotion Flow (3 mins)
+```bash
+# Step 4: Demote user by one level
+curl -X PATCH \
+     -H "Authorization: Bearer SUPERADMIN_TOKEN" \
+     http://localhost:3001/users/PROFESSOR_ID/demote
+
+# ✓ Expected: "isSuperadmin": false, "level": "Admin", "isAdmin": true
+# ✓ Status: 200 OK
+```
+
+### ✅ Test 6: Authorization Check (2 mins)
 ```bash
 # Test with regular user token (should fail)
 curl -X PATCH \
      -H "Authorization: Bearer REGULAR_USER_TOKEN" \
-     http://localhost:3001/users/SOME_ID/approve
+     http://localhost:3001/users/SOME_ID/promote-admin
 
 # ✓ Expected: 403 Forbidden
 ```

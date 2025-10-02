@@ -12,6 +12,7 @@ export class ResponseUserDto {
   level: UserLevel;
   isActive: boolean;
   isTeacherActive: boolean;
+  isAdmin: boolean;
   isSuperadmin: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -29,6 +30,7 @@ export class ResponseUserDto {
     this.level = user.level;
     this.isActive = user.isActive;
     this.isTeacherActive = user.isTeacherActive ?? false;
+    this.isAdmin = user.isAdmin ?? false;
     this.isSuperadmin = user.isSuperadmin ?? false;
     this.createdAt = user.createdAt;
     this.updatedAt = user.updatedAt;

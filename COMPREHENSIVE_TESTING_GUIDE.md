@@ -1,23 +1,34 @@
-# Comprehensive Testing Guide: Teacher Approval & Superadmin System
+# Comprehensive Testing Guide: Enhanced Role Management System
 
-This guide provides detailed testing procedures for the new `isTeacherActive` and `isSuperadmin` features in the WEPGCOMP portal.
+This guide provides detailed testing procedures for the enhanced role management system with `isTeacherActive`, `isAdmin`, and `isSuperadmin` features in the WEPGCOMP portal.
 
 ## Overview of Changes
 
 ### Backend Changes
-- **New Fields**: Added `isTeacherActive` and `isSuperadmin` boolean fields to the `UserAccount` model
-- **New Endpoints**: 
+- **New Fields**: Added `isTeacherActive`, `isAdmin`, and `isSuperadmin` boolean fields to the `UserAccount` model
+- **Enhanced Endpoints**: 
   - `PATCH /users/:id/approve` - Approve teacher status
-  - `PATCH /users/:id/promote` - Promote to superadmin
-- **Updated Response**: `ResponseUserDto` now includes both new fields
-- **Authorization**: Role-based access control implemented
+  - `PATCH /users/:id/promote-admin` - Promote approved teacher to admin
+  - `PATCH /users/:id/promote-superadmin` - Promote admin to superadmin
+  - `PATCH /users/:id/demote` - Demote user by one level in hierarchy
+  - `PATCH /users/:id/demote-to/:targetLevel` - Demote user to specific level
+- **Updated Response**: `ResponseUserDto` now includes all three new fields
+- **Authorization**: Enhanced role-based access control with proper hierarchy
 
 ### Database Schema
 ```sql
 -- New columns in UserAccount table
 isTeacherActive  Boolean @default(false)
+isAdmin          Boolean @default(false)
 isSuperadmin     Boolean @default(false)
 ```
+
+### Role Hierarchy
+The system now follows a clear hierarchy:
+1. **Superadmin** (highest) - Full system access
+2. **Admin** - Can approve teachers and manage users
+3. **Approved Teacher** - Can access teacher-specific features
+4. **Default User** (lowest) - Basic user access
 
 ## Testing Prerequisites
 
@@ -96,29 +107,84 @@ curl -X PATCH http://localhost:3001/users/{USER_ID}/approve \
 }
 ```
 
-#### Test 4: Superadmin Promotion Endpoint
+#### Test 4: Admin Promotion Endpoint
 ```bash
-# Test promoting user to superadmin
-curl -X PATCH http://localhost:3001/users/{USER_ID}/promote \
+# Test promoting approved teacher to admin
+curl -X PATCH http://localhost:3001/users/{USER_ID}/promote-admin \
   -H "Authorization: Bearer {SUPERADMIN_TOKEN}" \
   -H "Content-Type: application/json"
 ```
 
 **Test Cases:**
-1. **Valid Superadmin Token**: ✅ Should succeed
+1. **Valid Superadmin Token**: ✅ Should succeed for approved teachers
 2. **Admin Token**: ❌ Should return 403 Forbidden
 3. **Regular User Token**: ❌ Should return 403 Forbidden
-4. **Invalid User ID**: ❌ Should return 404 Not Found
+4. **Non-Professor User**: ❌ Should return 400 Bad Request
+5. **Unapproved Teacher**: ❌ Should return 400 Bad Request
+
+**Expected Response:**
+```json
+{
+  "id": "user-id",
+  "level": "Admin",
+  "isAdmin": true,
+  "isTeacherActive": true,
+  // ... other fields
+}
+```
+
+#### Test 5: Superadmin Promotion Endpoint
+```bash
+# Test promoting admin to superadmin
+curl -X PATCH http://localhost:3001/users/{USER_ID}/promote-superadmin \
+  -H "Authorization: Bearer {SUPERADMIN_TOKEN}" \
+  -H "Content-Type: application/json"
+```
+
+**Test Cases:**
+1. **Valid Superadmin Token**: ✅ Should succeed for admins
+2. **Admin Token**: ❌ Should return 403 Forbidden
+3. **Non-Admin User**: ❌ Should return 400 Bad Request
 
 **Expected Response:**
 ```json
 {
   "id": "user-id",
   "level": "Superadmin",
+  "isAdmin": true,
   "isSuperadmin": true,
   // ... other fields
 }
 ```
+
+#### Test 6: User Demotion Endpoint
+```bash
+# Test demoting user by one level
+curl -X PATCH http://localhost:3001/users/{USER_ID}/demote \
+  -H "Authorization: Bearer {SUPERADMIN_TOKEN}" \
+  -H "Content-Type: application/json"
+```
+
+**Test Cases:**
+1. **Demote Superadmin**: ✅ Should become Admin
+2. **Demote Admin**: ✅ Should become Approved Teacher (if Professor) or Default User
+3. **Demote Approved Teacher**: ✅ Should become Default User
+4. **Demote Default User**: ❌ Should return 400 Bad Request
+5. **Last Superadmin**: ❌ Should return 400 Bad Request
+
+#### Test 7: Target Level Demotion Endpoint
+```bash
+# Test demoting user to specific level
+curl -X PATCH http://localhost:3001/users/{USER_ID}/demote-to/teacher \
+  -H "Authorization: Bearer {SUPERADMIN_TOKEN}" \
+  -H "Content-Type: application/json"
+```
+
+**Test Cases:**
+1. **Demote to Admin**: ✅ Should work from Superadmin
+2. **Demote to Teacher**: ✅ Should work for Professors only
+3. **Demote to Default**: ✅ Should work from any level
+4. **Invalid Target**: ❌ Should return 400 Bad Request
 
 ### C. User Flow Testing
 

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, SetAdminDto } from './dto/create-user.dto';
+import { ResponseUserDto } from './dto/response-user.dto';
 import { Public, UserLevels } from '../auth/decorators/user-level.decorator';
 import { Profile, UserLevel } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -79,32 +80,80 @@ export class UserController {
     return this.userService.toggleUserActivation(id, activate);
   }
 
-  // --- NEW ENDPOINT FOR APPROVING TEACHERS ---
+  // --- ENHANCED ROLE MANAGEMENT ENDPOINTS ---
+
   /**
    * Approves a user with the PROFESSOR role.
    * Only accessible by users with ADMIN or SUPERADMIN roles.
    * @param id - The ID of the user to be approved.
    */
-  @Patch(':id/approve') // Handles PATCH requests to /users/:id/approve
-  @UseGuards(JwtAuthGuard, UserLevelGuard) // Protects the route, checking for a valid JWT and then the user's role.
-  @UserLevels(UserLevel.Admin, UserLevel.Superadmin) // Specifies that only ADMIN and SUPERADMIN can access this.
+  @Patch(':id/approve')
+  @UseGuards(JwtAuthGuard, UserLevelGuard)
+  @UserLevels(UserLevel.Admin, UserLevel.Superadmin)
+  @ApiBearerAuth()
   async approveTeacher(@Param('id') id: string) {
-    // @Param('id') grabs the 'id' from the URL as a string.
-    // We then call the corresponding service method to handle the logic.
-    return this.userService.approveTeacher(id);
+    const result = await this.userService.approveTeacher(id);
+    return new ResponseUserDto(result);
   }
 
-  // --- NEW ENDPOINT FOR PROMOTING TO SUPERADMIN ---
   /**
-   * Promotes a user to SUPERADMIN.
-   * Only accessible by users who are already SUPERADMINs.
-   * @param id - The ID of the user to be promoted.
+   * Promotes an approved teacher to ADMIN.
+   * Only accessible by users who are SUPERADMINs.
+   * @param id - The ID of the user to be promoted to admin.
    */
-  @Patch(':id/promote') // Handles PATCH requests to /users/:id/promote
-  @UseGuards(JwtAuthGuard, UserLevelGuard) // Same protection mechanism.
-  @UserLevels(UserLevel.Superadmin) // Stricter: only a SUPERADMIN can promote another user.
+  @Patch(':id/promote-admin')
+  @UseGuards(JwtAuthGuard, UserLevelGuard)
+  @UserLevels(UserLevel.Superadmin)
+  @ApiBearerAuth()
+  async promoteToAdmin(@Param('id') id: string) {
+    const result = await this.userService.promoteToAdmin(id);
+    return new ResponseUserDto(result);
+  }
+
+  /**
+   * Promotes an admin to SUPERADMIN.
+   * Only accessible by users who are already SUPERADMINs.
+   * @param id - The ID of the user to be promoted to superadmin.
+   */
+  @Patch(':id/promote-superadmin')
+  @UseGuards(JwtAuthGuard, UserLevelGuard)
+  @UserLevels(UserLevel.Superadmin)
+  @ApiBearerAuth()
   async promoteToSuperadmin(@Param('id') id: string) {
-    return this.userService.promoteToSuperadmin(id);
+    const result = await this.userService.promoteToSuperadmin(id);
+    return new ResponseUserDto(result);
+  }
+
+  /**
+   * Demotes a user from their current admin role.
+   * Only accessible by users who are SUPERADMINs.
+   * @param id - The ID of the user to be demoted.
+   */
+  @Patch(':id/demote')
+  @UseGuards(JwtAuthGuard, UserLevelGuard)
+  @UserLevels(UserLevel.Superadmin)
+  @ApiBearerAuth()
+  async demoteUser(@Param('id') id: string) {
+    const result = await this.userService.demoteUser(id);
+    return new ResponseUserDto(result);
+  }
+
+  /**
+   * Demotes a user to a specific level in the hierarchy.
+   * Only accessible by users who are SUPERADMINs.
+   * @param id - The ID of the user to be demoted.
+   * @param targetLevel - The target level (default, teacher, admin).
+   */
+  @Patch(':id/demote-to/:targetLevel')
+  @UseGuards(JwtAuthGuard, UserLevelGuard)
+  @UserLevels(UserLevel.Superadmin)
+  @ApiBearerAuth()
+  async demoteUserToLevel(
+    @Param('id') id: string,
+    @Param('targetLevel') targetLevel: 'default' | 'teacher' | 'admin',
+  ) {
+    const result = await this.userService.demoteUserToLevel(id, targetLevel);
+    return new ResponseUserDto(result);
   }
 
   @Get()

@@ -6,15 +6,21 @@ This document outlines the user experience design for the new teacher approval a
 
 ## User Roles & Permissions Matrix
 
-| Action | Default User | Professor | Admin | Superadmin |
-|--------|-------------|-----------|-------|------------|
-| View own profile | ✅ | ✅ | ✅ | ✅ |
-| View user list | ❌ | ❌ | ✅ | ✅ |
-| Approve teachers | ❌ | ❌ | ✅ | ✅ |
-| Promote to superadmin | ❌ | ❌ | ❌ | ✅ |
-| Manage submissions | ❌ | ✅* | ✅ | ✅ |
+| Action | Default User | Professor | Approved Teacher | Admin | Superadmin |
+|--------|-------------|-----------|------------------|-------|------------|
+| View own profile | ✅ | ✅ | ✅ | ✅ | ✅ |
+| View user list | ❌ | ❌ | ❌ | ✅ | ✅ |
+| Approve teachers | ❌ | ❌ | ❌ | ✅ | ✅ |
+| Promote to admin | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Promote to superadmin | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Demote users | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Manage submissions | ❌ | ❌ | ✅ | ✅ | ✅ |
 
-*Only if `isTeacherActive: true`
+**Role Hierarchy:**
+1. **Superadmin** (highest) - Full system control
+2. **Admin** - User management and teacher approval
+3. **Approved Teacher** - Teaching features access
+4. **Professor/Default User** (lowest) - Basic access
 
 ## Core User Journeys
 
@@ -65,7 +71,50 @@ for aprovada."
 completo a todos os recursos docentes do sistema."
 ```
 
-### 2. 👑 Superadmin Promotion Journey
+### 2. 👑 Admin Promotion Journey
+
+#### Current State Issues:
+- No clear process for promoting teachers to admins
+- Missing intermediate management level
+- Confusion about admin vs superadmin roles
+
+#### Improved UX Flow:
+
+```mermaid
+graph TD
+    A[Approved Teacher] --> B[Superadmin Reviews Profile]
+    B --> C[Superadmin Clicks 'Promote to Admin']
+    C --> D[Confirmation Dialog]
+    D --> E[Success: Teacher Promoted to Admin]
+    E --> F[Email: Admin Promotion Notification]
+    F --> G[New Admin: User Management Access]
+```
+
+#### User Experience Details:
+
+**Step 1: Admin Promotion Confirmation**
+```
+⚠️  Modal Dialog:
+"Tem certeza que deseja promover [Nome do Usuário] a Administrador?
+Esta ação dará acesso ao gerenciamento de usuários e aprovação de professores."
+
+[Cancelar] [Confirmar Promoção]
+```
+
+**Step 2: Success Feedback**
+```
+✅ Toast Message: "Professor promovido a Administrador com sucesso!"
+```
+
+**Step 3: Promotion Notification**
+```
+📧 Email Subject: "Promoção a Administrador"
+📧 Email Body:
+"Você foi promovido a Administrador do sistema WEPGCOMP. 
+Agora você pode gerenciar usuários e aprovar novos professores."
+```
+
+### 3. 👑 Superadmin Promotion Journey
 
 #### Current State Issues:
 - No clear process for admin promotion
@@ -101,12 +150,52 @@ promover outros usuários."
 ✅ Toast Message: "Usuário promovido a Superadministrador com sucesso!"
 ```
 
-**Step 3: Promotion Notification**
+### 4. 📉 User Demotion Journey
+
+#### Hierarchical Demotion System:
+- **Superadmin → Admin**: Remove superadmin privileges, keep admin access
+- **Admin → Approved Teacher**: Remove admin privileges, keep teacher access (if Professor)
+- **Admin → Default User**: Remove all privileges (if not Professor)
+- **Approved Teacher → Default User**: Remove teacher privileges
+
+#### Improved UX Flow:
+
+```mermaid
+graph TD
+    A[Superadmin Identifies Issue] --> B[Review User Profile]
+    B --> C[Choose Demotion Level]
+    C --> D[Confirmation Dialog with Warning]
+    D --> E[Execute Demotion]
+    E --> F[Success Message]
+    F --> G[Email: Demotion Notification]
+    G --> H[User: Reduced Access Level]
 ```
-📧 Email Subject: "Promoção a Superadministrador"
+
+#### User Experience Details:
+
+**Step 1: Demotion Confirmation**
+```
+⚠️  Modal Dialog:
+"Tem certeza que deseja rebaixar [Nome do Usuário]?
+Esta ação removerá privilégios administrativos e não pode ser desfeita facilmente.
+
+Nível atual: Superadministrador
+Novo nível: Administrador"
+
+[Cancelar] [Confirmar Rebaixamento]
+```
+
+**Step 2: Success Feedback**
+```
+✅ Toast Message: "Usuário rebaixado com sucesso para Administrador!"
+```
+
+**Step 3: Demotion Notification**
+```
+📧 Email Subject: "Alteração de Privilégios"
 📧 Email Body:
-"Você foi promovido a Superadministrador do sistema WEPGCOMP. 
-Agora você tem acesso total ao sistema e pode gerenciar outros usuários."
+"Seus privilégios no sistema WEPGCOMP foram alterados. 
+Você agora tem acesso de Administrador."
 ```
 
 ## Frontend Integration Design
