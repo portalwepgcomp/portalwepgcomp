@@ -33,6 +33,9 @@ interface User extends RegisterUserParams {
     updatedAt: Date;
     level: RoleType;
     isActive: boolean;
+    isTeacherActive: boolean; // NEW: Teacher approval status
+    isAdmin: boolean; // NEW: Admin flag
+    isSuperadmin: boolean; // NEW: Superadmin flag
 }
 
 interface ResetPasswordSendEmailParams {
