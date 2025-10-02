@@ -1,7 +1,7 @@
 "use client";
 
 import LoadingPage from "@/components/LoadingPage";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 import "./style.scss";
 
@@ -30,6 +30,13 @@ export default function ModalComponent({
   onClose,
   children,
 }: Readonly<ModalComponentProps>) {
+    useEffect(() => {
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+      backdrop.parentNode?.removeChild(backdrop);
+          document.body.style.overflow = '';
+    }
+  },[onClose])
   return (
     <div
       className={`modal fade ${
