@@ -224,32 +224,4 @@ export class UserController {
       );
     }
   }
-
-  // @Post('approve-teacher')
-  // @UserLevels(UserLevel.Superadmin, UserLevel.Admin)
-  // @ApiBearerAuth()
-  // @ApiTags('Users')
-  // async approveTeacher(@Body() setTeacherApprovalDto: SetTeacherApprovalDto) {
-  //   return await this.userService.approveTeacher(setTeacherApprovalDto);
-  // }
-
-  // @Post('reject-teacher')
-  // @UserLevels(UserLevel.Superadmin, UserLevel.Admin)
-  // @ApiBearerAuth()
-  // @ApiTags('Users')
-  // async rejectTeacher(@Body() setTeacherApprovalDto: SetTeacherApprovalDto) {
-  //   return await this.userService.rejectTeacher(setTeacherApprovalDto);
-  // }
-
-  // @Get('pending-teachers')
-  // @UserLevels(UserLevel.Superadmin, UserLevel.Admin)
-  // @ApiBearerAuth()
-  // @ApiTags('Users')
-  // async getPendingTeachers() {
-  //   return await this.userService.findAll(
-  //     undefined, // roles
-  //     ['Professor'], // profiles - only professors
-  //     'Inactive', // status - inactive users (pending approval)
-  //   );
-  // }
 }
