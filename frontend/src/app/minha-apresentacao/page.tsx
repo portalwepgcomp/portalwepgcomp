@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import ModalEditarCadastro from "@/components/Modals/ModalEdicaoCadastro/ModalEditarCadastro";
 import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
+import { useEdicao } from "@/hooks/useEdicao";
 import { SubmissionFileProvider } from "@/context/submissionFile";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubmission } from "@/hooks/useSubmission";
@@ -40,15 +40,19 @@ export default function MinhasApresentacoes() {
       setSubmission(submission);
     }
   };
+  const { Edicao } = useEdicao();
+  
+  const eventEditionId = Edicao?.id;
+
 
   useEffect(() => {
     const params = {
-      eventEditionId: getEventEditionIdStorage() ?? "",
+      eventEditionId: eventEditionId ?? "",
       mainAuthorId: user?.id
     };
 
     getSubmissions(params);
-  }, []);
+  }, [eventEditionId]);
 
   useEffect(() => {
     const filteredSessions = submissionList.filter((submission) => {

@@ -86,11 +86,6 @@ export default function Header() {
     const currentHash = window.location.hash;
     listEdicao();
 
-    setSelectEdition({
-      year: "",
-      isActive: true,
-    });
-
     if (currentPath === "/home") {
       if (currentHash === "#inicio") setSelectedItem("inicio");
       else if (currentHash === "#Programacao")
@@ -230,35 +225,35 @@ export default function Header() {
                 </Link>
               </div>
 
-                {!signed && (
-                  <li className="nav-item">
-                    <Link
-                      className="nav-link active text-black"
-                      aria-current="page"
-                      href="/cadastro"
-                    >
-                      Cadastro
-                    </Link>
-                  </li>
-                )}
-                
+              {!signed && (
                 <li className="nav-item">
-                  {signed ? (
-                    <div className="welcome-user">
-                      Olá, {user?.name.split(" ")[0]}!{perfil()}
-                    </div>
-                  ) : (
-                    <Link
-                      className="nav-link active text-black"
-                      aria-current="page"
-                      href="/login"
-                    >
-                      Login
-                    </Link>
-                  )}
+                  <Link
+                    className="nav-link active text-black"
+                    aria-current="page"
+                    href="/cadastro"
+                  >
+                    Cadastro
+                  </Link>
                 </li>
-              </ul>
-            </div>
+              )}
+
+              <li className="nav-item">
+                {signed ? (
+                  <div className="welcome-user">
+                    Olá, {user?.name.split(" ")[0]}!{perfil()}
+                  </div>
+                ) : (
+                  <Link
+                    className="nav-link active text-black"
+                    aria-current="page"
+                    href="/login"
+                  >
+                    Login
+                  </Link>
+                )}
+              </li>
+            </ul>
+          </div>
         </div>
       </nav>
     </>
