@@ -6,7 +6,7 @@ import Banner from "@/components/UI/Banner";
 import { useContext, useEffect } from "react";
 
 import { AuthContext } from "@/context/AuthProvider/authProvider";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
+import { useEdicao } from "@/hooks/useEdicao";
 import { useSession } from "@/hooks/useSession";
 
 import PresentationCard from "@/components/CardApresentacao/PresentationCard";
@@ -17,11 +17,14 @@ export default function MinhasBancas() {
 		useSession();
 	const { user } = useContext(AuthContext);
 
+	const { Edicao } = useEdicao();
+
+	const eventEditionId = Edicao?.id;
+
 	useEffect(() => {
-		const eventEditionId = getEventEditionIdStorage() ?? "";
 		if (eventEditionId)
 			listPresentionBlockByPanelist(eventEditionId, user?.id ?? "");
-	}, []);
+	}, [eventEditionId]);
 
 	return (
 		<div
