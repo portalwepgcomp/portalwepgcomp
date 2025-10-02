@@ -569,10 +569,14 @@ export class UserService {
       throw new NotFoundException('Usuário não encontrado.');
     }
 
-    // Prevent demoting the last superadmin
-    if (user.isSuperadmin) {
+    // Prevent demoting the last superadmin (check both boolean flag and level)
+    const isSuperadmin =
+      user.isSuperadmin || user.level === UserLevel.Superadmin;
+    if (isSuperadmin) {
       const superadminCount = await this.prismaClient.userAccount.count({
-        where: { isSuperadmin: true },
+        where: {
+          OR: [{ isSuperadmin: true }, { level: UserLevel.Superadmin }],
+        },
       });
 
       if (superadminCount <= 1) {
@@ -586,21 +590,25 @@ export class UserService {
     let updateData: any = {};
     let demotionMessage = '';
 
-    if (user.isSuperadmin) {
+    // Check for Admin (either by boolean flag or level)
+    const isAdmin = user.isAdmin || user.level === UserLevel.Admin;
+
+    if (isSuperadmin) {
       // Superadmin → Admin (keep admin status)
       updateData = {
         isSuperadmin: false,
+        isAdmin: true, // Ensure admin flag is set correctly
         level: UserLevel.Admin,
-        // Keep isAdmin: true, isTeacherActive as is
+        // Keep isTeacherActive as is
       };
       demotionMessage = 'Superadministrador rebaixado para Administrador';
-    } else if (user.isAdmin) {
+    } else if (isAdmin) {
       // Admin → Approved Teacher (if they are a professor) or Default User
       if (user.profile === Profile.Professor) {
         updateData = {
           isAdmin: false,
           level: UserLevel.Default,
-          // Keep isTeacherActive: true if they were approved
+          isTeacherActive: true, // Make them approved teacher
         };
         demotionMessage = 'Administrador rebaixado para Professor Aprovado';
       } else {
