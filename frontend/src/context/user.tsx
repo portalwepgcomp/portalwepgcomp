@@ -91,7 +91,8 @@ export const UserProvider = ({ children }: UserProps) => {
           setLoadingUserList(false);
         });
     };
-  }, [authUser, showAlert]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser?.id, showAlert]);
 
   const registerUser = async (body: RegisterUserParams) => {
     setLoadingCreateUser(true);
