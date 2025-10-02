@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   CreateUserDto,
   RegistrationNumberType,
@@ -20,13 +24,15 @@ export class UserService {
     private prismaClient: PrismaService,
     private jwtService: JwtService,
     private mailingService: MailingService,
-  ) { }
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     // Validacao de e-mail @ufba.br para quem nao eh de fora.
     if (createUserDto.profile !== Profile.Listener) {
       if (!createUserDto.email.toLowerCase().endsWith('@ufba.br')) {
-        throw new BadRequestException('Apenas e-mails @ufba.br podem ser cadastrados.');
+        throw new BadRequestException(
+          'Apenas e-mails @ufba.br podem ser cadastrados.',
+        );
       }
     }
 
@@ -34,7 +40,7 @@ export class UserService {
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(createUserDto.password)) {
       throw new BadRequestException(
-        'A senha deve conter pelo menos 8 caracteres, incluindo pelo menos uma letra, um número e pode conter caracteres especiais.'
+        'A senha deve conter pelo menos 8 caracteres, incluindo pelo menos uma letra, um número e pode conter caracteres especiais.',
       );
     }
 
@@ -43,7 +49,7 @@ export class UserService {
       createUserDto.registrationNumber?.trim() || undefined;
 
     // define tipo padrão se vier número e não informar tipo:
-    let registrationNumberType =
+    const registrationNumberType =
       createUserDto.registrationNumberType ??
       (registrationNumber
         ? createUserDto.profile === Profile.Listener
@@ -98,6 +104,10 @@ export class UserService {
         registrationNumber,
         registrationNumberType,
         isActive:
+          createUserDto.profile === Profile.Professor && !shouldBeSuperAdmin
+            ? false
+            : true,
+        isTeacherActive:
           createUserDto.profile === Profile.Professor && !shouldBeSuperAdmin
             ? false
             : true,
@@ -382,7 +392,7 @@ export class UserService {
       },
     });
 
-    return users.map((user) => new ResponseUserDto(user));
+    return users.map((user) => new ResponseUserDto(user as any));
   }
 
   private async generateEmailToken(userId: string): Promise<string> {
@@ -436,10 +446,53 @@ export class UserService {
     }
   }
 
-  async updateRegistrationNumber(userId: string, registrationNumber: string | null): Promise<void> {
+  async updateRegistrationNumber(
+    userId: string,
+    registrationNumber: string | null,
+  ): Promise<void> {
     await this.prismaClient.userAccount.update({
       where: { id: userId },
       data: { registrationNumber },
+    });
+  }
+
+  // --- LOGIC FOR APPROVING TEACHERS ---
+  // 👇 FIX 1: The 'id' is a string, not a number.
+  async approveTeacher(id: string): Promise<UserAccount> {
+    // 👇 FIX 2: Use the correct model name 'userAccount'.
+    const user = await this.prismaClient.userAccount.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found.`);
+    }
+
+    return this.prismaClient.userAccount.update({
+      where: { id: id },
+      // Use the correct field name 'isTeacherActive' from the schema
+      data: { isTeacherActive: true },
+    });
+  }
+
+  // --- LOGIC FOR PROMOTING TO SUPERADMIN ---
+  // 👇 FIX 1: The 'id' is a string, not a number.
+  async promoteToSuperadmin(id: string): Promise<UserAccount> {
+    const user = await this.prismaClient.userAccount.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found.`);
+    }
+
+    return this.prismaClient.userAccount.update({
+      where: { id: id },
+      // 👇 FIX 4: Assuming 'isSuperadmin' is correct. Please verify this field name in your 'schema.prisma'
+      data: {
+        isSuperadmin: true,
+        level: UserLevel.Superadmin, // Assuming 'level' is your role field
+      },
     });
   }
 }

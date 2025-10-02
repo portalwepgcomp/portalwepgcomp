@@ -79,6 +79,34 @@ export class UserController {
     return this.userService.toggleUserActivation(id, activate);
   }
 
+  // --- NEW ENDPOINT FOR APPROVING TEACHERS ---
+  /**
+   * Approves a user with the PROFESSOR role.
+   * Only accessible by users with ADMIN or SUPERADMIN roles.
+   * @param id - The ID of the user to be approved.
+   */
+  @Patch(':id/approve') // Handles PATCH requests to /users/:id/approve
+  @UseGuards(JwtAuthGuard, UserLevelGuard) // Protects the route, checking for a valid JWT and then the user's role.
+  @UserLevels(UserLevel.Admin, UserLevel.Superadmin) // Specifies that only ADMIN and SUPERADMIN can access this.
+  async approveTeacher(@Param('id') id: string) {
+    // @Param('id') grabs the 'id' from the URL as a string.
+    // We then call the corresponding service method to handle the logic.
+    return this.userService.approveTeacher(id);
+  }
+
+  // --- NEW ENDPOINT FOR PROMOTING TO SUPERADMIN ---
+  /**
+   * Promotes a user to SUPERADMIN.
+   * Only accessible by users who are already SUPERADMINs.
+   * @param id - The ID of the user to be promoted.
+   */
+  @Patch(':id/promote') // Handles PATCH requests to /users/:id/promote
+  @UseGuards(JwtAuthGuard, UserLevelGuard) // Same protection mechanism.
+  @UserLevels(UserLevel.Superadmin) // Stricter: only a SUPERADMIN can promote another user.
+  async promoteToSuperadmin(@Param('id') id: string) {
+    return this.userService.promoteToSuperadmin(id);
+  }
+
   @Get()
   @ApiQuery({
     name: 'roles',
@@ -147,4 +175,32 @@ export class UserController {
       );
     }
   }
+
+  // @Post('approve-teacher')
+  // @UserLevels(UserLevel.Superadmin, UserLevel.Admin)
+  // @ApiBearerAuth()
+  // @ApiTags('Users')
+  // async approveTeacher(@Body() setTeacherApprovalDto: SetTeacherApprovalDto) {
+  //   return await this.userService.approveTeacher(setTeacherApprovalDto);
+  // }
+
+  // @Post('reject-teacher')
+  // @UserLevels(UserLevel.Superadmin, UserLevel.Admin)
+  // @ApiBearerAuth()
+  // @ApiTags('Users')
+  // async rejectTeacher(@Body() setTeacherApprovalDto: SetTeacherApprovalDto) {
+  //   return await this.userService.rejectTeacher(setTeacherApprovalDto);
+  // }
+
+  // @Get('pending-teachers')
+  // @UserLevels(UserLevel.Superadmin, UserLevel.Admin)
+  // @ApiBearerAuth()
+  // @ApiTags('Users')
+  // async getPendingTeachers() {
+  //   return await this.userService.findAll(
+  //     undefined, // roles
+  //     ['Professor'], // profiles - only professors
+  //     'Inactive', // status - inactive users (pending approval)
+  //   );
+  // }
 }
