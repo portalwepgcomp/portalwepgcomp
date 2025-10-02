@@ -19,7 +19,7 @@ interface UserProviderData {
   loadingAdvisors: boolean;
   loadingAdmins: boolean;
   loadingSwitchActive: boolean;
-  loadingRoleAction: boolean; // NEW: For role management actions
+  loadingRoleAction: boolean;
   user: User | null;
   userList: User[];
   advisors: User[];
@@ -34,7 +34,6 @@ interface UserProviderData {
   markAsDefaultUser: (body: SetPermissionParams) => Promise<void>;
   markAsAdminUser: (body: SetPermissionParams) => Promise<void>;
   markAsSpAdminUser: (body: SetPermissionParams) => Promise<void>;
-  // NEW: Enhanced role management methods
   approveTeacher: (userId: string) => Promise<void>;
   promoteToAdmin: (userId: string) => Promise<void>;
   promoteToSuperadmin: (userId: string) => Promise<void>;
@@ -55,7 +54,7 @@ export const UserProvider = ({ children }: UserProps) => {
   const [loadingAdmins, setLoadingAdmins] = useState<boolean>(false);
   const [loadingSwitchActive, setLoadingSwitchActive] =
     useState<boolean>(false);
-  const [loadingRoleAction, setLoadingRoleAction] = useState<boolean>(false); // NEW
+  const [loadingRoleAction, setLoadingRoleAction] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [userList, setUserList] = useState<User[]>([]);
   const [advisors, setAdvisors] = useState<User[]>([]);
@@ -351,7 +350,6 @@ export const UserProvider = ({ children }: UserProps) => {
     }
   }
 
-  // NEW: Enhanced role management methods
   const approveTeacher = async (userId: string) => {
     setLoadingRoleAction(true);
 

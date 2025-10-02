@@ -52,7 +52,6 @@ export const userApi = {
         return data;
     },
 
-    // NEW: Enhanced role management endpoints
     approveTeacher: async (userId: string) => {
         const { data } = await instance.patch(`${baseUrl}/${userId}/approve`);
         return data;
