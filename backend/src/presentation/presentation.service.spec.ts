@@ -984,6 +984,7 @@ describe('PresentationService', () => {
         registrationNumberType: RegistrationNumberType.CPF,
         isTeacherActive: false,
         isSuperadmin: false,
+        isAdmin: false,
       };
       const mockSubmissions = [
         {
@@ -1063,6 +1064,7 @@ describe('PresentationService', () => {
         registrationNumberType: RegistrationNumberType.CPF,
         isTeacherActive: false,
         isSuperadmin: false,
+        isAdmin: false,
       };
 
       jest
@@ -1096,6 +1098,7 @@ describe('PresentationService', () => {
         registrationNumberType: RegistrationNumberType.CPF,
         isTeacherActive: false,
         isSuperadmin: false,
+        isAdmin: false,
       };
 
       jest
@@ -1132,6 +1135,7 @@ describe('PresentationService', () => {
         registrationNumberType: RegistrationNumberType.CPF,
         isTeacherActive: false,
         isSuperadmin: false,
+        isAdmin: false,
       };
 
       const mockSubmissions = [

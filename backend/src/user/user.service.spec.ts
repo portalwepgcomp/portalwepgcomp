@@ -515,6 +515,7 @@ describe('UserService', () => {
         isActive: true,
         isSuperadmin: false,
         isTeacherActive: false,
+        isAdmin: false,
         isVerified: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -677,6 +678,7 @@ describe('UserService', () => {
         isActive: true,
         isSuperadmin: false,
         isTeacherActive: false,
+        isAdmin: true,
         isVerified: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -839,6 +841,7 @@ describe('UserService', () => {
         isActive: true,
         isSuperadmin: true,
         isTeacherActive: false,
+        isAdmin: false,
         isVerified: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -933,6 +936,7 @@ describe('UserService', () => {
           isVerified: false,
           isSuperadmin: false,
           isTeacherActive: true,
+          isAdmin: true,
         },
         {
           id: '2',
@@ -950,6 +954,7 @@ describe('UserService', () => {
           isVerified: false,
           isSuperadmin: false,
           isTeacherActive: false,
+          isAdmin: false,
         },
       ];
 
@@ -975,6 +980,9 @@ describe('UserService', () => {
           createdAt: true,
           updatedAt: true,
           isVerified: true,
+          isAdmin: true,
+          isSuperadmin: true,
+          isTeacherActive: true,
         },
       });
 
@@ -1001,6 +1009,7 @@ describe('UserService', () => {
           isVerified: false,
           isSuperadmin: false,
           isTeacherActive: true,
+          isAdmin: true,
         },
       ];
 
@@ -1026,6 +1035,9 @@ describe('UserService', () => {
           createdAt: true,
           updatedAt: true,
           isVerified: true,
+          isAdmin: true,
+          isSuperadmin: true,
+          isTeacherActive: true,
         },
       });
 
@@ -1052,6 +1064,7 @@ describe('UserService', () => {
           isVerified: false,
           isSuperadmin: false,
           isTeacherActive: false,
+          isAdmin: false,
         },
       ];
 
@@ -1077,6 +1090,9 @@ describe('UserService', () => {
           createdAt: true,
           updatedAt: true,
           isVerified: true,
+          isAdmin: true,
+          isSuperadmin: true,
+          isTeacherActive: true,
         },
       });
 
@@ -1103,6 +1119,7 @@ describe('UserService', () => {
           isVerified: false,
           isSuperadmin: false,
           isTeacherActive: true,
+          isAdmin: true,
         },
       ];
 
@@ -1128,6 +1145,9 @@ describe('UserService', () => {
           createdAt: true,
           updatedAt: true,
           isVerified: true,
+          isAdmin: true,
+          isSuperadmin: true,
+          isTeacherActive: true,
         },
       });
 

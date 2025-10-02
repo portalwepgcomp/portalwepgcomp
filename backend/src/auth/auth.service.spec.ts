@@ -122,6 +122,7 @@ describe('AuthService', () => {
         isVerified: true,
         isTeacherActive: false,
         isSuperadmin: false,
+        isAdmin: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -164,6 +165,7 @@ describe('AuthService', () => {
         isVerified: true,
         isTeacherActive: false,
         isSuperadmin: false,
+        isAdmin: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
