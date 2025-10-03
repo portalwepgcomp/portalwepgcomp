@@ -86,11 +86,6 @@ export default function Header() {
     const currentHash = window.location.hash;
     listEdicao();
 
-    setSelectEdition({
-      year: "",
-      isActive: true,
-    });
-
     if (currentPath === "/home") {
       if (currentHash === "#inicio") setSelectedItem("inicio");
       else if (currentHash === "#Programacao")
@@ -112,15 +107,17 @@ export default function Header() {
   }, [selectEdition.year]);
 
   useEffect(() => {
-    if (edicoesList?.length) {
-      const edAtiva = edicoesList?.find((v) => v.isActive);
+    if (edicoesList?.length && !selectEdition.year) {
+      const edAtiva = edicoesList.find((v) => v.isActive);
 
-      setSelectEdition({
-        year: String(new Date(edAtiva?.startDate ?? "").getFullYear()),
-        isActive: true,
-      });
+      if (edAtiva?.startDate) {
+        setSelectEdition({
+          year: String(new Date(edAtiva.startDate).getFullYear()),
+          isActive: true,
+        });
+      }
     }
-  }, [edicoesList]);
+  }, [edicoesList, selectEdition.year, setSelectEdition]);
 
   return (
     <>
@@ -139,10 +136,8 @@ export default function Header() {
                 height={100}
               />
             </Link>
-
           </div>
           <div className="container-brand-edition">
-
             {!!yearsOptions.length && (
               <select
                 id="event-edition-select"
@@ -166,7 +161,6 @@ export default function Header() {
             )}
           </div>
 
-
           <button
             className="navbar-toggler"
             type="button"
@@ -179,84 +173,87 @@ export default function Header() {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-              <ul className="navbar-nav align-items-center fw-normal">
-                <div
-                  className={`nav-item ${
-                    selectedItem === "inicio" ? "fw-bold" : ""
-                  }`}
-                  onClick={() => handleItemClick("inicio")}
-                >
-                  <Link className="nav-link text-black" href="/home">
-                    Início
-                  </Link>
-                </div>
+          <div
+            className="collapse navbar-collapse justify-content-end"
+            id="navbarSupportedContent"
+          >
+            <ul className="navbar-nav align-items-center fw-normal">
+              <div
+                className={`nav-item ${
+                  selectedItem === "inicio" ? "fw-bold" : ""
+                }`}
+                onClick={() => handleItemClick("inicio")}
+              >
+                <Link className="nav-link text-black" href="/home">
+                  Início
+                </Link>
+              </div>
 
-                <div
-                  className={`nav-item ${
-                    selectedItem === "programação do evento" ? "fw-bold" : ""
-                  }`}
-                  onClick={() => handleItemClick("programação do evento")}
+              <div
+                className={`nav-item ${
+                  selectedItem === "programação do evento" ? "fw-bold" : ""
+                }`}
+                onClick={() => handleItemClick("programação do evento")}
+              >
+                <Link
+                  className="nav-link text-black tamanho-texto-programacao-evento"
+                  href="home#Programacao"
                 >
-                  <Link
-                    className="nav-link text-black tamanho-texto-programacao-evento"
-                    href="home#Programacao"
-                  >
-                    Programação
-                  </Link>
-                </div>
+                  Programação
+                </Link>
+              </div>
 
-                <div
-                  className={`nav-item ${
-                    selectedItem === "orientações" ? "fw-bold" : ""
-                  }`}
-                  onClick={() => handleItemClick("orientações")}
-                >
-                  <Link className="nav-link text-black" href="home#Orientacao">
-                    Orientações
-                  </Link>
-                </div>
+              <div
+                className={`nav-item ${
+                  selectedItem === "orientações" ? "fw-bold" : ""
+                }`}
+                onClick={() => handleItemClick("orientações")}
+              >
+                <Link className="nav-link text-black" href="home#Orientacao">
+                  Orientações
+                </Link>
+              </div>
 
-                <div
-                  className={`nav-item ${
-                    selectedItem === "contato" ? "fw-bold" : ""
-                  }`}
-                  onClick={() => handleItemClick("contato")}
-                >
-                  <Link className="nav-link text-black" href="home#Contato">
-                    Contato
-                  </Link>
-                </div>
-                
-                {!signed && (
-                  <li className="nav-item">
-                    <Link
-                      className="nav-link active text-black"
-                      aria-current="page"
-                      href="/cadastro"
-                    >
-                      Cadastro
-                    </Link>
-                  </li>
-                )}
-                
+              <div
+                className={`nav-item ${
+                  selectedItem === "contato" ? "fw-bold" : ""
+                }`}
+                onClick={() => handleItemClick("contato")}
+              >
+                <Link className="nav-link text-black" href="home#Contato">
+                  Contato
+                </Link>
+              </div>
+
+              {!signed && (
                 <li className="nav-item">
-                  {signed ? (
-                    <div className="welcome-user">
-                      Olá, {user?.name.split(" ")[0]}!{perfil()}
-                    </div>
-                  ) : (
-                    <Link
-                      className="nav-link active text-black"
-                      aria-current="page"
-                      href="/login"
-                    >
-                      Login
-                    </Link>
-                  )}
+                  <Link
+                    className="nav-link active text-black"
+                    aria-current="page"
+                    href="/cadastro"
+                  >
+                    Cadastro
+                  </Link>
                 </li>
-              </ul>
-            </div>
+              )}
+
+              <li className="nav-item">
+                {signed ? (
+                  <div className="welcome-user">
+                    Olá, {user?.name.split(" ")[0]}!{perfil()}
+                  </div>
+                ) : (
+                  <Link
+                    className="nav-link active text-black"
+                    aria-current="page"
+                    href="/login"
+                  >
+                    Login
+                  </Link>
+                )}
+              </li>
+            </ul>
+          </div>
         </div>
       </nav>
     </>

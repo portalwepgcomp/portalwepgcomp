@@ -33,16 +33,16 @@ export default function Sessoes() {
     }
   };
 
-  useEffect(() => {
-    const eventEditionId = getEventEditionIdStorage();
+  const eventEditionId = Edicao?.id;
 
+  useEffect(() => {
     listSessions(eventEditionId ?? "");
     getUsers({ profiles: "Professor" });
     getSubmissions({
       eventEditionId: eventEditionId ?? "",
       withouPresentation: true,
     });
-  }, []);
+  }, [eventEditionId]);
 
   useEffect(() => {
     if (sessoesList.length) {
@@ -63,7 +63,7 @@ export default function Sessoes() {
 
   useEffect(() => {
     setSessionsListValues(sessoesList);
-  }, []);
+  }, [sessoesList]);
 
   return (
     <ProtectedLayout>

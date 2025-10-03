@@ -3,6 +3,7 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
+  useEffect,
   useState,
 } from "react";
 
@@ -34,8 +35,22 @@ export const ActiveEditionProvider = ({ children }: ActiveEditionProps) => {
     year: string;
     isActive: boolean;
   }>({ year: "", isActive: false });
+
   const [loadingActiveEdition, setLoadingActiveEdition] =
     useState<boolean>(false);
+
+  useEffect(() => {
+    const savedEdition = localStorage.getItem("activeEdition");
+    if (savedEdition) {
+      setSelectEdition(JSON.parse(savedEdition));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectEdition.year) {
+      localStorage.setItem("activeEdition", JSON.stringify(selectEdition));
+    }
+  }, [selectEdition]);
 
   return (
     <ActiveEditionContext.Provider

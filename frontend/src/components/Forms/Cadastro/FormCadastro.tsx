@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import PasswordEye from "@/components/UI/PasswordEye";
 import "./style.scss";
+import Loading from "@/components/LoadingPage";
 
 const formCadastroSchema = z
   .object({
@@ -154,7 +155,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
 
   return (
   <>
-    {!loadingCreateUser && (
+    {!loadingCreateUser ? (
       <form className="row" onSubmit={handleSubmit(handleFormCadastro)}>
         <div className="col-12 mb-1">
           <label className="form-label fs-5 fw-bold">
@@ -374,7 +375,9 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
           </button>
         </div>
       </form>
-    )}
+    ):
+      <Loading/>
+    }
   </>
 );
 

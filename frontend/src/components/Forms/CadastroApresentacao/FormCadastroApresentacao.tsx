@@ -114,7 +114,6 @@ export function FormCadastroApresentacao() {
 
   const doutorandos = userList
     .filter((usuario) => usuario.profile === "DoctoralStudent")
-    .sort((a, b) => a.name.localeCompare(b.name));
 
   const aoMudarArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const arquivoSelecionado = e.target.files?.[0];
@@ -313,7 +312,6 @@ export function FormCadastroApresentacao() {
         >
           <option value="">Selecione o nome do orientador</option>
           {advisors
-            .sort((a, b) => a.name.localeCompare(b.name))
             .map((orientador) => (
               <option key={orientador.id} value={orientador.id}>
                 {orientador.name}

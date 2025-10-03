@@ -10,6 +10,7 @@ import { useSubmission } from "@/hooks/useSubmission";
 import { ApresentacoesMock } from "@/mocks/Apresentacoes";
 import Listagem, { mapCardList } from "@/templates/Listagem/Listagem";
 import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
+import { useEdicao } from "@/hooks/useEdicao";
 
 export default function Apresentacoes() {
   const { title, userArea } = ApresentacoesMock;
@@ -27,10 +28,16 @@ export default function Apresentacoes() {
   const [isMounted, setIsMounted] = useState(false);
   const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(false);
 
+  const { Edicao } = useEdicao();
+
+  const eventEditionId = Edicao?.id;
+
   useEffect(() => {
-    getSubmissions({ eventEditionId: getEventEditionIdStorage() ?? "" });
-    setIsMounted(true)
-  }, []);
+    if (eventEditionId) {
+      getSubmissions({ eventEditionId: eventEditionId ?? "" });
+    }
+    setIsMounted(true);
+  }, [eventEditionId]);
 
   const filteredSubmissions = useMemo(() => {
     const search = searchValue.trim().toLowerCase();
@@ -43,9 +50,7 @@ export default function Apresentacoes() {
       return submission.mainAuthorId === user?.id && matchesSearch;
     });
 
-    setIsAddButtonDisabled(
-      user?.level === "Default" && filtered.length > 0
-    );
+    setIsAddButtonDisabled(user?.level === "Default" && filtered.length > 0);
 
     return filtered;
   }, [searchValue, submissionList, user]);
@@ -73,7 +78,7 @@ export default function Apresentacoes() {
   if (loadingSubmissionList || !isMounted) {
     return (
       <ProtectedLayout>
-        <IndicadorDeCarregamento/>
+        <IndicadorDeCarregamento />
       </ProtectedLayout>
     );
   }

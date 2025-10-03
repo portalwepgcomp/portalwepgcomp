@@ -43,10 +43,13 @@ export default function CardListagem({
     <div className="card-listagem" onClick={onClickItem}>
       <div className="card-listagem-text">
         <h5 className="card-listagem-title">{title}</h5>
+        {mainAuthor != "Sem nome" &&
         <div className="card-listagem-authors">
           <h6 className="card-listagem-main-author">Doutorando(a): {mainAuthor}</h6>
           {advisor && <p className="card-listagem-advisor">Orientador(a): {advisor}</p>}
         </div>
+        }
+        
         <ReadMore text={subtitle} maxLength={100}/>
       </div>
       <div className="buttons-area">
