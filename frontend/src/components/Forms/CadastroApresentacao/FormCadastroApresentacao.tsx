@@ -44,7 +44,7 @@ const esquemaCadastro = z.object({
   slide: z
     .string({ invalid_type_error: "Campo Inválido" })
     .refine((val) => val && val.trim().length > 0, {
-        message: "O PDF é obrigatório",
+        message: "O envio do slide em PDF é obrigatório",
       }),
 });
 
