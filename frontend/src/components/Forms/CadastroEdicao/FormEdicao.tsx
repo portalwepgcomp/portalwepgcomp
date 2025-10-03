@@ -35,16 +35,16 @@ const formEdicaoSchema = z.object({
 
   inicio: z
     .string({
-      invalid_type_error: "Data e horário de início são obrigatórios!",
+      invalid_type_error: "Data de início são obrigatórios!",
     })
     .datetime({
-      message: "Data ou horário inválidos!",
+      message: "Data inválida!",
     }),
 
   final: z
-    .string({ invalid_type_error: "Data e horário de fim são obrigatórios!" })
+    .string({ invalid_type_error: "Data de fim são obrigatórios!" })
     .datetime({
-      message: "Data ou horário inválidos!",
+      message: "Data inválida!",
     }),
 
   local: z
@@ -99,9 +99,13 @@ const formEdicaoSchema = z.object({
 
   sessoes: z.number({
     invalid_type_error: "O número de sessões é obrigatório!",
+  }).nonnegative({
+    message: "O número de sessões não pode ser negativo!"
   }),
   duracao: z.number({
     invalid_type_error: "Informar a duração é obrigatório!",
+  }).nonnegative({
+    message: "A duração não pode ser negativa!"
   }),
   submissao: z
     .string({ invalid_type_error: "Campo Inválido" })
@@ -146,9 +150,10 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
     control,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormEdicaoSchema>({
     resolver: zodResolver(formEdicaoSchema),
+    mode: 'onChange',
     defaultValues: {
       inicio: "",
       final: "",
@@ -345,7 +350,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
 
       <div className="col-12 mb-1">
         <label className="form-label form-title">
-          Data e horário de início e fim do evento
+          Data de início e fim do evento
           <span className="text-danger ms-1 form-title">*</span>
         </label>
         <div className="d-flex flex-row justify-content-start gap-2 ">
@@ -570,7 +575,9 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
               placeholder="ex.: 20 minutos"
               {...register("duracao", { valueAsNumber: true })}
             />
-            <p className="text-danger error-message"></p>
+            <p className="text-danger error-message">
+              {errors.duracao?.message}
+            </p>
           </div>
         </div>
       </div>
@@ -628,7 +635,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
         <button
           type="submit"
           className="btn text-white fs-5 submit-button"
-          disabled={!Edicao?.isActive}
+          disabled={!Edicao?.isActive || !isValid}
         >
           {confirmButton.label}
         </button>
