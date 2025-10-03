@@ -97,16 +97,20 @@ const formEdicaoSchema = z.object({
     )
     .optional(),
 
-  sessoes: z.number({
-    invalid_type_error: "O número de sessões é obrigatório!",
-  }).nonnegative({
-    message: "O número de sessões não pode ser negativo!"
-  }),
-  duracao: z.number({
-    invalid_type_error: "Informar a duração é obrigatório!",
-  }).nonnegative({
-    message: "A duração não pode ser negativa!"
-  }),
+  sessoes: z
+    .number({
+      invalid_type_error: "O número de sessões é obrigatório!",
+    })
+    .nonnegative({
+      message: "O número de sessões não pode ser negativo!",
+    }),
+  duracao: z
+    .number({
+      invalid_type_error: "Informar a duração é obrigatório!",
+    })
+    .nonnegative({
+      message: "A duração não pode ser negativa!",
+    }),
   submissao: z
     .string({ invalid_type_error: "Campo Inválido" })
     .min(1, "O texto para submissão é obrigatório!"),
@@ -140,7 +144,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
   const [avaliadoresOptions, setAvaliadoresOptions] = useState<OptionType[]>(
     []
   );
-  const [comissaoOptions, setComissaoOptions] = useState<OptionType[]>([])
+  const [comissaoOptions, setComissaoOptions] = useState<OptionType[]>([]);
   const router = useRouter();
   const { confirmButton } = ModalSessaoMock;
   registerLocale("pt-BR", ptBR);
@@ -153,7 +157,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
     formState: { errors, isValid },
   } = useForm<FormEdicaoSchema>({
     resolver: zodResolver(formEdicaoSchema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
       inicio: "",
       final: "",
@@ -301,7 +305,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
         value: v.id ?? "",
         label: v.name ?? "",
       }));
-      setComissaoOptions(users)
+      setComissaoOptions(users);
     }
   }, [admins]);
 
@@ -361,13 +365,9 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
               <DatePicker
                 id="ed-inicio-data"
                 onChange={(date) =>
-                  field.onChange(
-                    dayjs(date).toISOString() || null
-                  )
+                  field.onChange(dayjs(date).toISOString() || null)
                 }
-                selected={
-                  field.value ? dayjs(field.value).toDate() : null
-                }
+                selected={field.value ? dayjs(field.value).toDate() : null}
                 showIcon
                 className="form-control datepicker"
                 dateFormat="dd/MM/yyyy"
@@ -375,7 +375,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                 minDate={startOfYear(new Date())}
                 maxDate={endOfYear(new Date())}
                 placeholderText="(ex.: 22/10/2024)"
-                isClearable
                 toggleCalendarOnIconClick
               />
             )}
@@ -404,7 +403,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                 minDate={startOfYear(new Date())}
                 maxDate={endOfYear(new Date())}
                 placeholderText="(ex.: 22/10/2024)"
-                isClearable
                 toggleCalendarOnIconClick
               />
             )}
@@ -612,7 +610,12 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                   id="ed-deadline-data"
                   showIcon
                   onChange={(date) =>
-                    field.onChange(date?.toISOString() || null)
+                    field.onChange(
+                      dayjs(date)
+                        .set("hour", 23)
+                        .set("minute", 59)
+                        .toISOString() || null
+                    )
                   }
                   selected={field.value ? new Date(field.value) : null}
                   placeholderText="(ex.: 22/10/2024)"
@@ -621,7 +624,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                   locale="pt-BR"
                   minDate={startOfYear(new Date())}
                   maxDate={endOfYear(new Date())}
-                  isClearable
                   toggleCalendarOnIconClick
                 />
               )}
