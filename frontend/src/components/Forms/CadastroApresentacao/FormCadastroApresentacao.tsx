@@ -41,7 +41,11 @@ const esquemaCadastro = z.object({
       const celularFormatado = value.replace(/\D/g, "");
       return celularFormatado.length >= 10 && celularFormatado.length <= 11;
     }, "O celular deve conter 10 ou 11 dígitos"),
-  slide: z.string({ invalid_type_error: "Campo Inválido" }).optional(),
+  slide: z
+    .string({ invalid_type_error: "Campo Inválido" })
+    .refine((val) => val && val.trim().length > 0, {
+        message: "O PDF é obrigatório",
+      }),
 });
 
 type CadastroFormulario = z.infer<typeof esquemaCadastro>;
@@ -122,7 +126,9 @@ export function FormCadastroApresentacao() {
     if (arquivoSelecionado) {
       setArquivo(arquivoSelecionado);
       setNomeArquivo(arquivoSelecionado.name);
-      setValue("slide", arquivoSelecionado.name);
+      setValue("slide", arquivoSelecionado.name, {
+          shouldValidate: true,
+       });
     }
   };
 
