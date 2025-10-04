@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import ModalEditarCadastro from "@/components/Modals/ModalEdicaoCadastro/ModalEditarCadastro";
 import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
 import { useEdicao } from "@/hooks/useEdicao";
-import { SubmissionFileProvider } from "@/context/submissionFile";
+import { SubmissionFileProvider } from "@/hooks/useSubmissionFile";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubmission } from "@/hooks/useSubmission";
 import { MinhasApresentacoesMock } from "@/mocks/MinhasApresentacoes";

@@ -13,7 +13,7 @@ import "./style.scss";
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { useRouter } from "next/navigation";
 import { ptBR } from "date-fns/locale";
-import { UserContext } from "@/context/user";
+import { useUsers } from "@/hooks/useUsers";
 import { useSweetAlert } from "@/hooks/useAlert";
 import { useCommittee } from "@/hooks/useCommittee";
 import dayjs from "dayjs";
@@ -129,8 +129,8 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
   const { createEdicao, updateEdicao, Edicao } = useEdicao();
   const { getCommitterAll, committerList } = useCommittee();
   const { user } = useContext(AuthContext);
-  const { getAdvisors, advisors } = useContext(UserContext);
-  const { getAdmins, admins } = useContext(UserContext);
+  const { getAdvisors, advisors } = useUsers();
+  const { getAdmins, admins } = useUsers();
   const [advisorsLoaded, setAdvisorsLoaded] = useState(false);
   const [adminsLoaded, setAdminsLoaded] = useState(false);
   const [avaliadoresOptions, setAvaliadoresOptions] = useState<OptionType[]>(

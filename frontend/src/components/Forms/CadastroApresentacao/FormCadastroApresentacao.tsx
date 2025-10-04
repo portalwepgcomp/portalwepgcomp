@@ -10,8 +10,8 @@ import { z } from "zod";
 
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
-import { SubmissionContext } from "@/context/submission";
-import { UserContext } from "@/context/user";
+import { useSubmission } from "@/hooks/useSubmission";
+import { useUsers } from "@/hooks/useUsers";
 import { useSweetAlert } from "@/hooks/useAlert";
 import { useSubmissionFile } from "@/hooks/useSubmissionFile";
 
@@ -51,9 +51,9 @@ export function FormCadastroApresentacao() {
   const { showAlert } = useSweetAlert();
   const { user } = useContext(AuthContext);
   const { createSubmission, updateSubmissionById, submission, setSubmission } =
-    useContext(SubmissionContext);
+    useSubmission();
   const { getAdvisors, advisors, getUsers, userList, loadingUserList } =
-    useContext(UserContext);
+    useUsers();
   const { sendFile, deleteFile } = useSubmissionFile();
   const [professoresCarregou, setProfessoresCarregou] = useState(false);
   const [arquivo, setArquivo] = useState<File | null>(null);
@@ -182,7 +182,7 @@ export function FormCadastroApresentacao() {
 
     try {
       if (arquivo) {
-        const respostaUpload = await sendFile(arquivo, user.id);
+        const respostaUpload = await sendFile(arquivo);
         if (!respostaUpload?.key) {
           throw new Error("Falha no upload do arquivo");
         }
