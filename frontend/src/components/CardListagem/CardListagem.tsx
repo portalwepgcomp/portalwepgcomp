@@ -40,15 +40,16 @@ export default function CardListagem({
   const { Edicao } = useEdicao();
 
   return (
-    <div className="card-listagem"
+    <div className="card-listagem">
+      <div className="card-listagem-text"             
             data-bs-toggle="modal"
             data-bs-target={`#${idModalEdit}`}
             onClick={() => {
               if (onEdit) {
                 onEdit();
               }
-            }}>
-      <div className="card-listagem-text">
+            }}
+      >
         <h5 className="card-listagem-title">{title}</h5>
         {mainAuthor != "Sem nome" &&
         <div className="card-listagem-authors">
