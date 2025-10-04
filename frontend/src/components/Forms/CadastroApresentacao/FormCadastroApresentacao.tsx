@@ -41,7 +41,11 @@ const esquemaCadastro = z.object({
       const celularFormatado = value.replace(/\D/g, "");
       return celularFormatado.length >= 10 && celularFormatado.length <= 11;
     }, "O celular deve conter 10 ou 11 dígitos"),
-  slide: z.string({ invalid_type_error: "Campo Inválido" }).optional(),
+  slide: z
+    .string({ invalid_type_error: "Campo Inválido" })
+    .refine((val) => val && val.trim().length > 0, {
+        message: "O envio do slide em PDF é obrigatório",
+      }),
 });
 
 type CadastroFormulario = z.infer<typeof esquemaCadastro>;
@@ -114,7 +118,6 @@ export function FormCadastroApresentacao() {
 
   const doutorandos = userList
     .filter((usuario) => usuario.profile === "DoctoralStudent")
-    .sort((a, b) => a.name.localeCompare(b.name));
 
   const aoMudarArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const arquivoSelecionado = e.target.files?.[0];
@@ -122,7 +125,9 @@ export function FormCadastroApresentacao() {
     if (arquivoSelecionado) {
       setArquivo(arquivoSelecionado);
       setNomeArquivo(arquivoSelecionado.name);
-      setValue("slide", arquivoSelecionado.name);
+      setValue("slide", arquivoSelecionado.name, {
+          shouldValidate: true,
+       });
     }
   };
 
@@ -313,7 +318,6 @@ export function FormCadastroApresentacao() {
         >
           <option value="">Selecione o nome do orientador</option>
           {advisors
-            .sort((a, b) => a.name.localeCompare(b.name))
             .map((orientador) => (
               <option key={orientador.id} value={orientador.id}>
                 {orientador.name}

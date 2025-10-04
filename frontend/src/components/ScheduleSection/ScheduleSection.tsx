@@ -90,21 +90,23 @@ export default function ScheduleSection() {
 					Programação
 				</h1>
 
-				<div className='d-flex justify-content-center programacao-dias'>
-					{dates.map((date, index) => (
-						<button
-							key={index}
-							className='d-flex align-items-center fw-bold flex-start fs-5 date-button'
-							style={{
-								backgroundColor: selectedDate === date ? "#FFA90F" : "white",
-								color: selectedDate === date ? "white" : "#FFA90F",
-							}}
-							onClick={() => changeDate(date)}
-						>
-							<Calendar color={selectedDate === date ? "white" : "#FFA90F"} />
-							{moment(date).format("DD [de] MMMM")}
-						</button>
-					))}
+				<div className='d-flex justify-content-center'>
+					<div className='programacao-dias'>
+						{dates.map((date, index) => (
+							<button
+								key={index}
+								className='d-flex align-items-center fw-bold flex-start fs-5 date-button'
+								style={{
+									backgroundColor: selectedDate === date ? "#FFA90F" : "white",
+									color: selectedDate === date ? "white" : "#FFA90F",
+								}}
+								onClick={() => changeDate(date)}
+							>
+								<Calendar color={selectedDate === date ? "white" : "#FFA90F"} />
+								{moment(date).format("DD [de] MMMM")}
+							</button>
+						))}
+					</div>
 				</div>
 
 				{loadingRoomsList ? (
