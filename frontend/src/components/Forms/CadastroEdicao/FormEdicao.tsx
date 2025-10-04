@@ -103,14 +103,17 @@ const formEdicaoSchema = z.object({
     })
     .nonnegative({
       message: "O número de sessões não pode ser negativo!",
-    }),
+    })
+    .gt(0, { message: "O número de sessões deve ser maior que 0!" }),
+
   duracao: z
     .number({
       invalid_type_error: "Informar a duração é obrigatório!",
     })
     .nonnegative({
       message: "A duração não pode ser negativa!",
-    }),
+    })
+    .gt(0, { message: "A duração deve ser maior que 0!" }),
   submissao: z
     .string({ invalid_type_error: "Campo Inválido" })
     .min(1, "O texto para submissão é obrigatório!"),
