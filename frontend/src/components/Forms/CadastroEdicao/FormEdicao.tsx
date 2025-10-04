@@ -35,16 +35,16 @@ const formEdicaoSchema = z.object({
 
   inicio: z
     .string({
-      invalid_type_error: "Data e horário de início são obrigatórios!",
+      invalid_type_error: "Data de início são obrigatórios!",
     })
     .datetime({
-      message: "Data ou horário inválidos!",
+      message: "Data inválida!",
     }),
 
   final: z
-    .string({ invalid_type_error: "Data e horário de fim são obrigatórios!" })
+    .string({ invalid_type_error: "Data de fim são obrigatórios!" })
     .datetime({
-      message: "Data ou horário inválidos!",
+      message: "Data inválida!",
     }),
 
   local: z
@@ -97,12 +97,23 @@ const formEdicaoSchema = z.object({
     )
     .optional(),
 
-  sessoes: z.number({
-    invalid_type_error: "O número de sessões é obrigatório!",
-  }),
-  duracao: z.number({
-    invalid_type_error: "Informar a duração é obrigatório!",
-  }),
+  sessoes: z
+    .number({
+      invalid_type_error: "O número de sessões é obrigatório!",
+    })
+    .nonnegative({
+      message: "O número de sessões não pode ser negativo!",
+    })
+    .gt(0, { message: "O número de sessões deve ser maior que 0!" }),
+
+  duracao: z
+    .number({
+      invalid_type_error: "Informar a duração é obrigatório!",
+    })
+    .nonnegative({
+      message: "A duração não pode ser negativa!",
+    })
+    .gt(0, { message: "A duração deve ser maior que 0!" }),
   submissao: z
     .string({ invalid_type_error: "Campo Inválido" })
     .min(1, "O texto para submissão é obrigatório!"),
@@ -136,7 +147,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
   const [avaliadoresOptions, setAvaliadoresOptions] = useState<OptionType[]>(
     []
   );
-  const [comissaoOptions, setComissaoOptions] = useState<OptionType[]>([])
+  const [comissaoOptions, setComissaoOptions] = useState<OptionType[]>([]);
   const router = useRouter();
   const { confirmButton } = ModalSessaoMock;
   registerLocale("pt-BR", ptBR);
@@ -146,9 +157,10 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
     control,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormEdicaoSchema>({
     resolver: zodResolver(formEdicaoSchema),
+    mode: "onChange",
     defaultValues: {
       inicio: "",
       final: "",
@@ -296,7 +308,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
         value: v.id ?? "",
         label: v.name ?? "",
       }));
-      setComissaoOptions(users)
+      setComissaoOptions(users);
     }
   }, [admins]);
 
@@ -345,7 +357,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
 
       <div className="col-12 mb-1">
         <label className="form-label form-title">
-          Data e horário de início e fim do evento
+          Data de início e fim do evento
           <span className="text-danger ms-1 form-title">*</span>
         </label>
         <div className="d-flex flex-row justify-content-start gap-2 ">
@@ -356,13 +368,9 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
               <DatePicker
                 id="ed-inicio-data"
                 onChange={(date) =>
-                  field.onChange(
-                    dayjs(date).toISOString() || null
-                  )
+                  field.onChange(dayjs(date).toISOString() || null)
                 }
-                selected={
-                  field.value ? dayjs(field.value).toDate() : null
-                }
+                selected={field.value ? dayjs(field.value).toDate() : null}
                 showIcon
                 className="form-control datepicker"
                 dateFormat="dd/MM/yyyy"
@@ -370,7 +378,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                 minDate={startOfYear(new Date())}
                 maxDate={endOfYear(new Date())}
                 placeholderText="(ex.: 22/10/2024)"
-                isClearable
                 toggleCalendarOnIconClick
               />
             )}
@@ -399,7 +406,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                 minDate={startOfYear(new Date())}
                 maxDate={endOfYear(new Date())}
                 placeholderText="(ex.: 22/10/2024)"
-                isClearable
                 toggleCalendarOnIconClick
               />
             )}
@@ -570,7 +576,9 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
               placeholder="ex.: 20 minutos"
               {...register("duracao", { valueAsNumber: true })}
             />
-            <p className="text-danger error-message"></p>
+            <p className="text-danger error-message">
+              {errors.duracao?.message}
+            </p>
           </div>
         </div>
       </div>
@@ -605,7 +613,12 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                   id="ed-deadline-data"
                   showIcon
                   onChange={(date) =>
-                    field.onChange(date?.toISOString() || null)
+                    field.onChange(
+                      dayjs(date)
+                        .set("hour", 23)
+                        .set("minute", 59)
+                        .toISOString() || null
+                    )
                   }
                   selected={field.value ? new Date(field.value) : null}
                   placeholderText="(ex.: 22/10/2024)"
@@ -614,7 +627,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                   locale="pt-BR"
                   minDate={startOfYear(new Date())}
                   maxDate={endOfYear(new Date())}
-                  isClearable
                   toggleCalendarOnIconClick
                 />
               )}
@@ -628,7 +640,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
         <button
           type="submit"
           className="btn text-white fs-5 submit-button"
-          disabled={!Edicao?.isActive}
+          disabled={!Edicao?.isActive || !isValid}
         >
           {confirmButton.label}
         </button>

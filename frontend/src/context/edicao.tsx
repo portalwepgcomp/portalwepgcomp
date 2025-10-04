@@ -110,6 +110,7 @@ export const EdicaoProvider = ({ children }: EdicaoProps) => {
     try {
       const response = await edicaoApi.createEdicao(body);
       setEdicao(response);
+      setEventEditionIdStorage(response.id);
       showAlert({
         icon: "success",
         title: "Edição cadastrada com sucesso!",
@@ -193,6 +194,7 @@ export const EdicaoProvider = ({ children }: EdicaoProps) => {
     try {
       await edicaoApi.deleteEdicaoById(idEdicao);
       clearEdicao();
+      localStorage.removeItem("edicaoAtiva");
       showAlert({
         icon: "success",
         title: "Edição removida com sucesso!",
