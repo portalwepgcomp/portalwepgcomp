@@ -103,7 +103,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
     resolver: zodResolver(formCadastroSchema),
     defaultValues: {
       perfil: "doutorando",
-      matricula: "", // evita undefined
+      matricula: "",
     },
   });
 
@@ -114,9 +114,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
     number: false,
   });
 
-
   const aplicarMascaraCpf = (value: string): string => {
-
     const digits = value.replace(/\D/g, "");
 
     return digits
@@ -173,6 +171,12 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
     });
   };
 
+  const handleAoMudarDeNome = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const filteredValue = value.replace(/[^a-zA-ZÀ-ÿ\s]/g, "");
+    setValue("nome", filteredValue);
+  };
+
   const perfil = watch("perfil");
 
   const [eye1, setEye1] = useState(false);
@@ -193,6 +197,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
               id="nome"
               placeholder="Insira seu nome"
               {...register("nome")}
+              onChange={handleAoMudarDeNome}
             />
             <p className="text-danger error-message">{errors.nome?.message}</p>
           </div>
