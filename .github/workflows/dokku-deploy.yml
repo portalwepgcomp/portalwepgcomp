@@ -30,9 +30,9 @@ jobs:
       - name: Deploy Frontend
         run: |
           git remote add dokku-front ${{ secrets.DOKKU_USER }}@${{ secrets.DOKKU_HOST }}:${{ secrets.DOKKU_FRONTEND_APP_NAME }}
-          git push -f dokku-front master
+          git push -f dokku-front HEAD:master
 
       - name: Deploy Backend
         run: |
           git remote add dokku-back ${{ secrets.DOKKU_USER }}@${{ secrets.DOKKU_HOST }}:${{ secrets.DOKKU_BACKEND_APP_NAME }}
-          git push -f dokku-back master
+          git push -f dokku-back HEAD:master
