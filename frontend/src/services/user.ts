@@ -52,6 +52,31 @@ export const userApi = {
         return data;
     },
 
+    approveTeacher: async (userId: string) => {
+        const { data } = await instance.patch(`${baseUrl}/${userId}/approve`);
+        return data;
+    },
+
+    promoteToAdmin: async (userId: string) => {
+        const { data } = await instance.patch(`${baseUrl}/${userId}/promote-admin`);
+        return data;
+    },
+
+    promoteToSuperadmin: async (userId: string) => {
+        const { data } = await instance.patch(`${baseUrl}/${userId}/promote-superadmin`);
+        return data;
+    },
+
+    demoteUser: async (userId: string) => {
+        const { data } = await instance.patch(`${baseUrl}/${userId}/demote`);
+        return data;
+    },
+
+    demoteUserToLevel: async (userId: string, targetLevel: string) => {
+        const { data } = await instance.patch(`${baseUrl}/${userId}/demote-to/${targetLevel}`);
+        return data;
+    },
+
     registerUser: async (body: RegisterUserParams) => {
 
         const { data } = await instance.post(`${baseUrl}/register`, body);

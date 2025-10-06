@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useState } from "react";
 
 import { useSweetAlert } from "@/hooks/useAlert";
 import { userApi } from "@/services/user";
@@ -19,6 +19,7 @@ interface UserProviderData {
   loadingAdvisors: boolean;
   loadingAdmins: boolean;
   loadingSwitchActive: boolean;
+  loadingRoleAction: boolean;
   user: User | null;
   userList: User[];
   advisors: User[];
@@ -33,6 +34,10 @@ interface UserProviderData {
   markAsDefaultUser: (body: SetPermissionParams) => Promise<void>;
   markAsAdminUser: (body: SetPermissionParams) => Promise<void>;
   markAsSpAdminUser: (body: SetPermissionParams) => Promise<void>;
+  approveTeacher: (userId: string) => Promise<void>;
+  promoteToAdmin: (userId: string) => Promise<void>;
+  promoteToSuperadmin: (userId: string) => Promise<void>;
+  demoteUser: (userId: string) => Promise<void>;
 }
 
 export const UserContext = createContext<UserProviderData>(
@@ -49,6 +54,7 @@ export const UserProvider = ({ children }: UserProps) => {
   const [loadingAdmins, setLoadingAdmins] = useState<boolean>(false);
   const [loadingSwitchActive, setLoadingSwitchActive] =
     useState<boolean>(false);
+  const [loadingRoleAction, setLoadingRoleAction] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [userList, setUserList] = useState<User[]>([]);
   const [advisors, setAdvisors] = useState<User[]>([]);
@@ -59,7 +65,7 @@ export const UserProvider = ({ children }: UserProps) => {
   const { showAlert } = useSweetAlert();
   const router = useRouter();
 
-  const getUsers = async (params: GetUserParams) => {
+  const getUsers = useCallback(async (params: GetUserParams) => {
     setLoadingUserList(true);
     
     if(authUser){
@@ -85,7 +91,8 @@ export const UserProvider = ({ children }: UserProps) => {
           setLoadingUserList(false);
         });
     };
-    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser?.id, showAlert]);
 
   const registerUser = async (body: RegisterUserParams) => {
     setLoadingCreateUser(true);
@@ -344,6 +351,110 @@ export const UserProvider = ({ children }: UserProps) => {
     }
   }
 
+  const approveTeacher = async (userId: string) => {
+    setLoadingRoleAction(true);
+
+    try {
+      await userApi.approveTeacher(userId);
+      showAlert({
+        icon: "success",
+        title: "Professor aprovado com sucesso!",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+      getUsers({});
+    } catch (err: any) {
+      showAlert({
+        icon: "error",
+        title: "Erro ao aprovar professor",
+        text:
+          err.response?.data?.message ||
+          "Ocorreu um erro ao tentar aprovar o professor. Tente novamente!",
+        confirmButtonText: "Retornar",
+      });
+    } finally {
+      setLoadingRoleAction(false);
+    }
+  };
+
+  const promoteToAdmin = async (userId: string) => {
+    setLoadingRoleAction(true);
+
+    try {
+      await userApi.promoteToAdmin(userId);
+      showAlert({
+        icon: "success",
+        title: "Usuário promovido a Administrador!",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+      getUsers({});
+    } catch (err: any) {
+      showAlert({
+        icon: "error",
+        title: "Erro ao promover usuário",
+        text:
+          err.response?.data?.message ||
+          "Ocorreu um erro ao tentar promover o usuário. Tente novamente!",
+        confirmButtonText: "Retornar",
+      });
+    } finally {
+      setLoadingRoleAction(false);
+    }
+  };
+
+  const promoteToSuperadmin = async (userId: string) => {
+    setLoadingRoleAction(true);
+
+    try {
+      await userApi.promoteToSuperadmin(userId);
+      showAlert({
+        icon: "success",
+        title: "Usuário promovido a Superadministrador!",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+      getUsers({});
+    } catch (err: any) {
+      showAlert({
+        icon: "error",
+        title: "Erro ao promover usuário",
+        text:
+          err.response?.data?.message ||
+          "Ocorreu um erro ao tentar promover o usuário. Tente novamente!",
+        confirmButtonText: "Retornar",
+      });
+    } finally {
+      setLoadingRoleAction(false);
+    }
+  };
+
+  const demoteUser = async (userId: string) => {
+    setLoadingRoleAction(true);
+
+    try {
+      await userApi.demoteUser(userId);
+      showAlert({
+        icon: "success",
+        title: "Usuário rebaixado com sucesso!",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+      getUsers({});
+    } catch (err: any) {
+      showAlert({
+        icon: "error",
+        title: "Erro ao rebaixar usuário",
+        text:
+          err.response?.data?.message ||
+          "Ocorreu um erro ao tentar rebaixar o usuário. Tente novamente!",
+        confirmButtonText: "Retornar",
+      });
+    } finally {
+      setLoadingRoleAction(false);
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -354,6 +465,7 @@ export const UserProvider = ({ children }: UserProps) => {
         loadingAdvisors,
         loadingAdmins,
         loadingSwitchActive,
+        loadingRoleAction,
         user,
         userList,
         advisors,
@@ -368,6 +480,10 @@ export const UserProvider = ({ children }: UserProps) => {
         markAsDefaultUser,
         markAsAdminUser,
         markAsSpAdminUser,
+        approveTeacher,
+        promoteToAdmin,
+        promoteToSuperadmin,
+        demoteUser,
       }}
     >
       {children}
