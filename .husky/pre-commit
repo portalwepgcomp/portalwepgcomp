@@ -1,0 +1,38 @@
+#!/bin/sh
+
+echo "Rodando ESLint e Prettier nos arquivos modificados..."
+
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|jsx|ts|tsx)$' || true)
+
+if [ -z "$FILES" ]; then
+  echo "Nenhum arquivo de código modificado, pulando ESLint/Prettier..."
+  exit 0
+fi
+
+FRONT_FILES=$(echo "$FILES" | grep "^frontend/" || true)
+
+if [ -n "$FRONT_FILES" ]; then
+  echo "Rodando lint no frontend..."
+  FRONT_FILES_RELATIVE=$(echo "$FRONT_FILES" | sed 's|^frontend/||')
+  (cd frontend && npx eslint --fix -- $FRONT_FILES_RELATIVE && npx prettier --write -- $FRONT_FILES_RELATIVE)
+  if [ $? -ne 0 ]; then
+    echo "Erros de lint/prettier no frontend."
+    exit 1
+  fi
+fi
+
+BACK_FILES=$(echo "$FILES" | grep "^backend/" || true)
+
+if [ -n "$BACK_FILES" ]; then
+  echo "Rodando lint no backend..."
+  BACK_FILES_RELATIVE=$(echo "$BACK_FILES" | sed 's|^backend/||')
+  (cd backend && npx eslint --fix -- $BACK_FILES_RELATIVE && npx prettier --write -- $BACK_FILES_RELATIVE)
+  if [ $? -ne 0 ]; then
+    echo "Erros de lint/prettier no backend."
+    exit 1
+  fi
+fi
+
+[ -n "$FILES" ] && git add $FILES
+
+echo "ESLint e Prettier aplicados com sucesso."
