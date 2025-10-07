@@ -23,14 +23,14 @@ export default function PerfilOuvinte() {
                 timer: 3000,
                 showConfirmButton: false,
             });
-        } else if (response === 404) {
-            showAlert({
-                icon: "error",
-                title: "O ouvinte deve avaliar ao menos 10 apresentações para obter o certificado.",
-                timer: 3000,
-                showConfirmButton: false,
-            });
+            return
         }
+        showAlert({
+            icon: "error",
+            title: response,
+            timer: 3000,
+            showConfirmButton: false,
+        });
     };
 
     return (

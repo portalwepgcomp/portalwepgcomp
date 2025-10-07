@@ -25,6 +25,7 @@ export default function PerfilAdmin({
 
   const certificateDownload = async () => {
     const response = await downloadCertificate(Edicao?.id || "");
+    console.log(response)
 
     if (response === 200) {
       showAlert({
@@ -33,14 +34,14 @@ export default function PerfilAdmin({
         timer: 3000,
         showConfirmButton: false,
       });
-    } else if (response === 404) {
-      showAlert({
+      return
+    } 
+    showAlert({
         icon: "error",
-        title: "Error ao baixar o certificado!",
+        title: response,
         timer: 3000,
         showConfirmButton: false,
       });
-    }
   };
 
   return (
