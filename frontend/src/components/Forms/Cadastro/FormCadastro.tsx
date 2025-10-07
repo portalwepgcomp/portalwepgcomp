@@ -98,11 +98,12 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
     handleSubmit,
     formState: { errors },
     watch,
+    setValue,
   } = useForm<FormCadastroSchema>({
     resolver: zodResolver(formCadastroSchema),
     defaultValues: {
       perfil: "doutorando",
-      matricula: "", // evita undefined
+      matricula: "",
     },
   });
 
@@ -112,6 +113,28 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
     hasLetter: false,
     number: false,
   });
+
+  const aplicarMascaraCpf = (value: string): string => {
+    const digits = value.replace(/\D/g, "");
+
+    return digits
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})/, "$1-$2")
+      .replace(/(-\d{2})\d+?$/, "$1");
+  };
+
+  const handleMudancaMatricula = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (perfil === "ouvinte") {
+      const maskedValue = aplicarMascaraCpf(value);
+      setValue("matricula", maskedValue);
+    } else {
+      const numbersOnly = value.replace(/\D/g, "");
+      setValue("matricula", numbersOnly);
+    }
+  };
 
   const handleFormCadastro = (data: FormCadastroSchema) => {
     const { nome, email, senha, perfil, matricula = "" } = data; // default assegura string
@@ -148,237 +171,248 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
     });
   };
 
+  const handleAoMudarDeNome = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const filteredValue = value.replace(/[^a-zA-ZÀ-ÿ\s]/g, "");
+    setValue("nome", filteredValue);
+  };
+
   const perfil = watch("perfil");
 
   const [eye1, setEye1] = useState(false);
   const [eye2, setEye2] = useState(false);
 
   return (
-  <>
-    {!loadingCreateUser ? (
-      <form className="row" onSubmit={handleSubmit(handleFormCadastro)}>
-        <div className="col-12 mb-1">
-          <label className="form-label fs-5 fw-bold">
-            Nome completo
-            <span className="text-danger ms-1 fs-5">*</span>
-          </label>
-          <input
-            type="text"
-            className="form-control input-title"
-            id="nome"
-            placeholder="Insira seu nome"
-            {...register("nome")}
-          />
-          <p className="text-danger error-message">{errors.nome?.message}</p>
-        </div>
-
-        <div className="col-12 mb-1">
-          <label className="form-label fw-bold fs-5">
-            Perfil
-            <span className="text-danger ms-1 fs-5">*</span>
-          </label>
-          <div className="d-flex">
-            <div className="form-check me-3">
-              <input
-                type="radio"
-                className="form-check-input"
-                id="radio1"
-                {...register("perfil")}
-                value="doutorando"
-              />
-              <label
-                className="form-check-label fw-bold input-title"
-                htmlFor="radio1"
-              >
-                Doutorando (PGCOMP)
-                <i
-                  className="bi bi-info-circle ms-2"
-                  data-bs-toggle="tooltip"
-                  title="Aluno do PGCOMP que irá apresentar projetos no workshop."
-                ></i>
-              </label>
-            </div>
-            <div className="form-check me-3">
-              <input
-                type="radio"
-                className="form-check-input"
-                id="radio2"
-                {...register("perfil")}
-                value="professor"
-              />
-              <label
-                className="form-check-label fw-bold input-title"
-                htmlFor="radio2"
-              >
-                Professor (PGCOMP)
-                <i
-                  className="bi bi-info-circle ms-2"
-                  data-bs-toggle="tooltip"
-                  title=" Professor do PGCOMP que poderá assistir e avaliar os projetos apresentados no workshop."
-                ></i>
-              </label>
-            </div>
-            <div className="form-check">
-              <input
-                type="radio"
-                className="form-check-input"
-                id="radio3"
-                {...register("perfil")}
-                value="ouvinte"
-              />
-              <label
-                className="form-check-label fw-bold input-title"
-                htmlFor="radio3"
-              >
-                Ouvinte
-                <i
-                  className="bi bi-info-circle ms-2"
-                  data-bs-toggle="tooltip"
-                  title="Participantes que irão assistir ou expor no workshop."
-                ></i>
-              </label>
-            </div>
-          </div>
-          <p className="text-danger error-message">{errors.perfil?.message}</p>
-        </div>
-
-      <div className="col-12 mb-1">
-        <label className="form-label fw-bold fs-5">
-          {perfil === "ouvinte"
-            ? "CPF (Digite apenas números)"
-            : perfil === "professor"
-            ? "Matrícula SIAPE"
-            : "Matrícula"}
-          <span className="text-danger ms-1 fs-5">*</span>
-        </label>
-        <input
-          type="text"
-          className="form-control input-title"
-          id="matricula"
-          placeholder={
-            perfil === "ouvinte"
-              ? "Digite seu CPF"
-              : perfil === "professor"
-              ? "Insira sua matrícula SIAPE"
-              : "Insira sua matrícula"
-          }
-          {...register("matricula")}
-        />
-        <p className="text-danger error-message">{errors.matricula?.message}</p>
-      </div>
-
-        <div className="col-12 mb-1">
-          <label className="form-label fw-bold fs-5">
-            E-mail {perfil !== "ouvinte" && "UFBA"}
-            <span className="text-danger ms-1 fs-5">*</span>
-          </label>
-          <input
-            type="email"
-            className="form-control input-title"
-            id="email"
-            placeholder="Insira seu e-mail"
-            {...register("email")}
-          />
-          <p className="text-danger error-message">{errors.email?.message}</p>
-        </div>
-
-        <div className="col-12 mb-1">
-          <label className="form-label fw-bold fs-5">
-            Senha
-            <span className="text-danger ms-1 fs-5">*</span>
-          </label>
-          <div className="password-input">
+    <>
+      {!loadingCreateUser ? (
+        <form className="row" onSubmit={handleSubmit(handleFormCadastro)}>
+          <div className="col-12 mb-1">
+            <label className="form-label fs-5 fw-bold">
+              Nome completo
+              <span className="text-danger ms-1 fs-5">*</span>
+            </label>
             <input
-              type={eye1 ? "text" : "password"}
-              className="form-control input-title password"
-              id="senha"
-              placeholder="Insira sua senha"
-              {...register("senha")}
-              value={senha}
-              onChange={handleChangeSenha}
+              type="text"
+              className="form-control input-title"
+              id="nome"
+              placeholder="Insira seu nome"
+              {...register("nome")}
+              onChange={handleAoMudarDeNome}
             />
-            <div className="eye" onClick={() => setEye1(!eye1)}>
-              <PasswordEye color={eye1 == false ? "black" : "blue"} />
+            <p className="text-danger error-message">{errors.nome?.message}</p>
+          </div>
+
+          <div className="col-12 mb-1">
+            <label className="form-label fw-bold fs-5">
+              Perfil
+              <span className="text-danger ms-1 fs-5">*</span>
+            </label>
+            <div className="d-flex">
+              <div className="form-check me-3">
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  id="radio1"
+                  {...register("perfil")}
+                  value="doutorando"
+                />
+                <label
+                  className="form-check-label fw-bold input-title"
+                  htmlFor="radio1"
+                >
+                  Doutorando (PGCOMP)
+                  <i
+                    className="bi bi-info-circle ms-2"
+                    data-bs-toggle="tooltip"
+                    title="Aluno do PGCOMP que irá apresentar projetos no workshop."
+                  ></i>
+                </label>
+              </div>
+              <div className="form-check me-3">
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  id="radio2"
+                  {...register("perfil")}
+                  value="professor"
+                />
+                <label
+                  className="form-check-label fw-bold input-title"
+                  htmlFor="radio2"
+                >
+                  Professor (PGCOMP)
+                  <i
+                    className="bi bi-info-circle ms-2"
+                    data-bs-toggle="tooltip"
+                    title=" Professor do PGCOMP que poderá assistir e avaliar os projetos apresentados no workshop."
+                  ></i>
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  id="radio3"
+                  {...register("perfil")}
+                  value="ouvinte"
+                />
+                <label
+                  className="form-check-label fw-bold input-title"
+                  htmlFor="radio3"
+                >
+                  Ouvinte
+                  <i
+                    className="bi bi-info-circle ms-2"
+                    data-bs-toggle="tooltip"
+                    title="Participantes que irão assistir ou expor no workshop."
+                  ></i>
+                </label>
+              </div>
+            </div>
+            <p className="text-danger error-message">{errors.perfil?.message}</p>
+          </div>
+
+          <div className="col-12 mb-1">
+            <label className="form-label fw-bold fs-5">
+              {perfil === "ouvinte"
+                ? "CPF"
+                : perfil === "professor"
+                ? "Matrícula SIAPE"
+                : "Matrícula"}
+              <span className="text-danger ms-1 fs-5">*</span>
+            </label>
+            <input
+              type="text"
+              className="form-control input-title"
+              id="matricula"
+              placeholder={
+                perfil === "ouvinte"
+                  ? "000.000.000-00"
+                  : perfil === "professor"
+                  ? "Insira sua matrícula SIAPE"
+                  : "Insira sua matrícula"
+              }
+              {...register("matricula")}
+              onChange={handleMudancaMatricula}
+              maxLength={perfil === "ouvinte" ? 14 : undefined} // 14 caracteres para CPF com máscara
+            />
+            <p className="text-danger error-message">{errors.matricula?.message}</p>
+          </div>
+
+          <div className="col-12 mb-1">
+            <label className="form-label fw-bold fs-5">
+              E-mail {perfil !== "ouvinte" && "UFBA"}
+              <span className="text-danger ms-1 fs-5">*</span>
+            </label>
+            <input
+              type="email"
+              className="form-control input-title"
+              id="email"
+              placeholder="Insira seu e-mail"
+              {...register("email")}
+            />
+            <p className="text-danger error-message">{errors.email?.message}</p>
+          </div>
+
+          <div className="col-12 mb-1">
+            <label className="form-label fw-bold fs-5">
+              Senha
+              <span className="text-danger ms-1 fs-5">*</span>
+            </label>
+            <div className="password-input">
+              <input
+                type={eye1 ? "text" : "password"}
+                className="form-control input-title password"
+                id="senha"
+                placeholder="Insira sua senha"
+                {...register("senha")}
+                value={senha}
+                onChange={handleChangeSenha}
+              />
+              <div className="eye" onClick={() => setEye1(!eye1)}>
+                <PasswordEye color={eye1 == false ? "black" : "blue"} />
+              </div>
+            </div>
+            <p className="text-danger error-message">{errors.senha?.message}</p>
+            <div className="mt-3">
+              <p className="mb-1 fw-semibold paragraph-title">
+                A senha deve possuir pelo menos:
+              </p>
+              <ul className="mb-0">
+                <li
+                  className={`fw-semibold list-title ${
+                    requisitos.minLength ? "text-success" : "text-danger"
+                  }`}
+                >
+                  {requisitos.minLength ? (
+                    <i className="bi bi-shield-fill-check" />
+                  ) : (
+                    <i className="bi bi-shield-fill-x" />
+                  )}{" "}
+                  8 dígitos
+                </li>
+                <li
+                  className={`fw-semibold list-title ${
+                    requisitos.hasLetter ? "text-success" : "text-danger"
+                  }`}
+                >
+                  {requisitos.hasLetter ? (
+                    <i className="bi bi-shield-fill-check" />
+                  ) : (
+                    <i className="bi bi-shield-fill-x" />
+                  )}{" "}
+                  1 letra
+                </li>
+                <li
+                  className={`fw-semibold list-title ${
+                    requisitos.number ? "text-success" : "text-danger"
+                  }`}
+                >
+                  {requisitos.number ? (
+                    <i className="bi bi-shield-fill-check" />
+                  ) : (
+                    <i className="bi bi-shield-fill-x" />
+                  )}{" "}
+                  1 número
+                </li>
+              </ul>
             </div>
           </div>
-          <p className="text-danger error-message">{errors.senha?.message}</p>
-          <div className="mt-3">
-            <p className="mb-1 fw-semibold paragraph-title">
-              A senha deve possuir pelo menos:
+
+          <div className="col-12 mb-4">
+            <label className="form-label fw-bold fs-5">
+              Confirmação de senha
+              <span className="text-danger ms-1 fs-5">*</span>
+            </label>
+            <div className="password-input">
+              <input
+                type={eye2 ? "text" : "password"}
+                className="form-control input-title password"
+                id="confirmaSenha"
+                placeholder="Insira sua senha novamente"
+                {...register("confirmaSenha")}
+              />
+              <div className="eye" onClick={() => setEye2(!eye2)}>
+                <PasswordEye color={eye2 == false ? "black" : "blue"} />
+              </div>
+            </div>
+            <p className="text-danger error-message">
+              {errors.confirmaSenha?.message}
             </p>
-            <ul className="mb-0">
-              <li
-                className={`fw-semibold list-title ${requisitos.minLength ? "text-success" : "text-danger"
-                  }`}
-              >
-                {requisitos.minLength ? (
-                  <i className="bi bi-shield-fill-check" />
-                ) : (
-                  <i className="bi bi-shield-fill-x" />
-                )}{" "}
-                8 dígitos
-              </li>
-              <li
-                className={`fw-semibold list-title ${requisitos.hasLetter ? "text-success" : "text-danger"
-                  }`}
-              >
-                {requisitos.hasLetter ? (
-                  <i className="bi bi-shield-fill-check" />
-                ) : (
-                  <i className="bi bi-shield-fill-x" />
-                )}{" "}
-                1 letra
-              </li>
-              <li
-                className={`fw-semibold list-title ${requisitos.number ? "text-success" : "text-danger"
-                  }`}
-              >
-                {requisitos.number ? (
-                  <i className="bi bi-shield-fill-check" />
-                ) : (
-                  <i className="bi bi-shield-fill-x" />
-                )}{" "}
-                1 número
-              </li>
-            </ul>
           </div>
-        </div>
 
-        <div className="col-12 mb-4">
-          <label className="form-label fw-bold fs-5">
-            Confirmação de senha
-            <span className="text-danger ms-1 fs-5">*</span>
-          </label>
-          <div className="password-input">
-            <input
-              type={eye2 ? "text" : "password"}
-              className="form-control input-title password"
-              id="confirmaSenha"
-              placeholder="Insira sua senha novamente"
-              {...register("confirmaSenha")}
-            />
-            <div className="eye" onClick={() => setEye2(!eye2)}>
-              <PasswordEye color={eye2 == false ? "black" : "blue"} />
-            </div>
+          <div className="gap-2 col-3 mx-auto">
+            <button
+              type="submit"
+              className="btn fw-bold fs-5 text-white submit-button"
+            >
+              Cadastrar
+            </button>
           </div>
-          <p className="text-danger error-message">
-            {errors.confirmaSenha?.message}
-          </p>
-        </div>
-
-        <div className="gap-2 col-3 mx-auto">
-          <button
-            type="submit"
-            className="btn fw-bold fs-5 text-white submit-button"
-          >
-            Cadastrar
-          </button>
-        </div>
-      </form>
-    ):
-      <Loading/>
-    }
-  </>
-);
-
+        </form>
+      ) : (
+        <Loading />
+      )}
+    </>
+  );
 }

@@ -1,0 +1,38 @@
+name: Deploy Dokku/PRD-Frontend & Backend
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
+          name: id_rsa
+          known_hosts: unnecessary
+
+      - name: Add Dokku to known_hosts
+        run: ssh-keyscan -p ${{ secrets.DOKKU_PORT }} ${{ secrets.DOKKU_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy Frontend
+        run: |
+          git remote add dokku-front ssh://${{ secrets.DOKKU_USER }}@${{ secrets.DOKKU_HOST }}:${{ secrets.DOKKU_PORT }}/${{ secrets.DOKKU_FRONTEND_APP_NAME }}
+          git push -f dokku-front HEAD:master
+
+      - name: Deploy Backend
+        run: |
+          git remote add dokku-back ssh://${{ secrets.DOKKU_USER }}@${{ secrets.DOKKU_HOST }}:${{ secrets.DOKKU_PORT }}/${{ secrets.DOKKU_BACKEND_APP_NAME }}
+          git push -f dokku-back HEAD:master
