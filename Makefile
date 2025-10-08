@@ -14,3 +14,11 @@ up-infra:
 
 up-infra-l:
 	cd ./backend && docker-compose ps | grep -q "Up" || (docker-compose up -d)
+
+deploy: deploy-front deploy-back
+
+deploy-front:
+	git push -f dokku-front master
+
+deploy-back:
+	git push -f dokku-back master
