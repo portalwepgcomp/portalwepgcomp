@@ -18,7 +18,7 @@ up-infra-l:
 deploy: deploy-front deploy-back
 
 deploy-front:
-	git push -f dokku-front master
+	git push -f dokku-front development
 
 deploy-back:
-	git push -f dokku-back master
+	git push -f dokku-back development
