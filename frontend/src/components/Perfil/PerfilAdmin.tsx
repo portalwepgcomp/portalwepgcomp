@@ -25,7 +25,6 @@ export default function PerfilAdmin({
 
   const certificateDownload = async () => {
     const response = await downloadCertificate(Edicao?.id || "");
-    console.log(response)
 
     if (response === 200) {
       showAlert({
