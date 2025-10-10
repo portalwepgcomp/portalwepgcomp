@@ -243,7 +243,6 @@ export default function FormSessaoAuxiliar() {
                 timeIntervals={15}
                 dateFormat="dd/MM/yyyy HH:mm"
                 minDate={dayjs(Edicao?.startDate || "")
-                  .add(1, "day")
                   .tz("America/Sao_Paulo", true)
                   .toDate()}
                 maxDate={dayjs(Edicao?.endDate || "")
@@ -285,7 +284,6 @@ export default function FormSessaoAuxiliar() {
                 timeIntervals={15}
                 dateFormat="dd/MM/yyyy HH:mm"
                 minDate={dayjs(Edicao?.startDate || "")
-                  .add(1, "day")
                   .tz("America/Sao_Paulo", true)
                   .toDate()}
                 maxDate={dayjs(Edicao?.endDate || "")
