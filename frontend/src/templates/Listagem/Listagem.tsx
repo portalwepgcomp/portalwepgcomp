@@ -153,7 +153,7 @@ export default function Listagem({
                       ? "editarEdicaoModal"
                       : idModal
                   }
-                  onClickItem={() => onClickItem && onClickItem(card)}
+                  onClickItem={() => onEdit && onEdit(card?.id ?? "")}
                   onEdit={() => onEdit && onEdit(card?.id ?? "")}
                   onDelete={() => onDelete && onDelete(card?.id ?? "")}
                 />
