@@ -139,7 +139,7 @@ export default function Listagem({
                 <CardListagem
                   key={card.id ?? card.name ?? i}
                   title={card?.title || "Sem Título"}
-                  subtitle={card.subtitle ? card.subtitle : "Sem subtítulo"}
+                  subtitle={card.subtitle ? card.subtitle : ""}
                   mainAuthor={card.mainAuthor?.name ? card.mainAuthor.name : "Sem nome"}
                   advisor={card.advisor?.name ? card.advisor.name : "Sem nome"}
                   generalButtonLabel={generalButtonLabel}
