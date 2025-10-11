@@ -196,6 +196,8 @@ export const SubmissionProvider = ({ children }: SubmissionProps) => {
       const response = await submissionApi.deleteSubmissionById(idSubmission);
       setSubmission(response);
 
+      getSubmissions({ eventEditionId: response.eventEditionId });
+
       showAlert({
         icon: "success",
         title: "Apresentação removida com sucesso!",
