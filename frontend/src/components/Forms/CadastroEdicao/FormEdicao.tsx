@@ -13,7 +13,7 @@ import "./style.scss";
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { useRouter } from "next/navigation";
 import { ptBR } from "date-fns/locale";
-import { UserContext } from "@/context/user";
+import { UserContext } from "@/hooks/useUsers";
 import { useSweetAlert } from "@/hooks/useAlert";
 import { useCommittee } from "@/hooks/useCommittee";
 import dayjs from "dayjs";

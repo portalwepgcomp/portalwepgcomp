@@ -10,8 +10,8 @@ import { z } from "zod";
 
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
-import { SubmissionContext } from "@/context/submission";
-import { UserContext } from "@/context/user";
+import { SubmissionContext } from "@/hooks/useSubmission";
+import { UserContext } from "@/hooks/useUsers";
 import { useSweetAlert } from "@/hooks/useAlert";
 import { useSubmissionFile } from "@/hooks/useSubmissionFile";
 
