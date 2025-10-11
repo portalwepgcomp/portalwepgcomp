@@ -40,13 +40,12 @@ export default function ScheduleSection() {
 	function generateDatesBetween(startDate: string, endDate: string): string[] {
 		const datesArray: string[] = [];
 		const currentDate = moment(startDate);
-		const finalDate = moment(endDate).subtract(1, "day");
+		const finalDate = moment(endDate)
 
 		while (currentDate.isSameOrBefore(finalDate)) {
-			currentDate.add(1, "day");
 			datesArray.push(currentDate.format("YYYY-MM-DD"));
+			currentDate.add(1, "day");
 		}
-
 		return datesArray;
 	}
 
