@@ -22,6 +22,11 @@ import { useEffect } from "react";
 import "./style.scss";
 
 const formSessaoApresentacoesSchema = z.object({
+    titulo: z
+    .string({
+      invalid_type_error: "Campo inválido!",
+    })
+    .min(1, "Título é obrigatório."),
   apresentacoes: z
     .array(
       z.object({
@@ -71,7 +76,7 @@ const formSessaoApresentacoesSchema = z.object({
 });
 
 export default function FormSessaoApresentacoes() {
-  const { formApresentacoesFields, confirmButton } = ModalSessaoMock;
+  const { formAuxiliarFields, formApresentacoesFields, confirmButton } = ModalSessaoMock;
   const { createSession, updateSession, sessao, setSessao, roomsList } =
     useSession();
   const { userList } = useUsers();
@@ -84,6 +89,7 @@ export default function FormSessaoApresentacoes() {
 
   const defaultValues = sessao?.id
     ? {
+        titulo: sessao?.title ?? "",
         apresentacoes: [],
         n_apresentacoes: sessao?.numPresentations ?? 0,
         sala: sessao?.roomId ?? "",
@@ -126,17 +132,18 @@ export default function FormSessaoApresentacoes() {
   const handleFormSessaoApresentacoes = (
     data: FormSessaoApresentacoesSchema
   ) => {
-    const { apresentacoes, sala, inicio, n_apresentacoes, avaliadores } = data;
+    const { titulo, apresentacoes, sala, inicio, n_apresentacoes, avaliadores } = data;
 
     const eventEditionId = getEventEditionIdStorage();
 
-    if (!sala || !inicio) {
+    if (!titulo ||!sala || !inicio) {
       throw new Error("Campos obrigatórios em branco.");
     }
 
     const body = {
       type: "Presentation",
       eventEditionId: eventEditionId ?? "",
+      title: titulo,
       submissions: apresentacoes?.length
         ? apresentacoes?.map((v) => v.value)
         : undefined,
@@ -168,6 +175,7 @@ export default function FormSessaoApresentacoes() {
 
   useEffect(() => {
     if (sessao) {
+      setValue("titulo", sessao?.title ?? "");
       setValue(
         "apresentacoes",
         sessao?.presentations?.map((v) => {
@@ -187,6 +195,7 @@ export default function FormSessaoApresentacoes() {
         })
       );
     } else {
+      setValue("titulo", "");
       setValue("apresentacoes", []);
       setValue("n_apresentacoes", 0);
       setValue("sala", "");
@@ -201,6 +210,19 @@ export default function FormSessaoApresentacoes() {
       onSubmit={handleSubmit(handleFormSessaoApresentacoes)}
     >
       <div className="col-12 mb-1">
+
+        <label className="form-label fw-bold form-title ">
+          {formAuxiliarFields.titulo.label}
+          <span className="text-danger ms-1 form-title">*</span>
+        </label>
+        <input
+          type="text"
+          className="form-control input-title"
+          id="sg-titulo-input"
+          placeholder={formAuxiliarFields.titulo.placeholder}
+          {...register("titulo")}
+        />
+        <p className="text-danger error-message">{errors.titulo?.message}</p>
         <label className="form-label fw-bold form-title">
           {formApresentacoesFields.apresentacoes.label}
         </label>
@@ -288,7 +310,6 @@ export default function FormSessaoApresentacoes() {
                 timeIntervals={15}
                 dateFormat="dd/MM/yyyy HH:mm"
                 minDate={dayjs(Edicao?.startDate || "")
-                  .add(1, "day")
                   .tz("America/Sao_Paulo", true)
                   .toDate()}
                 maxDate={dayjs(Edicao?.endDate || "")
