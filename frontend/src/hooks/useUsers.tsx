@@ -1,5 +1,3 @@
-import { useContext } from "react";
-
 export const useUsers = () => useContext(UserContext);
 
 import { useRouter } from "next/navigation";
