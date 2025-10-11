@@ -1,7 +1,5 @@
 import { useContext } from "react";
 
-export const useSubmissionFile = () => useContext(SubmissionFileContext);
-
 import { createContext, ReactNode, useState } from "react";
 
 import { useSweetAlert } from "@/hooks/useAlert";
@@ -31,6 +29,8 @@ interface SubmissionFileProviderData {
 export const SubmissionFileContext = createContext<SubmissionFileProviderData>(
   {} as SubmissionFileProviderData
 );
+
+export const useSubmissionFile = () => useContext(SubmissionFileContext);
 
 export const SubmissionFileProvider = ({ children }: SubmissionFileProps) => {
   const [loadingSubmissionFileList, setLoadingSubmissionFileList] =

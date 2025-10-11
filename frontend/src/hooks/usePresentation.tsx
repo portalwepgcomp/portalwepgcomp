@@ -1,7 +1,5 @@
 import { useContext } from "react";
 
-export const usePresentation = () => useContext(PresentationContext);
-
 import { BookmarkedPresentations } from "@/models/presentatio-bookmarks";
 import { presentationApi } from "@/services/presentation";
 import { createContext, ReactNode, useState } from "react";
@@ -24,6 +22,8 @@ interface PresentationProviderData {
 export const PresentationContext = createContext<PresentationProviderData>(
   {} as PresentationProviderData
 );
+
+export const usePresentation = () => useContext(PresentationContext);
 
 export const PresentationProvider = ({ children }: PresentationProps) => {
     const [presentationList, setpresentationList] = useState<Presentation[]>([]);

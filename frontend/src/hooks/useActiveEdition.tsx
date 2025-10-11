@@ -1,9 +1,5 @@
 import { useContext } from "react";
 
-export const useActiveEdition = () => {
-  return useContext(ActiveEditionContext);
-};
-
 import {
   createContext,
   Dispatch,
@@ -72,3 +68,6 @@ export const ActiveEditionProvider = ({ children }: ActiveEditionProps) => {
   );
 };
 
+export const useActiveEdition = () => {
+  return useContext(ActiveEditionContext);
+};

@@ -1,7 +1,5 @@
 import { useContext } from "react";
 
-export const useEvaluation = () => useContext(EvaluationContext);
-
 import { createContext, ReactNode, useState } from "react";
 import { evaluationApi } from "@/services/evaluation";
 import { useSweetAlert } from "@/hooks/useAlert";
@@ -31,6 +29,8 @@ interface EvaluationProviderData {
 export const EvaluationContext = createContext<EvaluationProviderData>(
   {} as EvaluationProviderData
 );
+
+export const useEvaluation = () => useContext(EvaluationContext);
 
 export const EvaluationProvider = ({ children }: EvaluationProps) => {
   const [loadingEvaluation, setLoadingEvaluation] = useState<boolean>(false);

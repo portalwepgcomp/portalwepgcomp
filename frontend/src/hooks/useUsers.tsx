@@ -1,5 +1,3 @@
-export const useUsers = () => useContext(UserContext);
-
 import { useRouter } from "next/navigation";
 import { createContext, ReactNode, useCallback, useContext, useState } from "react";
 
@@ -43,6 +41,8 @@ interface UserProviderData {
 export const UserContext = createContext<UserProviderData>(
   {} as UserProviderData
 );
+
+export const useUsers = () => useContext(UserContext);
 
 export const UserProvider = ({ children }: UserProps) => {
   const [loadingCreateUser, setLoadingCreateUser] = useState<boolean>(false);

@@ -1,6 +1,5 @@
 import { useContext } from "react";
 
-export const useCommittee = () => useContext(CommitteerContext);
 
 import { committerMembersApi } from "@/services/CommitteeMember";
 import { createContext, ReactNode, useState } from "react";
@@ -17,6 +16,8 @@ interface CommitterProviderData {
 export const CommitteerContext = createContext<CommitterProviderData>(
   {} as CommitterProviderData
 );
+
+export const useCommittee = () => useContext(CommitteerContext);
 
 export const CommitterProvider = ({ children }: CommitterProps) => {
   const [committerList, setcommitterList] = useState<Committer[]>([]);

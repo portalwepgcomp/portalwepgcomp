@@ -1,7 +1,5 @@
 import { useContext } from "react";
 
-export const useEdicao = () => useContext(EdicaoContext);
-
 import {
   createContext,
   Dispatch,
@@ -38,6 +36,9 @@ interface EdicaoProviderData {
 export const EdicaoContext = createContext<EdicaoProviderData>(
   {} as EdicaoProviderData
 );
+
+export const useEdicao = () => useContext(EdicaoContext);
+
 
 export const EdicaoProvider = ({ children }: EdicaoProps) => {
   const [loadingEdicoesList, setLoadingEdicoesList] = useState<boolean>(false);

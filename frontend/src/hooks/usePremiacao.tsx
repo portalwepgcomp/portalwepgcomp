@@ -1,7 +1,5 @@
 import { useContext } from "react";
 
-export const usePremiacao = () => useContext(PremiacaoContext);
-
 import { createContext, ReactNode, useState } from "react";
 
 import { useSweetAlert } from "@/hooks/useAlert";
@@ -29,6 +27,8 @@ interface PremiacaoProviderData {
 export const PremiacaoContext = createContext<PremiacaoProviderData>(
   {} as PremiacaoProviderData
 );
+
+export const usePremiacao = () => useContext(PremiacaoContext);
 
 export const PremiacaoProvider = ({ children }: SubmissionProps) => {
   const [loadingPremiacaoList, setLoadingPremiacaoList] =

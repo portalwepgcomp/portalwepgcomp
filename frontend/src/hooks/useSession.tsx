@@ -1,7 +1,5 @@
 import { useContext } from "react";
 
-export const useSession = () => useContext(SessionContext);
-
 import {
   createContext,
   Dispatch,
@@ -54,6 +52,8 @@ interface SessionProviderData {
 export const SessionContext = createContext<SessionProviderData>(
   {} as SessionProviderData
 );
+
+export const useSession = () => useContext(SessionContext);
 
 export const SessionProvider = ({ children }: SessionProps) => {
   const [loadingSessoesList, setLoadingSessoesList] = useState<boolean>(false);

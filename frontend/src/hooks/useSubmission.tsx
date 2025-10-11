@@ -1,7 +1,5 @@
 import { useContext } from "react";
 
-export const useSubmission = () => useContext(SubmissionContext);
-
 import {
   createContext,
   Dispatch,
@@ -36,6 +34,8 @@ interface SubmissionProviderData {
 export const SubmissionContext = createContext<SubmissionProviderData>(
   {} as SubmissionProviderData
 );
+
+export const useSubmission = () => useContext(SubmissionContext);
 
 export const SubmissionProvider = ({ children }: SubmissionProps) => {
   const [loadingSubmissionList, setLoadingSubmissionList] =

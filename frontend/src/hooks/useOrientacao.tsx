@@ -1,7 +1,5 @@
 import { useContext } from "react";
 
-export const useOrientacao = () => useContext(OrientacaoContext);
-
 import { createContext, ReactNode, useState } from "react";
 
 import { useSweetAlert } from "@/hooks/useAlert";
@@ -26,6 +24,8 @@ interface OrientacaoProviderData {
 export const OrientacaoContext = createContext<OrientacaoProviderData>(
   {} as OrientacaoProviderData
 );
+
+export const useOrientacao = () => useContext(OrientacaoContext);
 
 export const OrientacaoProvider = ({ children }: OrientacaoProps) => {
   const [loadingOrientacoes, setLoadingOrientacoes] = useState<boolean>(false);
