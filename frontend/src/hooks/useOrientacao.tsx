@@ -136,7 +136,7 @@ export const OrientacaoProvider = ({ children }: OrientacaoProps) => {
       .then(() => {
         showAlert({
           icon: "success",
-          title: "Sessão deletada com sucesso!",
+          title: "Orientação deletada com sucesso!",
           timer: 3000,
           showConfirmButton: false,
         });
