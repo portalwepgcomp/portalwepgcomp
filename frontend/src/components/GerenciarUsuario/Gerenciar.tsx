@@ -352,8 +352,8 @@ export default function Gerenciar() {
         <div className="management-header mb-4">
           <div className="d-flex justify-content-between align-items-center">
             <div>
-              <h3 className="mb-1">Gerenciamento de Usuários</h3>
-              <p className="text-muted mb-0">Gerencie usuários e cadastre novos professores</p>
+              <h3 className="mb-1">Gerenciamento de Professores</h3>
+              <p className="text-muted mb-0">Gerencie usuários e cadastre novos professores diretamente no sistema</p>
             </div>
             <button
               type="button"
