@@ -24,7 +24,9 @@ export default function RootLayout({
           <Providers>
             <div className="d-flex flex-column vh-100">
               <Header />
-              {children}
+              <main style={{ flex: 1, overflow: "auto" }}>
+                {children}
+              </main>
               <Footer />
             </div>
           </Providers>
