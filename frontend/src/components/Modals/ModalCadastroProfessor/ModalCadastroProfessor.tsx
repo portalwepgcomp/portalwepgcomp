@@ -45,6 +45,7 @@ export default function ModalCadastroProfessor({ onSuccess }: ModalCadastroProfe
       loading={loadingCreateProfessor}
       labelConfirmButton="Cadastrar Professor"
       colorButtonConfirm="#0066BA"
+      className="modal-above-header"
     >
       <div className="body-modal-cadastro-professor">
         <div className="modal-header-content">

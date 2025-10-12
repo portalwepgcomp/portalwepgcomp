@@ -27,6 +27,11 @@
     }
 }
 
+// Special class for modals that need to appear above fixed header
+.modal-component.modal-above-header {
+    z-index: 10001;
+}
+
 @media (max-width:480px) {
     .modal-dialog {
       margin: 0 !important;

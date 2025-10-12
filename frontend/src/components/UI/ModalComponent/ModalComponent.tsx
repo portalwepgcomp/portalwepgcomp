@@ -14,6 +14,7 @@ interface ModalComponentProps {
   disabledConfirmButton?: boolean;
   isShortModal?: boolean;
   idCloseModal?: string;
+  className?: string;
   onConfirm?: () => void;
   onClose?: () => void;
 }
@@ -27,6 +28,7 @@ export default function ModalComponent({
   disabledConfirmButton,
   isShortModal,
   idCloseModal,
+  className,
   onClose,
   children,
 }: Readonly<ModalComponentProps>) {
@@ -41,7 +43,7 @@ export default function ModalComponent({
     <div
       className={`modal fade ${
         isShortModal ? "modal-sm" : "modal-lg"
-      } modal-component` }
+      } modal-component ${className || ""}`}
       id={id}
       tabIndex={-1}
       onBlur={onClose}
