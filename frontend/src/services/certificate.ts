@@ -4,7 +4,7 @@ import axiosInstance from '@/utils/api';
 const baseUrl = "/certificate";
 export const useCertificate = () => {
 
-    const downloadCertificate = async (eventId: string): Promise<number> => {
+    const downloadCertificate = async (eventId: string): Promise<number | string> => {
         try {
             const response = await axiosInstance.get(`${baseUrl}/event-edition/${eventId}`, {
                 responseType: "blob",
@@ -24,7 +24,27 @@ export const useCertificate = () => {
             return 200; 
         } catch (error: any) {       
 
-            return error.status; 
+            if (error.response && error.response.data) {
+                // Tenta extrair a mensagem do backend
+                const reader = new FileReader();
+                return await new Promise<string>((resolve) => {
+                    reader.onload = () => {
+                        try {
+                            const text = reader.result as string;
+                            try {
+                                const json = JSON.parse(text);
+                                resolve(json.message || text);
+                            } catch {
+                                resolve(text);
+                            }
+                        } catch {
+                            resolve("Erro desconhecido ao processar a mensagem de erro.");
+                        }
+                    };
+                    reader.readAsText(error.response.data);
+                });
+            }
+            return error.message || "Erro desconhecido ao baixar certificado.";
         }
     };
 

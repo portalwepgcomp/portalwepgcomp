@@ -23,15 +23,14 @@ export default function PerfilProfessor() {
         timer: 3000,
         showConfirmButton: false,
       });
-    } else if (response === 404) {
+      return
+    } 
       showAlert({
         icon: "error",
-        title:
-          "Professor não participou de mesas avaliadoras, portanto não pode receber certificado",
+        title: response,
         timer: 3000,
         showConfirmButton: false,
       });
-    }
   };
 
   return (

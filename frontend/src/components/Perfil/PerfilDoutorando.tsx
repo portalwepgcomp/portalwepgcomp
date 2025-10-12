@@ -23,15 +23,14 @@ export default function PerfilDoutorando() {
         timer: 3000,
         showConfirmButton: false,
       });
-    } else if (response === 404) {
-      showAlert({
-        icon: "error",
-        title:
-          "Doutorando não tem submissões, portanto não pode receber certificado",
-        timer: 3000,
-        showConfirmButton: false,
-      });
-    }
+      return
+    } 
+    showAlert({
+      icon: "error",
+      title: response,
+      timer: 3000,
+      showConfirmButton: false,
+    });
   };
 
   return (
