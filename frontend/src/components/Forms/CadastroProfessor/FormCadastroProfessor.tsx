@@ -36,9 +36,11 @@ type FormCadastroProfessorSchema = z.infer<typeof formCadastroProfessorSchema>;
 
 interface FormCadastroProfessorProps {
   onSuccess?: () => void;
+  formRef?: React.RefObject<HTMLFormElement>;
+  showButtons?: boolean;
 }
 
-export function FormCadastroProfessor({ onSuccess }: FormCadastroProfessorProps) {
+export function FormCadastroProfessor({ onSuccess, formRef, showButtons = true }: FormCadastroProfessorProps) {
   const { createProfessorBySuperadmin, loadingCreateProfessor } = useUsers();
   const router = useRouter();
   
@@ -95,7 +97,7 @@ export function FormCadastroProfessor({ onSuccess }: FormCadastroProfessorProps)
 
   return (
     <div className="cadastro-professor-form">
-      <form className="row" onSubmit={handleSubmit(handleFormCadastroProfessor)}>
+      <form className="row" onSubmit={handleSubmit(handleFormCadastroProfessor)} ref={formRef}>
         <div className="col-12 mb-3">
           <label className="form-label fs-5 fw-bold">
             Nome completo
@@ -177,30 +179,32 @@ export function FormCadastroProfessor({ onSuccess }: FormCadastroProfessorProps)
           </div>
         </div>
 
-        <div className="col-12 d-flex justify-content-end gap-3">
-          <button
-            type="button"
-            className="btn btn-outline-secondary btn-lg"
-            onClick={handleCancel}
-            disabled={loadingCreateProfessor}
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            className="btn btn-primary btn-lg"
-            disabled={loadingCreateProfessor}
-          >
-            {loadingCreateProfessor ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                Cadastrando...
-              </>
-            ) : (
-              "Cadastrar Professor"
-            )}
-          </button>
-        </div>
+        {showButtons && (
+          <div className="col-12 d-flex justify-content-end gap-3">
+            <button
+              type="button"
+              className="btn btn-outline-secondary btn-lg"
+              onClick={handleCancel}
+              disabled={loadingCreateProfessor}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary btn-lg"
+              disabled={loadingCreateProfessor}
+            >
+              {loadingCreateProfessor ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Cadastrando...
+                </>
+              ) : (
+                "Cadastrar Professor"
+              )}
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );

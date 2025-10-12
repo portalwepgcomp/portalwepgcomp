@@ -7,6 +7,7 @@ import { useUsers } from "@/hooks/useUsers";
 import LoadingPage from "../LoadingPage";
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { useEdicao } from "@/hooks/useEdicao";
+import ModalCadastroProfessor from "../Modals/ModalCadastroProfessor/ModalCadastroProfessor";
 
 export default function Gerenciar() {
   const { user: currentUser } = useContext(AuthContext);
@@ -331,6 +332,7 @@ export default function Gerenciar() {
   // Load users on component mount with stable dependency
   useEffect(() => {
     getUsers({});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Remove getUsers dependency to prevent infinite loops
 
   // Remove the debounced effect that was causing unnecessary renders
@@ -353,16 +355,18 @@ export default function Gerenciar() {
               <h3 className="mb-1">Gerenciamento de Usuários</h3>
               <p className="text-muted mb-0">Gerencie usuários e cadastre novos professores</p>
             </div>
-            <a
-              href="/cadastro-professor"
+            <button
+              type="button"
               className="btn btn-primary btn-lg d-flex align-items-center gap-2"
+              data-bs-toggle="modal"
+              data-bs-target="#cadastroProfessorModal"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
               </svg>
               <span className="d-none d-sm-inline">Cadastrar Professor</span>
               <span className="d-sm-none">Novo</span>
-            </a>
+            </button>
           </div>
         </div>
       )}
@@ -601,6 +605,11 @@ export default function Gerenciar() {
           </div>
         )}
       </div>
+      
+      {/* Modal for professor registration */}
+      {currentUser?.level === "Superadmin" && (
+        <ModalCadastroProfessor onSuccess={() => getUsers({})} />
+      )}
     </div>
   );
 }
