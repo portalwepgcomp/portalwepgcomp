@@ -84,6 +84,13 @@ export const userApi = {
         return data;
     },
 
+    createProfessorBySuperadmin: async (body: CreateProfessorBySuperadminParams) => {
+
+        const { data } = await instance.post(`${baseUrl}/create-professor`, body);
+
+        return data;
+    },
+
     resetPasswordSendEmail: async (body: ResetPasswordSendEmailParams) => {
 
         const { data } = await instance.post(`${authBaseUrl}/forgot-password`, body);

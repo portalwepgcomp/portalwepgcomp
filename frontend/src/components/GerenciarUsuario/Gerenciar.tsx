@@ -345,6 +345,28 @@ export default function Gerenciar() {
 
   return (
     <div className="gerenciador">
+      {/* Header with Add Professor button for Superadmins */}
+      {currentUser?.level === "Superadmin" && (
+        <div className="management-header mb-4">
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <h3 className="mb-1">Gerenciamento de Usuários</h3>
+              <p className="text-muted mb-0">Gerencie usuários e cadastre novos professores</p>
+            </div>
+            <a
+              href="/cadastro-professor"
+              className="btn btn-primary btn-lg d-flex align-items-center gap-2"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+              </svg>
+              <span className="d-none d-sm-inline">Cadastrar Professor</span>
+              <span className="d-sm-none">Novo</span>
+            </a>
+          </div>
+        </div>
+      )}
+      
       <div className="filtros">
         <div className="pesquisar">
           <input

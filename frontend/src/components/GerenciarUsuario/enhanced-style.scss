@@ -6,6 +6,43 @@
   background: #fafafa;
   min-height: 100vh;
 
+  .management-header {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+
+    h3 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .text-muted {
+      color: #6c757d !important;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      svg {
+        flex-shrink: 0;
+      }
+    }
+  }
+
   .filtros {
     background: white;
     border-radius: 12px;
