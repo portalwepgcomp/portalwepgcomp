@@ -57,12 +57,12 @@ export default function Apresentacoes() {
 
   const handleDelete = async (submissionId: string) => {
     const submission = submissionList.find((s) => s.id === submissionId);
-
     if (!submission) return;
 
     if (user?.level !== "Default" || submission.mainAuthorId === user?.id) {
       await deleteSubmissionById(submissionId);
     }
+    getSubmissions({ eventEditionId: eventEditionId ?? "" });
   };
 
   const handleEdit = (submissionId: string) => {
