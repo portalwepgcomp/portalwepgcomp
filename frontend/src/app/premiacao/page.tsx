@@ -7,7 +7,7 @@ import Premiacoes from "@/components/Premiacao/Premiacoes";
 import Banner from "@/components/UI/Banner";
 
 import "./style.scss";
-import { PremiacaoProvider } from "@/context/premiacao";
+import { PremiacaoProvider } from "@/hooks/usePremiacao";
 import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
 
 export default function Premiacao() {
