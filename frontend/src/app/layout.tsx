@@ -24,9 +24,7 @@ export default function RootLayout({
           <Providers>
             <div className="d-flex flex-column vh-100">
               <Header />
-              <main className="main-content">
-                {children}
-              </main>
+              {children}
               <Footer />
             </div>
           </Providers>
