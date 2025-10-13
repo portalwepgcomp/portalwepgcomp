@@ -95,3 +95,9 @@ div:where(.swal2-container) {
   align-items: center;
   justify-content: center;
 }
+
+/* Main content area with custom scroll */
+.main-content {
+  flex: 1;
+  overflow: auto;
+}
