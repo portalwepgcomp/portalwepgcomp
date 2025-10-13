@@ -121,15 +121,33 @@ export class CertificateService {
         }
       }
     }
+
+    function dateHandler(
+      startDate: string | Date,
+      endDate: string | Date,
+    ): string {
+      const start =
+        typeof startDate === 'string' ? new Date(startDate) : startDate;
+      const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
+      const startDay = start.getDate();
+      const endDay = end.getDate();
+      const month = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(
+        end,
+      );
+      const year = end.getFullYear();
+
+      return `${startDay} a ${endDay} de ${month} de ${year}`;
+    }
+
     if (user.profile == Profile.Professor) {
-      texto += `   Certificamos que ${user.name} participou como avaliador(a) em sessões de apresentações do evento ${eventEdition.name}, ${panelistText}promovido pelo Programa de Pós-Graduação em Ciência da Computação do Instituto de Computação da Universidade Federal da Bahia, no período de ${eventEdition.startDate.toLocaleDateString()} a ${eventEdition.endDate.toLocaleDateString()}.`;
+      texto += `   Certificamos que ${user.name} participou como avaliador(a) em sessões de apresentações no Workshop de Estudantes do PGCOMP (${eventEdition.name}), ${panelistText}promovido pelo Programa de Pós-Graduação em Ciência da Computação - Universidade Federal da Bahia, de ${dateHandler(eventEdition.startDate, eventEdition.endDate)}.`;
       if (user.panelistAwards.length) {
         texto += ` Também ficamos felizes de informar que ${user.name} foi homenageado(a) como um dos melhores avaliadores pela comissão organizadora do ${eventEdition.name}.`;
       }
     } else if (user.profile == Profile.Listener) {
-      texto += `   Certificamos que ${user.name} participou como ouvinte do evento ${eventEdition.name}, promovido pelo Programa de Pós-Graduação em Ciência da Computação do Instituto de Computação da Universidade Federal da Bahia, no período de ${eventEdition.startDate.toLocaleDateString()} a ${eventEdition.endDate.toLocaleDateString()}.`;
+      texto += `   Certificamos que ${user.name} participou como ouvinte no Workshop de Estudantes do PGCOMP (${eventEdition.name}), promovido pelo Programa de Pós-Graduação em Ciência da Computação - Universidade Federal da Bahia, de ${dateHandler(eventEdition.startDate, eventEdition.endDate)}.`;
     } else {
-      texto += `    Certificamos que ${user.name} apresentou o trabalho de título "${userSubmission.title}" na categoria Apresentação Oral do evento ${eventEdition.name}, promovido pelo Programa de Pós-Graduação em Ciência da Computação do Instituto de Computação da Universidade Federal da Bahia, no período de ${eventEdition.startDate.toLocaleDateString()} a ${eventEdition.endDate.toLocaleDateString()}.`;
+      texto += `    Certificamos que ${user.name} apresentou o trabalho "${userSubmission.title}" na categoria Apresentação Oral no Workshop de Estudantes do PGCOMP (${eventEdition.name}), promovido pelo Programa de Pós-Graduação em Ciência da Computação - Universidade Federal da Bahia, de ${dateHandler(eventEdition.startDate, eventEdition.endDate)}.`;
       if (userPublicAwardStandings <= 3 && userEvaluatorsAwardStandings <= 3) {
         texto += ` O trabalho de ${user.name} recebeu o prêmio Escolha do Público, classificado em ${userPublicAwardStandings}º lugar na avaliação dos membros do público. Seu trabalho também recebeu o prêmio Escolha dos Avaliadores, sendo classificado em ${userEvaluatorsAwardStandings}º lugar na avaliação da banca avaliadora.`;
       } else if (userPublicAwardStandings <= 3) {
@@ -373,7 +391,7 @@ export class CertificateService {
       width: 135,
       height: mockSignatureDims.height,
     });
-    const leftName = 'Daniela Barreiro Claro';
+    const leftName = 'Frederico Araújo Durão';
     const leftRole = 'Coordenador(a) do PGCOMP';
     page.drawText(leftName, {
       x: signatureLineSize - font.widthOfTextAtSize(leftName, fontSize) / 2,
