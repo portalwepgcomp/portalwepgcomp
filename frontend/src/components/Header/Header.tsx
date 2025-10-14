@@ -25,7 +25,6 @@ export default function Header() {
   type MenuItem =
     | "inicio"
     | "programação do evento"
-    | "orientações"
     | "contato"
     | "login";
 
@@ -90,7 +89,6 @@ export default function Header() {
       if (currentHash === "#inicio") setSelectedItem("inicio");
       else if (currentHash === "#Programacao")
         setSelectedItem("programação do evento");
-      else if (currentHash === "#Orientacao") setSelectedItem("orientações");
       else if (currentHash === "#Contato") setSelectedItem("contato");
       else setSelectedItem(null);
     } else if (currentPath === "/login") {
@@ -204,12 +202,8 @@ export default function Header() {
               </div>
 
               <div
-                className={`nav-item ${
-                  selectedItem === "orientações" ? "fw-bold" : ""
-                }`}
-                onClick={() => handleItemClick("orientações")}
               >
-                <Link className="nav-link text-black" href="home#Orientacao">
+                <Link className="nav-link text-black" href="/orientacoes">
                   Orientações
                 </Link>
               </div>
