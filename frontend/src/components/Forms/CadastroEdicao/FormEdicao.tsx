@@ -60,7 +60,7 @@ const formEdicaoSchema = z.object({
         value: z.string({
           invalid_type_error: "Campo inválido!",
         }),
-      })
+      }),
     )
     .optional(),
 
@@ -71,7 +71,7 @@ const formEdicaoSchema = z.object({
         value: z.string({
           invalid_type_error: "Campo inválido!",
         }),
-      })
+      }),
     )
     .optional(),
 
@@ -82,7 +82,7 @@ const formEdicaoSchema = z.object({
         value: z.string({
           invalid_type_error: "Campo inválido!",
         }),
-      })
+      }),
     )
     .optional(),
 
@@ -93,7 +93,7 @@ const formEdicaoSchema = z.object({
         value: z.string({
           invalid_type_error: "Campo inválido!",
         }),
-      })
+      }),
     )
     .optional(),
 
@@ -145,7 +145,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
   const [advisorsLoaded, setAdvisorsLoaded] = useState(false);
   const [adminsLoaded, setAdminsLoaded] = useState(false);
   const [avaliadoresOptions, setAvaliadoresOptions] = useState<OptionType[]>(
-    []
+    [],
   );
   const [comissaoOptions, setComissaoOptions] = useState<OptionType[]>([]);
   const router = useRouter();
@@ -183,7 +183,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
           ?.filter((value) => value.role === "OrganizingCommittee")
           ?.map((v) => {
             return { value: v.userId, label: v.userName };
-          })
+          }),
       );
       setValue(
         "apoio",
@@ -191,7 +191,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
           ?.filter((value) => value.role === "ITSupport")
           ?.map((v) => {
             return { value: v.userId, label: v.userName };
-          })
+          }),
       );
       setValue(
         "apoioAd",
@@ -199,7 +199,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
           ?.filter((value) => value.role === "AdministativeSupport")
           ?.map((v) => {
             return { value: v.userId, label: v.userName };
-          })
+          }),
       );
       setValue(
         "comunicacao",
@@ -207,7 +207,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
           ?.filter((value) => value.role === "Communication")
           ?.map((v) => {
             return { value: v.userId, label: v.userName };
-          })
+          }),
       );
       setValue("duracao", edicaoData.presentationDuration);
       setValue("sessoes", edicaoData.presentationsPerPresentationBlock);
@@ -395,7 +395,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                     dayjs(date)
                       .set("hour", 23)
                       .set("minute", 59)
-                      .toISOString() || null
+                      .toISOString() || null,
                   )
                 }
                 selected={field.value ? dayjs(field.value).toDate() : null}
@@ -437,6 +437,8 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
             className="form-control input-title"
             id="local"
             placeholder="Digite a sala do evento"
+            value={"Sala A do IGEO"}
+            readOnly
             {...register("sala")}
           />
           <p className="text-danger error-message">{errors.sala?.message}</p>
@@ -617,7 +619,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
                       dayjs(date)
                         .set("hour", 23)
                         .set("minute", 59)
-                        .toISOString() || null
+                        .toISOString() || null,
                     )
                   }
                   selected={field.value ? new Date(field.value) : null}
