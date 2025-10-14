@@ -154,8 +154,13 @@ export default function Listagem({
                       : idModal
                   }
                   onClickItem={() => onEdit && onEdit(card?.id ?? "")}
-                  onEdit={() => onEdit && onEdit(card?.id ?? "")}
+                  onEdit={() => {
+                    if(onEdit){
+                      onEdit(card?.id ?? "")
+                    }
+                  }}
                   onDelete={() => onDelete && onDelete(card?.id ?? "")}
+                  startTime={card.startTime ? card.startTime : "" }
                 />
               ) : (
                 <PresentationCard

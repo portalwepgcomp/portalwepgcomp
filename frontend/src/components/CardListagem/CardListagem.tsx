@@ -21,6 +21,7 @@ interface CardListagem {
   onClickItem?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  startTime: string;
 }
 
 export default function CardListagem({
@@ -35,9 +36,21 @@ export default function CardListagem({
   idModalEdit,
   onDelete,
   onEdit,
+  startTime
 }: Readonly<CardListagem>) {
   const { showAlert } = useSweetAlert();
   const { Edicao } = useEdicao();
+
+  function dateFormat(date:string){
+    if (!date) return "";
+    const d = new Date(date);
+    const hours = d.getHours().toString().padStart(2, "0");
+    const minutes = d.getMinutes().toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const year = d.getFullYear().toString().slice(-2);
+    return `Início às ${hours}:${minutes} do dia ${day}/${month}/${year}`;
+  }
 
   return (
     <div className="card-listagem">
@@ -51,6 +64,7 @@ export default function CardListagem({
             }}
       >
         <h5 className="card-listagem-title">{title}</h5>
+        {startTime && <p>{dateFormat(startTime)}</p>}
         {mainAuthor != "Sem nome" &&
         <div className="card-listagem-authors">
           <h6 className="card-listagem-main-author">Doutorando(a): {mainAuthor}</h6>
