@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthProvider/authProvider";
+import { TokenValidationWrapper } from "@/components/TokenValidationWrapper";
 
 export const metadata: Metadata = {
   title: "WEPGCOMP",
@@ -22,11 +23,15 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <Providers>
-            <div className="d-flex flex-column vh-100">
-              <Header />
-              {children}
-              <Footer />
-            </div>
+            <TokenValidationWrapper>
+              <div className="d-flex flex-column vh-100">
+                <Header />
+                <main className="main-content">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+            </TokenValidationWrapper>
           </Providers>
         </AuthProvider>
       </body>

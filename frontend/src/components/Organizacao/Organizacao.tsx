@@ -81,7 +81,10 @@ export default function Organizacao(/*{props} : {props: OrganizacaoProps}*/) {
     } else {
       return "";
     }
-    return stringTeam;
+    return team
+      .slice()
+      .sort((a, b) => a.localeCompare(b))
+      .join(", ");
   }
 
   return (

@@ -33,18 +33,18 @@ axiosInstance.interceptors.response.use(
     }
 
     /*
-     * When response code is 401, try to refresh the token.
-     * Eject the interceptor so it doesn't loop in case
-     * token refresh causes the 401 response.
-     *
-     * Must be re-attached later on or the token refresh will only happen once
+     * When response code is 401 (token expired/invalid)
+     * Clear storage and redirect to login
      */
    
     localStorage.clear();
-    setTimeout(() => {
-      window.location.href = "/login";
-    }, 3000);
-    return Promise.reject(error); // Re-attach the interceptor by running the method
+    
+    // Dispara evento customizado para o AuthProvider
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("session-expired"));
+    }
+    
+    return Promise.reject(error);
   }
 );
 

@@ -9,6 +9,7 @@ import {
   LoginRequest,
   setTokenLocalStorage,
   setUserLocalStorage,
+  validateToken,
 } from "./util";
 import api from "../../utils/api";
 
@@ -19,18 +20,68 @@ interface IContextLogin {
   signed: boolean;
   singIn: (body: UserLogin) => Promise<void>;
   logout: () => void;
+  isValidatingToken: boolean;
 }
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState<null | UserProfile>(null);
+  const [isValidatingToken, setIsValidatingToken] = useState<boolean>(true);
   const { showAlert } = useSweetAlert();
   const router = useRouter();
 
   useEffect(() => {
-    const userSigned = getUserLocalStorage();
-    if (userSigned) {
-      setUser(JSON.parse(userSigned));
-    }
+    const checkTokenValidity = async () => {
+      const userSigned = getUserLocalStorage();
+      
+      if (userSigned) {
+        const isValid = await validateToken();
+        
+        if (isValid) {
+          setUser(JSON.parse(userSigned));
+        } else {
+          // Token expirado ou inválido
+          localStorage.clear();
+          setUser(null);
+          
+          showAlert({
+            icon: "warning",
+            title: "Sessão Expirada",
+            text: "Sua sessão expirou. Por favor, faça login novamente.",
+            confirmButtonText: "Ok",
+          });
+          
+          router.push("/login");
+        }
+      }
+      
+      setIsValidatingToken(false);
+    };
+
+    checkTokenValidity();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Listener para sessão expirada durante navegação
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      setUser(null);
+      
+      showAlert({
+        icon: "warning",
+        title: "Sessão Expirada",
+        text: "Sua sessão expirou. Por favor, faça login novamente.",
+        confirmButtonText: "Ok",
+      });
+      
+      router.push("/login");
+    };
+
+    window.addEventListener("session-expired", handleSessionExpired);
+
+    return () => {
+      window.removeEventListener("session-expired", handleSessionExpired);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const singIn = async ({ email, password }) => {
@@ -72,6 +123,7 @@ export const AuthProvider = ({ children }) => {
         signed: !!user,
         singIn,
         logout,
+        isValidatingToken,
       }}
     >
       {children}
