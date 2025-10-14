@@ -74,13 +74,6 @@ export default function Orientacoes() {
                 </div>
             ) : (
                 <>
-                    <div className="orientacoes">
-                        <HtmlEditorComponent
-                            content={content}
-                            onChange={(newValue) => setContent(newValue)}
-                            handleEditField={handleEditOrientacao}
-                        />
-                    </div>
                     <div className="button">
                         <div
                             className={
@@ -105,6 +98,13 @@ export default function Orientacoes() {
                         </div>
                     </div>
                     <>
+                        <div className="orientacoes">
+                            <HtmlEditorComponent
+                                content={content}
+                                onChange={(newValue) => setContent(newValue)}
+                                handleEditField={handleEditOrientacao}
+                            />
+                        </div>
                         {setion == 0 ? <OrientacoesAutores /> : ""}
                         {setion == 1 ? <OrientacoesAvaliadores /> : ""}
                         {setion == 2 ? <OrientacoesAudiencia /> : ""}
