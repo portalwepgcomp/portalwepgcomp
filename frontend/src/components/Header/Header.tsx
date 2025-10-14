@@ -9,7 +9,7 @@ import Link from "next/link";
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 
 import PerfilAdmin from "../Perfil/PerfilAdmin";
-import PerfilDoutorando from "../Perfil/PerfilDoutorando";
+import PerfilApresentador from "../Perfil/PerfilApresentador";
 import PerfilOuvinte from "../Perfil/PerfilOuvinte";
 import PerfilProfessor from "../Perfil/PerfilProfessor";
 
@@ -73,8 +73,8 @@ export default function Header() {
         return <PerfilOuvinte />;
       case "Professor":
         return <PerfilProfessor />;
-      case "DoctoralStudent":
-        return <PerfilDoutorando />;
+      case "Presenter":
+        return <PerfilApresentador />;
 
       default:
         return null;

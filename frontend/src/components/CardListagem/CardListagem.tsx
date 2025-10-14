@@ -53,7 +53,7 @@ export default function CardListagem({
         <h5 className="card-listagem-title">{title}</h5>
         {mainAuthor != "Sem nome" &&
         <div className="card-listagem-authors">
-          <h6 className="card-listagem-main-author">Doutorando(a): {mainAuthor}</h6>
+          <h6 className="card-listagem-main-author">Apresentador(a): {mainAuthor}</h6>
           {advisor && <p className="card-listagem-advisor">Orientador(a): {advisor}</p>}
         </div>
         }

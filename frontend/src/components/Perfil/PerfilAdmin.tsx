@@ -74,7 +74,7 @@ export default function PerfilAdmin({
           </button>
         </li>
 
-        {profile === "DoctoralStudent" && (
+        {profile === "Presenter" && (
           <li>
             <Link className="dropdown-item" href="/minha-apresentacao">
               Minha Apresentação

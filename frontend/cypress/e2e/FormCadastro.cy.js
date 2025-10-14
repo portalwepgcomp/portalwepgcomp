@@ -34,15 +34,15 @@ describe('Componente do Formulário de Cadastro', () => {
     });
 
     it('Deve validar o formato da matrícula', () => {
-      cy.get('input[value="doutorando"]').check();
+      cy.get('input[value="apresentador"]').check();
       cy.get('#matricula').type('abcdefg123');
       cy.get('button[type="submit"]').click();
       cy.contains('A matrícula precisa conter apenas números e ter menos de 20 dígitos.').should('be.visible');
     });
   
-    it('Deve validar o preenchimento da matrícula para perfil de doutorando', () => {
-      // Seleciona o perfil de doutorando
-      cy.get('input[value="doutorando"]').check();
+    it('Deve validar o preenchimento da matrícula para perfil de apresentador', () => {
+      // Seleciona o perfil de apresentador
+      cy.get('input[value="apresentador"]').check();
   
       // Tenta enviar o formulário sem matrícula
       cy.get('button[type="submit"]').click();
@@ -51,7 +51,7 @@ describe('Componente do Formulário de Cadastro', () => {
     });
 
     it('Deve validar o preenchimento da matrícula para perfil de professor', () => {
-      // Seleciona o perfil de doutorando
+      // Seleciona o perfil de apresentador
       cy.get('input[value="professor"]').check();
   
       // Tenta enviar o formulário sem matrícula
@@ -69,15 +69,15 @@ describe('Componente do Formulário de Cadastro', () => {
       cy.contains('As senhas não conferem!').should('be.visible');
     });
   
-    it('Deve cadastrar um usuário Doutorando com sucesso', function() {
-      const { doutorando } = this.userData;
+    it('Deve cadastrar um usuário Apresentador com sucesso', function() {
+      const { apresentador } = this.userData;
       cy.wait(2000);
-      cy.get('#nome').type(doutorando.nome + generateRandomLetters(5));
-      cy.get(`input[value="${doutorando.perfil}"]`).check();
+      cy.get('#nome').type(apresentador.nome + generateRandomLetters(5));
+      cy.get(`input[value="${apresentador.perfil}"]`).check();
       cy.get('#matricula').type(Math.floor(Math.random() * 1000000000));
-      cy.get('#email').type(doutorando.email +  generateRandomLetters(5));
-      cy.get('#senha').type(doutorando.senha);
-      cy.get('#confirmaSenha').type(doutorando.senha);
+      cy.get('#email').type(apresentador.email +  generateRandomLetters(5));
+      cy.get('#senha').type(apresentador.senha);
+      cy.get('#confirmaSenha').type(apresentador.senha);
   
       cy.get('button[type="submit"]').click();
 

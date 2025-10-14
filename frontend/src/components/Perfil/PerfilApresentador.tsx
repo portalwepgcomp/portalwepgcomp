@@ -7,7 +7,7 @@ import { useCertificate } from "@/services/certificate";
 import { useEdicao } from "@/hooks/useEdicao";
 import { useSweetAlert } from "@/hooks/useAlert";
 
-export default function PerfilDoutorando() {
+export default function PerfilApresentador() {
   const { logout } = useContext(AuthContext);
   const { Edicao } = useEdicao();
   const { showAlert } = useSweetAlert();

@@ -19,7 +19,7 @@ const formCadastroSchema = z
       .regex(/^[a-zA-ZÀ-ÿ\s]+$/, {
         message: "Preenchimento obrigatório.",
       }),
-    perfil: z.enum(["doutorando", "professor", "ouvinte"], {
+    perfil: z.enum(["apresentador", "professor", "ouvinte"], {
       required_error: "A escolha do perfil é obrigatória!",
       invalid_type_error: "Campo inválido!",
     }),
@@ -102,7 +102,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
   } = useForm<FormCadastroSchema>({
     resolver: zodResolver(formCadastroSchema),
     defaultValues: {
-      perfil: "doutorando",
+      perfil: "apresentador",
       matricula: "",
     },
   });
@@ -140,7 +140,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
     const { nome, email, senha, perfil, matricula = "" } = data; // default assegura string
 
     const profileFormated: Record<string, ProfileType> = {
-      doutorando: "DoctoralStudent",
+      apresentador: "Presenter",
       professor: "Professor",
       ouvinte: "Listener",
     };
@@ -214,13 +214,13 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
                   className="form-check-input"
                   id="radio1"
                   {...register("perfil")}
-                  value="doutorando"
+                  value="apresentador"
                 />
                 <label
                   className="form-check-label fw-bold input-title"
                   htmlFor="radio1"
                 >
-                  Doutorando (PGCOMP)
+                  Apresentador (PGCOMP)
                   <i
                     className="bi bi-info-circle ms-2"
                     data-bs-toggle="tooltip"

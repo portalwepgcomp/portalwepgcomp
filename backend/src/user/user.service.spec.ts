@@ -123,7 +123,7 @@ describe('UserService', () => {
       );
     });
 
-    it('should throw an AppException if DoctoralStudent registration number is null', async () => {
+    it('should throw an AppException if Presenter registration number is null', async () => {
       prismaService.userAccount.findUnique = jest
         .fn()
         .mockResolvedValueOnce(null);
@@ -152,7 +152,7 @@ describe('UserService', () => {
         registrationNumber: '2021001',
         registrationNumberType: 'MATRICULA',
         photoFilePath: null,
-        profile: 'DoctoralStudent',
+        profile: 'Presenter',
         level: 'Default',
         isActive: true,
         isSuperadmin: false,
@@ -320,7 +320,7 @@ describe('UserService', () => {
         email: 'user@example.com',
         registrationNumber: '2021001',
         photoFilePath: null,
-        profile: 'DoctoralStudent',
+        profile: 'Presenter',
         level: 'Default',
         isActive: true,
         createdAt: new Date(),
@@ -510,7 +510,7 @@ describe('UserService', () => {
         registrationNumber: '2021001',
         registrationNumberType: 'MATRICULA' as any,
         photoFilePath: null,
-        profile: 'DoctoralStudent',
+        profile: 'Presenter',
         level: 'Admin',
         isActive: true,
         isSuperadmin: false,
@@ -673,7 +673,7 @@ describe('UserService', () => {
         registrationNumber: '2021001',
         registrationNumberType: 'MATRICULA' as any,
         photoFilePath: null,
-        profile: 'DoctoralStudent',
+        profile: 'Presenter',
         level: 'Admin',
         isActive: true,
         isSuperadmin: false,
@@ -836,7 +836,7 @@ describe('UserService', () => {
         registrationNumber: '2021001',
         registrationNumberType: 'MATRICULA' as any,
         photoFilePath: null,
-        profile: 'DoctoralStudent',
+        profile: 'Presenter',
         level: 'Superadmin',
         isActive: true,
         isSuperadmin: true,

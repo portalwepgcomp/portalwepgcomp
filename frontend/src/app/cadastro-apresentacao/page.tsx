@@ -24,7 +24,7 @@ export default function CadastroApresentacao() {
   const router = useRouter();
 
   useEffect(() => {
-    if (user?.profile !== "DoctoralStudent") {
+    if (user?.profile !== "Presenter") {
       showAlert({
         icon: "error",
         title: "Acesso não autorizado",

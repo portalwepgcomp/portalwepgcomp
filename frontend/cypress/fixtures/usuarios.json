@@ -1,7 +1,7 @@
 {
-  "doutorando": {
+  "apresentador": {
     "nome": "Joao Silva",
-    "perfil": "doutorando",
+    "perfil": "apresentador",
     "matricula": "1234567890",
     "email": "joao.silva@ufba.br",
     "senha": "SenhaInvalida1234!"
