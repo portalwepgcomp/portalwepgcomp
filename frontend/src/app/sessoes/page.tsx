@@ -81,8 +81,6 @@ export default function Sessoes() {
     }
   }, [sessoesList, searchValue]);
 
-  console.log(sessionsListValues);
-
   return (
     <ProtectedLayout>
       <div
