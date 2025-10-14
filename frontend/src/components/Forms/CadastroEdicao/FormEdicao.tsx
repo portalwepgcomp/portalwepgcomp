@@ -437,7 +437,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
             className="form-control input-title"
             id="local"
             placeholder="Digite a sala do evento"
-            value={"Sala A do IGEO"}
+            value={"Auditório A do IGEO"}
             readOnly
             {...register("sala")}
           />
