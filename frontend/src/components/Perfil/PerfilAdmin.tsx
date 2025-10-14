@@ -57,27 +57,27 @@ export default function PerfilAdmin({
         {role === "Superadmin" && (
           <li>
             <Link className="dropdown-item" href="/edicoes">
-              Edições do Evento
+              Edições
             </Link>
           </li>
         )}
         {role === "Superadmin" && (
           <li>
             <Link className="dropdown-item" href="/gerenciamento">
-              Gerenciar Usuários
+              Usuários
             </Link>
           </li>
         )}
         <li>
           <button className="dropdown-item" onClick={certificateDownload}>
-            Emitir Certificado
+            Certificado
           </button>
         </li>
 
         {profile === "DoctoralStudent" && (
           <li>
             <Link className="dropdown-item" href="/minha-apresentacao">
-              Minha Apresentação
+              Apresentação
             </Link>
           </li>
         )}
@@ -85,7 +85,7 @@ export default function PerfilAdmin({
         {profile === "Professor" && (
           <li>
             <Link className="dropdown-item" href="/minhas-bancas">
-              Minhas bancas
+              Bancas
             </Link>
           </li>
         )}
@@ -102,7 +102,7 @@ export default function PerfilAdmin({
             data-bs-toggle="modal"
             data-bs-target="#escolherAvaliadorModal"
           >
-            Melhores Avaliadores
+            Avaliadores
           </button>
         </li>
         {(role === "Admin" || role === "Superadmin") && (
@@ -113,7 +113,7 @@ export default function PerfilAdmin({
               data-bs-target="#criteriosModal"
               className="dropdown-item"
             >
-              Gerenciar critérios
+              Critérios
             </button>
           </li>
         )}

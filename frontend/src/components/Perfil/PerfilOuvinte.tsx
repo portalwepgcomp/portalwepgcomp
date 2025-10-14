@@ -47,7 +47,7 @@ export default function PerfilOuvinte() {
                     <button
                         className="dropdown-item"
                         onClick={certificateDownload}>
-                        Emitir Certificado
+                        Certificado
                     </button>
                 </li>
                 <li>

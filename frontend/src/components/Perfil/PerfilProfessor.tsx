@@ -46,12 +46,12 @@ export default function PerfilProfessor() {
       <ul className='dropdown-menu dropdown-menu-end border-3 border-light'>
         <li>
           <button className='dropdown-item' onClick={certificateDownload}>
-            Emitir Certificado
+            Certificado
           </button>
         </li>
         <li>
           <Link className='dropdown-item' href='/minhas-bancas'>
-            Minhas bancas
+            Bancas
           </Link>
         </li>
         <li>
