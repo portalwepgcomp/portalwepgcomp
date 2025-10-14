@@ -58,3 +58,18 @@ export async function LoginRequest(
 
   return data;
 }
+
+export async function validateToken(): Promise<boolean> {
+  try {
+    const token = getTokenLocalStorage();
+    
+    if (!token) {
+      return false;
+    }
+
+    await api.get("auth/validate-token");
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
