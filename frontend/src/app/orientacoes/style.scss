@@ -7,6 +7,21 @@
     gap: 20px;
 }
 
+.buttonWrapper{
+    display: flex;
+    flex-Direction: row;
+    justify-Content: center;
+    align-Items: center;
+    flex-direction: column;
+
+    .orientationTitle{
+        font-size: 1.25rem;
+        font-Weight: bold;
+    }
+
+
+}
+
 .buttonFalse{
     border: solid;
     border-Color: #FFA90F;
