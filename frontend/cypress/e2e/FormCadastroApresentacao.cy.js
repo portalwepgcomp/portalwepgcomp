@@ -4,9 +4,9 @@ describe('Componente do Formulário de Cadastro de Apresentação', () => {
     });
   
     it('Deve mostrar mensagens de erro para campos obrigatórios não preenchidos', function () {
-      const { doutorando } = this.userData;
+      const { apresentador } = this.userData;
 
-      cy.login(doutorando.email, doutorando.senha); // insert doctoral student credentials
+      cy.login(apresentador.email, apresentador.senha); // insert presenter credentials
       cy.visit('/cadastro-apresentacao');
 
       cy.wait(2000);
@@ -21,12 +21,12 @@ describe('Componente do Formulário de Cadastro de Apresentação', () => {
       cy.contains('O celular deve conter 10 ou 11 dígitos').should('be.visible');
     });
 
-    // it('Deve permitir ao doutorando preencher e submeter o formulário com sucesso', function () {
+    // it('Deve permitir ao apresentador preencher e submeter o formulário com sucesso', function () {
     //   const num = Math.floor(Math.random() * 1000);
-    //   const { professor, doutorando } = this.userData;
+    //   const { professor, apresentador } = this.userData;
     //   cy.wait(2000);
 
-    //   cy.login(doutorando.email, doutorando.senha); // insert doctoral student credentials
+    //   cy.login(apresentador.email, apresentador.senha); // insert presenter credentials
     //   cy.visit('/cadastro-apresentacao');
 
     //   cy.get('button[type="submit"]').click();
@@ -41,11 +41,11 @@ describe('Componente do Formulário de Cadastro de Apresentação', () => {
     //   cy.url().should('include', '/minha-apresentacao');
     // });
 
-    // it('Deve permitir ao doutorando editar e submeter o formulário com sucesso', function () {
-    //   const { doutorando } = this.userData;
+    // it('Deve permitir ao apresentador editar e submeter o formulário com sucesso', function () {
+    //   const { apresentador } = this.userData;
     //   cy.wait(2000);
       
-    //   cy.login(doutorando.email, doutorando.senha); // insert doctoral student credentials
+    //   cy.login(apresentador.email, apresentador.senha); // insert presenter credentials
     //   cy.visit('/minha-apresentacao');
 
     //   cy.get('.listagem-template-cards')
@@ -71,7 +71,7 @@ describe('Componente do Formulário de Cadastro de Apresentação', () => {
       const { professor } = this.userData;
       cy.wait(2000);
 
-      cy.get('#doutorando-select').select('Ernesto Reis'); // insert doctoral student name 
+      cy.get('#apresentador-select').select('Ernesto Reis'); // insert presenter name 
       cy.get('button[type="submit"]').click();
       cy.get('input[placeholder="Insira o título da pesquisa"]').type('Título de Teste ' + num);
       cy.get('textarea[placeholder="Insira o resumo da pesquisa"]').type('Resumo de teste para validação.');

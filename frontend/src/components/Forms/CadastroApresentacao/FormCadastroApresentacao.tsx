@@ -29,7 +29,7 @@ const esquemaCadastro = z.object({
   resumo: z
     .string({ invalid_type_error: "Campo Inválido" })
     .min(1, "O resumo é obrigatório"),
-  doutorando: z.string({ invalid_type_error: "Campo Inválido" }).optional(),
+  apresentador: z.string({ invalid_type_error: "Campo Inválido" }).optional(),
   orientador: z
     .string({ invalid_type_error: "Campo Inválido" })
     .uuid({ message: "O orientador é obrigatório" }),
@@ -81,7 +81,7 @@ export function FormCadastroApresentacao() {
       setValue("id", submission.id);
       setValue("titulo", submission?.title);
       setValue("resumo", submission?.abstract ?? "");
-      setValue("doutorando", submission?.mainAuthorId);
+      setValue("apresentador", submission?.mainAuthorId);
       setValue("orientador", submission?.advisorId);
       setValue("coorientador", submission?.coAdvisor);
       setValue("slide", submission?.pdfFile);
@@ -91,7 +91,7 @@ export function FormCadastroApresentacao() {
       setValue("id", "");
       setValue("titulo", "");
       setValue("resumo", "");
-      setValue("doutorando", "");
+      setValue("apresentador", "");
       setValue("orientador", "");
       setValue("coorientador", "");
       setValue("data", "");
@@ -112,12 +112,12 @@ export function FormCadastroApresentacao() {
 
   useEffect(() => {
     if (user?.level !== "Default" && userList.length === 0) {
-      getUsers({ profiles: "DoctoralStudent" });
+      getUsers({ profiles: "Presenter" });
     }
   }, [user?.level, userList.length, getUsers]);
 
-  const doutorandos = userList
-    .filter((usuario) => usuario.profile === "DoctoralStudent")
+  const apresentadores = userList
+    .filter((usuario) => usuario.profile === "Presenter")
 
   const aoMudarArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const arquivoSelecionado = e.target.files?.[0];
@@ -135,7 +135,7 @@ export function FormCadastroApresentacao() {
     return {
       ...submission,
       eventEditionId: getEventEditionIdStorage() ?? "",
-      mainAuthorId: data.doutorando || user?.id,
+      mainAuthorId: data.apresentador || user?.id,
       title: data.titulo,
       abstractText: data.resumo,
       advisorId: data.orientador as UUID,
@@ -153,7 +153,7 @@ export function FormCadastroApresentacao() {
         return await updateSubmissionById(submission.id, dadosSubmissao);
       } else {
         const sucesso = await createSubmission(dadosSubmissao);
-        if (sucesso && user?.profile === "DoctoralStudent") {
+        if (sucesso && user?.profile === "Presenter") {
           roteador.push("/minha-apresentacao");
         }
         return sucesso;
@@ -256,24 +256,24 @@ export function FormCadastroApresentacao() {
       {user?.level !== "Default" && (
         <div className="col-12 mb-1">
           <label className="form-label form-title">
-            Selecionar doutorando
+            Selecionar apresentador
             <span className="text-danger ms-1">*</span>
           </label>
           <select
-            id="doutorando-select"
+            id="apresentador-select"
             className="form-control input-title"
-            {...register("doutorando")}
+            {...register("apresentador")}
             disabled={loadingUserList}
           >
-            <option value="">Selecione um doutorando</option>
-            {doutorandos.length === 0 && !loadingUserList ? (
+            <option value="">Selecione um apresentador</option>
+            {apresentadores.length === 0 && !loadingUserList ? (
               <option value="" disabled>
-                Nenhum doutorando encontrado
+                Nenhum apresentador encontrado
               </option>
             ) : (
-              doutorandos.map((doutorando) => (
-                <option key={doutorando.id} value={doutorando.id}>
-                  {doutorando.name}
+              apresentadores.map((apresentador) => (
+                <option key={apresentador.id} value={apresentador.id}>
+                  {apresentador.name}
                 </option>
               ))
             )}

@@ -28,13 +28,13 @@ describe('Componente do Formulário de Login', () => {
       cy.get('.button-password').should('exist').and('contain', 'Esqueceu sua senha?');
     });
       
-    it('Deve permitir o login com credenciais válidas de doutorando', function () {
-      const { doutorando } = this.userData;
+    it('Deve permitir o login com credenciais válidas de apresentador', function () {
+      const { apresentador } = this.userData;
       cy.wait(2000);
   
       // Preencher o formulário
-      cy.get('input#email').type(doutorando.email);
-      cy.get('input#password').type(doutorando.senha);
+      cy.get('input#email').type(apresentador.email);
+      cy.get('input#password').type(apresentador.senha);
       cy.get('button[type="submit"]').click();
        
       // Verifica redirecionamento

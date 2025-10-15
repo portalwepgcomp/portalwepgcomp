@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-type ProfileType = "Professor" | "DoctoralStudent" | "Listener";
+type ProfileType = "Professor" | "Presenter" | "Listener";
 type RoleType = "Superadmin" | "Admin" | "Default";
 type StatusType = "Active" | "Inactive";
 
@@ -34,6 +34,7 @@ interface User extends RegisterUserParams {
     level: RoleType;
     isActive: boolean;
     isTeacherActive: boolean;
+    isPresenterActive: boolean;
     isAdmin: boolean; 
     isSuperadmin: boolean; 
 }
