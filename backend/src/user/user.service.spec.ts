@@ -937,6 +937,7 @@ describe('UserService', () => {
           isSuperadmin: false,
           isTeacherActive: true,
           isAdmin: true,
+          isPresenterActive: true,
         },
         {
           id: '2',
@@ -955,6 +956,7 @@ describe('UserService', () => {
           isSuperadmin: false,
           isTeacherActive: false,
           isAdmin: false,
+          isPresenterActive: false,
         },
       ];
 
@@ -983,6 +985,7 @@ describe('UserService', () => {
           isAdmin: true,
           isSuperadmin: true,
           isTeacherActive: true,
+          isPresenterActive: true,
         },
       });
 
@@ -1010,6 +1013,7 @@ describe('UserService', () => {
           isSuperadmin: false,
           isTeacherActive: true,
           isAdmin: true,
+          isPresenterActive: true,
         },
       ];
 
@@ -1065,6 +1069,7 @@ describe('UserService', () => {
           isSuperadmin: false,
           isTeacherActive: false,
           isAdmin: false,
+          isPresenterActive: false,
         },
       ];
 
@@ -1120,6 +1125,7 @@ describe('UserService', () => {
           isSuperadmin: false,
           isTeacherActive: true,
           isAdmin: true,
+          isPresenterActive: true,
         },
       ];
 

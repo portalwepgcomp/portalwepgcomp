@@ -105,12 +105,7 @@ export class UserService {
         level: shouldBeSuperAdmin ? UserLevel.Superadmin : UserLevel.Default,
         registrationNumber,
         registrationNumberType,
-        isActive:
-          createUserDto.profile === Profile.Professor && !shouldBeSuperAdmin
-            ? false
-            : createUserDto.profile === Profile.Presenter
-              ? false
-              : true,
+        isActive: true,
         isTeacherActive:
           createUserDto.profile === Profile.Professor && !shouldBeSuperAdmin
             ? false
