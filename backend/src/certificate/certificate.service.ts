@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { PageSizes, PDFDocument, PDFFont, rgb, TextAlignment } from 'pdf-lib';
+import { PDFDocument, rgb, PageSizes, PDFFont, TextAlignment } from 'pdf-lib';
 import * as fontkit from '@pdf-lib/fontkit';
 import { AppException } from '../exceptions/app.exception';
 import { CommitteeLevel, Profile } from '@prisma/client';

@@ -480,6 +480,7 @@ export class UserService {
         isVerified: true,
         isActive: true,
         isTeacherActive: true,
+        isPresenterActive: true,
         isAdmin: true,
         isSuperadmin: true,
         createdAt: true,

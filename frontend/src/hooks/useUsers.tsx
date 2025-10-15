@@ -1,5 +1,11 @@
 import { useRouter } from "next/navigation";
-import { createContext, ReactNode, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
 
 import { useSweetAlert } from "@/hooks/useAlert";
 import { userApi } from "@/services/user";
@@ -40,7 +46,7 @@ interface UserProviderData {
 }
 
 export const UserContext = createContext<UserProviderData>(
-  {} as UserProviderData
+  {} as UserProviderData,
 );
 
 export const useUsers = () => useContext(UserContext);
@@ -62,38 +68,40 @@ export const UserProvider = ({ children }: UserProps) => {
   const [admins, setAdmins] = useState<User[]>([]);
   const { user: authUser } = useContext(AuthContext);
 
-
   const { showAlert } = useSweetAlert();
   const router = useRouter();
 
-  const getUsers = useCallback(async (params: GetUserParams) => {
-    setLoadingUserList(true);
-    
-    if(authUser){
-      userApi
-        .getUsers(params)
-        .then((response) => {
-          setUserList(response);
-        })
-        .catch((err) => {
-          setUserList([]);
+  const getUsers = useCallback(
+    async (params: GetUserParams) => {
+      setLoadingUserList(true);
 
-          showAlert({
-            icon: "error",
-            title: "Erro ao listar usuários",
-            text:
-              err.response?.data?.message?.message ||
-              err.response?.data?.message ||
-              "Ocorreu um erro durante a busca.",
-            confirmButtonText: "Retornar",
+      if (authUser) {
+        userApi
+          .getUsers(params)
+          .then((response) => {
+            setUserList(response);
+          })
+          .catch((err) => {
+            setUserList([]);
+
+            showAlert({
+              icon: "error",
+              title: "Erro ao listar usuários",
+              text:
+                err.response?.data?.message?.message ||
+                err.response?.data?.message ||
+                "Ocorreu um erro durante a busca.",
+              confirmButtonText: "Retornar",
+            });
+          })
+          .finally(() => {
+            setLoadingUserList(false);
           });
-        })
-        .finally(() => {
-          setLoadingUserList(false);
-        });
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authUser?.id, showAlert]);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [authUser?.id, showAlert],
+  );
 
   const registerUser = async (body: RegisterUserParams) => {
     setLoadingCreateUser(true);
@@ -350,7 +358,7 @@ export const UserProvider = ({ children }: UserProps) => {
     } finally {
       setLoadingAdmins(false);
     }
-  }
+  };
 
   const approveTeacher = async (userId: string) => {
     setLoadingRoleAction(true);
@@ -382,14 +390,23 @@ export const UserProvider = ({ children }: UserProps) => {
     setLoadingRoleAction(true);
 
     try {
-      await userApi.approvePresenter(userId);
+      const result = await userApi.approvePresenter(userId);
+
+      // Optimistic update - immediately update the user in the local state
+      setUserList((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === userId ? { ...user, isPresenterActive: true } : user,
+        ),
+      );
+
       showAlert({
         icon: "success",
         title: "Apresentador aprovado com sucesso!",
         timer: 3000,
         showConfirmButton: false,
       });
-      getUsers({});
+
+      await getUsers({});
     } catch (err: any) {
       showAlert({
         icon: "error",
