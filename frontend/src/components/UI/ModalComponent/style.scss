@@ -1,4 +1,5 @@
 .modal-component{
+    z-index: 2000 !important;
     .header-modal-component{
         border: none;
 
@@ -9,7 +10,7 @@
         }
 
         .close-buton::before {
-            transform: scale(1.5); 
+            transform: scale(1.5);
           }
     }
 
