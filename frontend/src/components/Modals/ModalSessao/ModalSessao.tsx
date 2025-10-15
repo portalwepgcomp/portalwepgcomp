@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import "./style.scss";
 import { ModalSessaoMock } from "@/mocks/ModalSessoes";
 import { SessaoTipoEnum } from "@/enums/session";
@@ -12,19 +12,30 @@ import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 
 export default function ModalSessao() {
   const { tipo, titulo } = ModalSessaoMock;
-  const { sessao, listRooms } = useSession();
+  const { sessao, listRooms, sessoesList } = useSession();
+
+  const disabledIntervals = useMemo(() => {
+    if (!sessoesList) return [];
+    const otherSessions = sessoesList.filter((s) => s.id !== sessao?.id);
+
+    return otherSessions.map((s) => {
+      const start = new Date(s.startTime);
+      const end = new Date(start.getTime() + (s.duration ?? 0) * 60000);
+      return { start, end };
+    });
+  }, [sessoesList, sessao?.id]);
 
   const [tipoSessao, setTipoSessao] = useState<SessaoTipoEnum>(
     sessao?.type === SessaoTipoEnum["Sessão de apresentações"]
       ? SessaoTipoEnum["Sessão de apresentações"]
-      : SessaoTipoEnum["Sessão auxiliar do evento"]
+      : SessaoTipoEnum["Sessão auxiliar do evento"],
   );
 
   useEffect(() => {
     if (sessao?.type) {
       setTipoSessao(
         (sessao?.type ||
-          SessaoTipoEnum["Sessão auxiliar do evento"]) as SessaoTipoEnum
+          SessaoTipoEnum["Sessão auxiliar do evento"]) as SessaoTipoEnum,
       );
     }
   }, [sessao?.type]);
@@ -79,9 +90,9 @@ export default function ModalSessao() {
         </div>
 
         {tipoSessao === SessaoTipoEnum["Sessão auxiliar do evento"] ? (
-          <FormSessaoGeral />
+          <FormSessaoGeral disabledIntervals={disabledIntervals} />
         ) : (
-          <FormSessaoApresentacoes />
+          <FormSessaoApresentacoes disabledIntervals={disabledIntervals} />
         )}
       </div>
     </ModalComponent>
