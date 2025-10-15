@@ -9,7 +9,6 @@ import Listagem, { mapCardList } from "@/templates/Listagem/Listagem";
 import ModalSessaoOrdenarApresentacoes from "@/components/Modals/ModalSessaoOrdenarApresentacoes/ModalSessaoOrdenarApresentacoes";
 import { useUsers } from "@/hooks/useUsers";
 import { useSubmission } from "@/hooks/useSubmission";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 import { useEdicao } from "@/hooks/useEdicao";
 import { formatDate } from "@/utils/formatDate";
 import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
@@ -31,8 +30,8 @@ export default function Sessoes() {
   const [sessionsListValues, setSessionsListValues] =
     useState<Sessao[]>(sessoesList);
 
-  const getSessionOnList = (card: any) => {
-    const sessaoValue = sessoesList?.find((v) => v.id === card.id);
+  const getSessionOnList = (sessionId: string) => {
+    const sessaoValue = sessoesList?.find((v) => v.id === sessionId);
 
     if (sessaoValue?.id) {
       setSessao(sessaoValue);
@@ -107,7 +106,8 @@ export default function Sessoes() {
               )}
               idGeneralModal="trocarOrdemApresentacao"
               generalButtonLabel="Trocar ordem das apresentações"
-              onClickItem={getSessionOnList}
+              onClickItem={(value) => getSessionOnList(value)}
+              onEdit={(value) => getSessionOnList(value)}
               onClear={() => setSessao(null)}
               onDelete={(id: string) => deleteSession(id, Edicao?.id ?? "")}
             />
