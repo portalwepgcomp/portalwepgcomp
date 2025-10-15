@@ -1,0 +1,128 @@
+.cadastro-professor-form {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+
+  .input-title {
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+
+    &:focus {
+      border-color: #0066cc;
+      box-shadow: 0 0 0 0.25rem rgba(0, 102, 204, 0.15);
+    }
+
+    &.is-invalid {
+      border-color: #dc3545;
+      
+      &:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.15);
+      }
+    }
+
+    &:disabled {
+      background-color: #f8f9fa;
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  .form-label {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    
+    .text-danger {
+      color: #dc3545 !important;
+    }
+  }
+
+  .form-text {
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  .invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #dc3545;
+  }
+
+  .alert-info {
+    background-color: #e7f3ff;
+    border-color: #b8daff;
+    color: #004085;
+    border-radius: 8px;
+    padding: 1rem;
+    
+    svg {
+      color: #0066cc;
+      flex-shrink: 0;
+    }
+  }
+
+  .btn {
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    
+    &.btn-primary {
+      background-color: #0066cc;
+      border-color: #0066cc;
+      
+      &:hover:not(:disabled) {
+        background-color: #0056b3;
+        border-color: #0056b3;
+        transform: translateY(-1px);
+      }
+      
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+    }
+    
+    &.btn-outline-secondary {
+      border-color: #6c757d;
+      color: #6c757d;
+      
+      &:hover:not(:disabled) {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  .spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .cadastro-professor-form {
+    padding: 1.5rem;
+    margin: 0 1rem;
+    
+    .btn {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+    
+    .d-flex.justify-content-end {
+      flex-direction: column-reverse;
+    }
+  }
+}

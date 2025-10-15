@@ -48,6 +48,12 @@ interface ResetPasswordParams {
     newPassword: string,
 }
 
+interface CreateProfessorBySuperadminParams {
+    name: string,
+    email: string,
+    registrationNumber: string
+}
+
 interface UserLogin {
     email: string,
     password: string

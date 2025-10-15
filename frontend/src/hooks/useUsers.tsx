@@ -17,6 +17,7 @@ interface UserProps {
 
 interface UserProviderData {
   loadingCreateUser: boolean;
+  loadingCreateProfessor: boolean;
   loadingSendEmail: boolean;
   loadingResetPassword: boolean;
   loadingUserList: boolean;
@@ -30,6 +31,7 @@ interface UserProviderData {
   admins: User[];
   getUsers: (params: GetUserParams) => void;
   registerUser: (body: RegisterUserParams) => Promise<void>;
+  createProfessorBySuperadmin: (body: CreateProfessorBySuperadminParams) => Promise<void>;
   resetPasswordSendEmail: (body: ResetPasswordSendEmailParams) => Promise<void>;
   resetPassword: (body: ResetPasswordParams) => Promise<void>;
   getAdvisors: () => Promise<void>;
@@ -53,6 +55,7 @@ export const useUsers = () => useContext(UserContext);
 
 export const UserProvider = ({ children }: UserProps) => {
   const [loadingCreateUser, setLoadingCreateUser] = useState<boolean>(false);
+  const [loadingCreateProfessor, setLoadingCreateProfessor] = useState<boolean>(false);
   const [loadingUserList, setLoadingUserList] = useState<boolean>(false);
   const [loadingSendEmail, setLoadingSendEmail] = useState<boolean>(false);
   const [loadingResetPassword, setLoadingResetPassword] =
@@ -132,6 +135,40 @@ export const UserProvider = ({ children }: UserProps) => {
       });
     } finally {
       setLoadingCreateUser(false);
+    }
+  };
+
+  const createProfessorBySuperadmin = async (body: CreateProfessorBySuperadminParams) => {
+    setLoadingCreateProfessor(true);
+
+    try {
+      const response = await userApi.createProfessorBySuperadmin(body);
+
+      showAlert({
+        icon: "success",
+        title: "Professor cadastrado com sucesso!",
+        text: "O professor foi cadastrado e receberá um email com as credenciais de acesso.",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+
+      // Refresh user list
+      getUsers({});
+
+      return response;
+    } catch (err: any) {
+      showAlert({
+        icon: "error",
+        title: "Erro ao cadastrar professor",
+        text:
+          err.response?.data?.message?.message ||
+          err.response?.data?.message ||
+          "Ocorreu um erro durante o cadastro. Tente novamente mais tarde!",
+        confirmButtonText: "Retornar",
+      });
+      throw err;
+    } finally {
+      setLoadingCreateProfessor(false);
     }
   };
 
@@ -503,6 +540,7 @@ export const UserProvider = ({ children }: UserProps) => {
     <UserContext.Provider
       value={{
         loadingCreateUser,
+        loadingCreateProfessor,
         loadingSendEmail,
         loadingResetPassword,
         loadingUserList,
@@ -516,6 +554,7 @@ export const UserProvider = ({ children }: UserProps) => {
         admins,
         getUsers,
         registerUser,
+        createProfessorBySuperadmin,
         resetPasswordSendEmail,
         resetPassword,
         getAdvisors,
