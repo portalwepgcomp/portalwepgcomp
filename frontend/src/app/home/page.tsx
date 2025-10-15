@@ -20,7 +20,6 @@ export default function Home() {
         <>
           <Carousel />
           <ScheduleSection />
-          <Orientacao />
           <Organizacao />
           <LocalEvento />
           <Realizacao />

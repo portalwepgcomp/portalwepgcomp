@@ -88,12 +88,19 @@ export default function Organizacao(/*{props} : {props: OrganizacaoProps}*/) {
   }
 
   return (
-    <div
+    <section
+      style={{
+        width: "100%",
+        margin: "0 auto",
+        backgroundColor: "#F17F0C"
+      }}
+    >
+      <div
       style={{
         width: "90%",
         margin: "0 auto",
         color: "black",
-        padding: "30px 0",
+        padding: "30px 0px",
       }}
     >
       <h1
@@ -102,7 +109,7 @@ export default function Organizacao(/*{props} : {props: OrganizacaoProps}*/) {
           fontWeight: "700",
           lineHeight: "80px",
           textAlign: "center",
-          color: "#054B75",
+          color: "black",
         }}
       >
         Organização
@@ -116,36 +123,37 @@ export default function Organizacao(/*{props} : {props: OrganizacaoProps}*/) {
         }}
       >
         <p>
-          <span style={{ fontWeight: "700", color: "#F17F0C" }}>
+          <span style={{ fontWeight: "700", color: "white" }}>
             Coordenação geral:
           </span>{" "}
           {coordenador}
         </p>
         <p>
-          <span style={{ fontWeight: "700", color: "#F17F0C" }}>
+          <span style={{ fontWeight: "700", color: "white" }}>
             Comissão organizadora:
           </span>{" "}
           {formatTeam(groupedMembers.comissao)}
         </p>
         <p>
-          <span style={{ fontWeight: "700", color: "#F17F0C" }}>
+          <span style={{ fontWeight: "700", color: "white" }}>
             Apoio à TI:
           </span>{" "}
           {formatTeam(groupedMembers.ti)}
         </p>
         <p>
-          <span style={{ fontWeight: "700", color: "#F17F0C" }}>
+          <span style={{ fontWeight: "700", color: "white" }}>
             Comunicação:
           </span>{" "}
           {formatTeam(groupedMembers.comunicacao)}
         </p>
         <p>
-          <span style={{ fontWeight: "700", color: "#F17F0C" }}>
+          <span style={{ fontWeight: "700", color: "white" }}>
             Apoio administrativo:
           </span>{" "}
           {formatTeam(groupedMembers.administracao)}
         </p>
       </div>
     </div>
+    </section>
   );
 }
