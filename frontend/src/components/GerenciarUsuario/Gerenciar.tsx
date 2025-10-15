@@ -22,6 +22,7 @@ export default function Gerenciar() {
     loadingRoleAction,
     getUsers,
     approveTeacher,
+    approvePresenter,
     promoteToAdmin,
     promoteToSuperadmin,
     demoteUser,
@@ -51,9 +52,12 @@ export default function Gerenciar() {
       filtered = filtered.filter((user) => {
         switch (filters.status) {
           case "ativo":
-            return user.isActive && (user.profile !== "Professor" || user.isTeacherActive);
+            return user.isActive && 
+              (user.profile !== "Professor" || user.isTeacherActive) &&
+              (user.profile !== "Presenter" || user.isPresenterActive);
           case "ativo_pendente":
-            return user.profile === "Professor" && user.isActive && !user.isTeacherActive;
+            return (user.profile === "Professor" && user.isActive && !user.isTeacherActive) ||
+                   (user.profile === "Presenter" && user.isActive && !user.isPresenterActive);
           case "inativo":
             return !user.isActive;
           default:
@@ -109,6 +113,7 @@ export default function Gerenciar() {
   const getUserStatus = useCallback((user: User) => {
     if (!user.isActive) return "INATIVO";
     if (user.profile === "Professor" && !user.isTeacherActive) return "ATIVO_PENDENTE";
+    if (user.profile === "Presenter" && !user.isPresenterActive) return "ATIVO_PENDENTE";
     return "ATIVO";
   }, []);
 
@@ -227,6 +232,36 @@ export default function Gerenciar() {
       );
     }
 
+    // Presenter approval (Admin and Superadmin only)
+    if (
+      isCurrentUserAdmin &&
+      targetUser.profile === "Presenter" &&
+      targetUser.isActive &&
+      !targetUser.isPresenterActive
+    ) {
+      actions.push(
+        <button
+          key="approve-presenter"
+          className="btn btn-success btn-sm"
+          onClick={() => approvePresenter(targetUser.id)}
+          disabled={!Edicao?.isActive || loadingRoleAction}
+          title="Aprovar Apresentador"
+        >
+          <span className="d-none d-md-inline">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+            </svg>
+            Aprovar Apresentador
+          </span>
+          <span className="d-md-none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+            </svg>
+          </span>
+        </button>
+      );
+    }
+
     // Admin promotion (Superadmin only)
     if (
       isCurrentUserSuperadmin &&
@@ -319,7 +354,7 @@ export default function Gerenciar() {
     }
 
     return actions;
-  }, [currentUser, Edicao, loadingRoleAction, approveTeacher, promoteToAdmin, promoteToSuperadmin, demoteUser]);
+  }, [currentUser, Edicao, loadingRoleAction, approveTeacher, approvePresenter, promoteToAdmin, promoteToSuperadmin, demoteUser]);
 
   // Enhanced status class names
   const statusClassNames = {
@@ -486,7 +521,8 @@ export default function Gerenciar() {
                         }}
                         value={userStatus}
                       >
-                        {userValue.profile === "Professor" && !userValue.isTeacherActive ? (
+                        {(userValue.profile === "Professor" && !userValue.isTeacherActive) || 
+                         (userValue.profile === "Presenter" && !userValue.isPresenterActive) ? (
                           <>
                             <option value="ATIVO_PENDENTE">ATIVO PENDENTE</option>
                             <option value="INATIVO">INATIVO</option>

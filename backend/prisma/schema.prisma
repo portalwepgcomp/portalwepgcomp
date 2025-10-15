@@ -24,6 +24,7 @@ model UserAccount {
   isAdmin                 Boolean                 @default(false) @map("is_admin")
   isSuperadmin            Boolean                 @default(false) @map("is_superadmin")
   isTeacherActive         Boolean                 @default(false) @map("is_teacher_active")
+  isPresenterActive       Boolean                 @default(false) @map("is_presenter_active")
   panelistAwards          AwardedPanelist[]
   certificates            Certificate[]
   committeeMemberships    CommitteeMember[]

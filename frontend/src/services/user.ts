@@ -57,6 +57,11 @@ export const userApi = {
         return data;
     },
 
+    approvePresenter: async (userId: string) => {
+        const { data } = await instance.patch(`${baseUrl}/${userId}/approve-presenter`);
+        return data;
+    },
+
     promoteToAdmin: async (userId: string) => {
         const { data } = await instance.patch(`${baseUrl}/${userId}/promote-admin`);
         return data;

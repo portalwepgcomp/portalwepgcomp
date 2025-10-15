@@ -34,6 +34,7 @@ interface User extends RegisterUserParams {
     level: RoleType;
     isActive: boolean;
     isTeacherActive: boolean;
+    isPresenterActive: boolean;
     isAdmin: boolean; 
     isSuperadmin: boolean; 
 }

@@ -33,6 +33,7 @@ interface UserProviderData {
   markAsAdminUser: (body: SetPermissionParams) => Promise<void>;
   markAsSpAdminUser: (body: SetPermissionParams) => Promise<void>;
   approveTeacher: (userId: string) => Promise<void>;
+  approvePresenter: (userId: string) => Promise<void>;
   promoteToAdmin: (userId: string) => Promise<void>;
   promoteToSuperadmin: (userId: string) => Promise<void>;
   demoteUser: (userId: string) => Promise<void>;
@@ -377,6 +378,32 @@ export const UserProvider = ({ children }: UserProps) => {
     }
   };
 
+  const approvePresenter = async (userId: string) => {
+    setLoadingRoleAction(true);
+
+    try {
+      await userApi.approvePresenter(userId);
+      showAlert({
+        icon: "success",
+        title: "Apresentador aprovado com sucesso!",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+      getUsers({});
+    } catch (err: any) {
+      showAlert({
+        icon: "error",
+        title: "Erro ao aprovar apresentador",
+        text:
+          err.response?.data?.message ||
+          "Ocorreu um erro ao tentar aprovar o apresentador. Tente novamente!",
+        confirmButtonText: "Retornar",
+      });
+    } finally {
+      setLoadingRoleAction(false);
+    }
+  };
+
   const promoteToAdmin = async (userId: string) => {
     setLoadingRoleAction(true);
 
@@ -481,6 +508,7 @@ export const UserProvider = ({ children }: UserProps) => {
         markAsAdminUser,
         markAsSpAdminUser,
         approveTeacher,
+        approvePresenter,
         promoteToAdmin,
         promoteToSuperadmin,
         demoteUser,
