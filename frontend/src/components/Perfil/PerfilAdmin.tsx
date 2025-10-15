@@ -33,14 +33,14 @@ export default function PerfilAdmin({
         timer: 3000,
         showConfirmButton: false,
       });
-      return
-    } 
+      return;
+    }
     showAlert({
-        icon: "error",
-        title: response,
-        timer: 3000,
-        showConfirmButton: false,
-      });
+      icon: "error",
+      title: response,
+      timer: 3000,
+      showConfirmButton: false,
+    });
   };
 
   return (
@@ -57,44 +57,44 @@ export default function PerfilAdmin({
         {role === "Superadmin" && (
           <li>
             <Link className="dropdown-item" href="/edicoes">
-              Edições do Evento
+              Eventos
             </Link>
           </li>
         )}
-        {role === "Superadmin" && (
+        {profile === "Professor" && (
           <li>
-            <Link className="dropdown-item" href="/gerenciamento">
-              Gerenciar Usuários
+            <Link className="dropdown-item" href="/minhas-bancas">
+              Bancas
             </Link>
           </li>
         )}
         <li>
           <button className="dropdown-item" onClick={certificateDownload}>
-            Emitir Certificado
+            Certificado
           </button>
         </li>
-
-        {profile === "Presenter" && (
-          <li>
-            <Link className="dropdown-item" href="/minha-apresentacao">
-              Minha Apresentação
-            </Link>
-          </li>
-        )}
-
-        {profile === "Professor" && (
-          <li>
-            <Link className="dropdown-item" href="/minhas-bancas">
-              Minhas bancas
-            </Link>
-          </li>
-        )}
 
         <li>
           <Link className="dropdown-item" href="/apresentacoes">
             Apresentações
           </Link>
         </li>
+        {role === "Superadmin" && (
+          <li>
+            <Link className="dropdown-item" href="/gerenciamento">
+              Usuários
+            </Link>
+          </li>
+        )}
+
+        {profile === "Presenter" && (
+          <li>
+            <Link className="dropdown-item" href="/minha-apresentacao">
+              Submissão
+            </Link>
+          </li>
+        )}
+
         <li>
           <button
             className="dropdown-item"
@@ -102,7 +102,7 @@ export default function PerfilAdmin({
             data-bs-toggle="modal"
             data-bs-target="#escolherAvaliadorModal"
           >
-            Melhores Avaliadores
+            Avaliadores
           </button>
         </li>
         {(role === "Admin" || role === "Superadmin") && (
@@ -113,7 +113,7 @@ export default function PerfilAdmin({
               data-bs-target="#criteriosModal"
               className="dropdown-item"
             >
-              Gerenciar critérios
+              Critérios
             </button>
           </li>
         )}

@@ -23,8 +23,8 @@ export default function PerfilApresentador() {
         timer: 3000,
         showConfirmButton: false,
       });
-      return
-    } 
+      return;
+    }
     showAlert({
       icon: "error",
       title: response,
@@ -34,33 +34,33 @@ export default function PerfilApresentador() {
   };
 
   return (
-    <li className='dropdown'>
+    <li className="dropdown">
       <button
-        className='btn dropdown-toggle border-0'
-        type='button'
-        data-bs-toggle='dropdown'
-        aria-expanded='false'
+        className="btn dropdown-toggle border-0"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
       >
-        <i className='bi bi-list fs-3'></i>
+        <i className="bi bi-list fs-3"></i>
       </button>
-      <ul className='dropdown-menu dropdown-menu-end border-3 border-light'>
+      <ul className="dropdown-menu dropdown-menu-end border-3 border-light">
         <li>
-          <button className='dropdown-item' onClick={certificateDownload}>
-            Emitir Certificado
+          <button className="dropdown-item" onClick={certificateDownload}>
+            Certificado
           </button>
         </li>
         <li>
-          <Link className='dropdown-item' href='/minha-apresentacao'>
-            Minha Apresentação
+          <Link className="dropdown-item" href="/minha-apresentacao">
+            Submissão
           </Link>
         </li>
         <li>
-          <Link className='dropdown-item' href='/favoritos'>
+          <Link className="dropdown-item" href="/favoritos">
             Favoritos
           </Link>
         </li>
         <li>
-          <Link className='dropdown-item' href='/home' onClick={logout}>
+          <Link className="dropdown-item" href="/home" onClick={logout}>
             Sair
           </Link>
         </li>
