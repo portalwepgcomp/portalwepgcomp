@@ -9,13 +9,18 @@ import Listagem, { mapCardList } from "@/templates/Listagem/Listagem";
 import ModalSessaoOrdenarApresentacoes from "@/components/Modals/ModalSessaoOrdenarApresentacoes/ModalSessaoOrdenarApresentacoes";
 import { useUsers } from "@/hooks/useUsers";
 import { useSubmission } from "@/hooks/useSubmission";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 import { useEdicao } from "@/hooks/useEdicao";
 import { formatDate } from "@/utils/formatDate";
 import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
 
 export default function Sessoes() {
-  const { listSessions, sessoesList, deleteSession, setSessao, loadingSessoesList } = useSession();
+  const {
+    listSessions,
+    sessoesList,
+    deleteSession,
+    setSessao,
+    loadingSessoesList,
+  } = useSession();
   const { getUsers } = useUsers();
   const { getSubmissions } = useSubmission();
 
@@ -25,8 +30,8 @@ export default function Sessoes() {
   const [sessionsListValues, setSessionsListValues] =
     useState<Sessao[]>(sessoesList);
 
-  const getSessionOnList = (card: any) => {
-    const sessaoValue = sessoesList?.find((v) => v.id === card.id);
+  const getSessionOnList = (sessionId: string) => {
+    const sessaoValue = sessoesList?.find((v) => v.id === sessionId);
 
     if (sessaoValue?.id) {
       setSessao(sessaoValue);
@@ -54,16 +59,26 @@ export default function Sessoes() {
 
           return !v?.title || searchMatch;
         }) ?? [];
-      setSessionsListValues(newSessionsList.map(s => ({
-        ...s,
-        formatedStartTime: `${formatDate(s.startTime)}`
-      })));
+      setSessionsListValues(
+        newSessionsList.map((s) => {
+          const start = new Date(s.startTime);
+          const end = new Date(start.getTime() + (s.duration ?? 0) * 60000);
+
+          const formattedDate = formatDate(start.toISOString());
+          const endTimeStr = end.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          });
+
+          return {
+            ...s,
+            formatedStartTime: `${formattedDate} - Fim: ${endTimeStr}h`,
+          };
+        }),
+      );
     }
   }, [sessoesList, searchValue]);
-
-  useEffect(() => {
-    setSessionsListValues(sessoesList);
-  }, [sessoesList]);
 
   return (
     <ProtectedLayout>
@@ -73,26 +88,33 @@ export default function Sessoes() {
           gap: "50px",
         }}
       >
-        {loadingSessoesList ? (<IndicadorDeCarregamento />) : (
-        <>
-          <Listagem
-            idModal="sessaoModal"
-            title={"Sessões"}
-            labelAddButton={"Incluir Sessão"}
-            searchPlaceholder={"Pesquise pelo nome da sessão"}
-            searchValue={searchValue}
-            onChangeSearchValue={(value) => setSearchValue(value)}
-            cardsList={mapCardList(sessionsListValues, "title", "formatedStartTime")}
-            idGeneralModal="trocarOrdemApresentacao"
-            generalButtonLabel="Trocar ordem das apresentações"
-            onClickItem={getSessionOnList}
-            onClear={() => setSessao(null)}
-            onDelete={(id: string) => deleteSession(id, Edicao?.id ?? "")}
-          />
-          <ModalSessao />
-          <ModalSessaoOrdenarApresentacoes />
-        </>)}
-        
+        {loadingSessoesList ? (
+          <IndicadorDeCarregamento />
+        ) : (
+          <>
+            <Listagem
+              idModal="sessaoModal"
+              title={"Sessões"}
+              labelAddButton={"Incluir Sessão"}
+              searchPlaceholder={"Pesquise pelo nome da sessão"}
+              searchValue={searchValue}
+              onChangeSearchValue={(value) => setSearchValue(value)}
+              cardsList={mapCardList(
+                sessionsListValues,
+                "title",
+                "formatedStartTime",
+              )}
+              idGeneralModal="trocarOrdemApresentacao"
+              generalButtonLabel="Trocar ordem das apresentações"
+              onClickItem={(value) => getSessionOnList(value)}
+              onEdit={(value) => getSessionOnList(value)}
+              onClear={() => setSessao(null)}
+              onDelete={(id: string) => deleteSession(id, Edicao?.id ?? "")}
+            />
+            <ModalSessao />
+            <ModalSessaoOrdenarApresentacoes />
+          </>
+        )}
       </div>
     </ProtectedLayout>
   );

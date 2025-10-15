@@ -22,7 +22,7 @@ import { useEffect } from "react";
 import "./style.scss";
 
 const formSessaoApresentacoesSchema = z.object({
-    titulo: z
+  titulo: z
     .string({
       invalid_type_error: "Campo inválido!",
     })
@@ -34,7 +34,7 @@ const formSessaoApresentacoesSchema = z.object({
         value: z.string({
           invalid_type_error: "Campo inválido!",
         }),
-      })
+      }),
     )
     .optional(),
 
@@ -70,13 +70,20 @@ const formSessaoApresentacoesSchema = z.object({
         value: z.string({
           invalid_type_error: "Campo inválido!",
         }),
-      })
+      }),
     )
     .optional(),
 });
 
-export default function FormSessaoApresentacoes() {
-  const { formAuxiliarFields, formApresentacoesFields, confirmButton } = ModalSessaoMock;
+interface FormSessaoAuxiliarProps {
+  disabledIntervals: { start: Date; end: Date }[];
+}
+
+export default function FormSessaoApresentacoes({
+  disabledIntervals,
+}: Readonly<FormSessaoAuxiliarProps>) {
+  const { formAuxiliarFields, formApresentacoesFields, confirmButton } =
+    ModalSessaoMock;
   const { createSession, updateSession, sessao, setSessao, roomsList } =
     useSession();
   const { userList } = useUsers();
@@ -124,19 +131,39 @@ export default function FormSessaoApresentacoes() {
 
   const avaliadoresOptions = formatOptions(userList, "name");
 
-  const filterTimes = (time: Date) => {
+  const combinedTimeFilter = (time: Date) => {
     const hour = time.getHours();
-    return hour < 22 && hour > 6;
+    const isWithinOperatingHours = hour < 22 && hour > 6;
+
+    if (!isWithinOperatingHours) {
+      return false;
+    }
+
+    const timeToCheck = time.getTime();
+    const isTimeUnavailable = disabledIntervals.some((interval) => {
+      const startTime = interval.start.getTime();
+      const endTime = interval.end.getTime();
+      return timeToCheck >= startTime && timeToCheck < endTime;
+    });
+
+    return !isTimeUnavailable;
   };
 
   const handleFormSessaoApresentacoes = (
-    data: FormSessaoApresentacoesSchema
+    data: FormSessaoApresentacoesSchema,
   ) => {
-    const { titulo, apresentacoes, sala, inicio, n_apresentacoes, avaliadores } = data;
+    const {
+      titulo,
+      apresentacoes,
+      sala,
+      inicio,
+      n_apresentacoes,
+      avaliadores,
+    } = data;
 
     const eventEditionId = getEventEditionIdStorage();
 
-    if (!titulo ||!sala || !inicio) {
+    if (!titulo || !sala || !inicio) {
       throw new Error("Campos obrigatórios em branco.");
     }
 
@@ -183,7 +210,7 @@ export default function FormSessaoApresentacoes() {
             value: v.submission?.id ?? "",
             label: v.submission?.title ?? "",
           };
-        })
+        }),
       );
       setValue("n_apresentacoes", sessao?.numPresentations ?? 3);
       setValue("sala", sessao?.roomId);
@@ -192,7 +219,7 @@ export default function FormSessaoApresentacoes() {
         "avaliadores",
         sessao?.panelists?.map((v) => {
           return { value: v.userId, label: v.user?.name ?? "" };
-        })
+        }),
       );
     } else {
       setValue("titulo", "");
@@ -210,7 +237,6 @@ export default function FormSessaoApresentacoes() {
       onSubmit={handleSubmit(handleFormSessaoApresentacoes)}
     >
       <div className="col-12 mb-1">
-
         <label className="form-label fw-bold form-title ">
           {formAuxiliarFields.titulo.label}
           <span className="text-danger ms-1 form-title">*</span>
@@ -316,7 +342,7 @@ export default function FormSessaoApresentacoes() {
                   .tz("America/Sao_Paulo", true)
                   .toDate()}
                 isClearable
-                filterTime={filterTimes}
+                filterTime={combinedTimeFilter}
                 placeholderText={formApresentacoesFields.inicio.placeholder}
                 toggleCalendarOnIconClick
               />

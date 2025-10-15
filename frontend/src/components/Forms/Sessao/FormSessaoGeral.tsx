@@ -63,7 +63,13 @@ const formSessaoAuxiliarSchema = z.object({
     .nullable(),
 });
 
-export default function FormSessaoAuxiliar() {
+interface FormSessaoAuxiliarProps {
+  disabledIntervals: { start: Date; end: Date }[];
+}
+
+export default function FormSessaoAuxiliar({
+  disabledIntervals,
+}: Readonly<FormSessaoAuxiliarProps>) {
   const { formAuxiliarFields, confirmButton } = ModalSessaoMock;
   const { createSession, updateSession, sessao, setSessao, roomsList } =
     useSession();
@@ -98,9 +104,22 @@ export default function FormSessaoAuxiliar() {
 
   const roomsOptions = formatOptions(roomsList, "name");
 
-  const filterTimes = (time: Date) => {
+  const combinedTimeFilter = (time: Date) => {
     const hour = time.getHours();
-    return hour < 22 && hour > 6;
+    const isWithinOperatingHours = hour < 22 && hour > 6;
+
+    if (!isWithinOperatingHours) {
+      return false;
+    }
+
+    const timeToCheck = time.getTime();
+    const isTimeUnavailable = disabledIntervals.some((interval) => {
+      const startTime = interval.start.getTime();
+      const endTime = interval.end.getTime();
+      return timeToCheck >= startTime && timeToCheck < endTime;
+    });
+
+    return !isTimeUnavailable;
   };
 
   const handleFormSessaoAuxiliar = (data: FormSessaoAuxiliarSchema) => {
@@ -152,7 +171,7 @@ export default function FormSessaoAuxiliar() {
         "final",
         dayjs(sessao?.startTime)
           .add(sessao?.duration ?? 0, "minute")
-          .toISOString()
+          .toISOString(),
       );
     } else {
       setValue("titulo", "");
@@ -249,7 +268,7 @@ export default function FormSessaoAuxiliar() {
                   .tz("America/Sao_Paulo", true)
                   .toDate()}
                 isClearable
-                filterTime={filterTimes}
+                filterTime={combinedTimeFilter}
                 placeholderText={formAuxiliarFields.inicio.placeholder}
                 toggleCalendarOnIconClick
               />
@@ -290,7 +309,7 @@ export default function FormSessaoAuxiliar() {
                   .tz("America/Sao_Paulo", true)
                   .toDate()}
                 isClearable
-                filterTime={filterTimes}
+                filterTime={combinedTimeFilter}
                 placeholderText={formAuxiliarFields.final.placeholder}
                 toggleCalendarOnIconClick
               />
