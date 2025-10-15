@@ -35,7 +35,8 @@ export default function Gerenciar() {
     profile: "",
   });
   const [searchValue, setSearchValue] = useState<string>("");
-  
+  const [showInfoCards, setShowInfoCards] = useState<boolean>(false);
+
   // Optimized user list with memoization for stability
   const filteredUsers = useMemo(() => {
     let filtered = userList || [];
@@ -43,7 +44,7 @@ export default function Gerenciar() {
     // Search filter
     if (searchValue.trim()) {
       filtered = filtered.filter((user) =>
-        user?.name?.toLowerCase().includes(searchValue.trim().toLowerCase())
+        user?.name?.toLowerCase().includes(searchValue.trim().toLowerCase()),
       );
     }
 
@@ -52,12 +53,20 @@ export default function Gerenciar() {
       filtered = filtered.filter((user) => {
         switch (filters.status) {
           case "ativo":
-            return user.isActive && 
+            return (
+              user.isActive &&
               (user.profile !== "Professor" || user.isTeacherActive) &&
-              (user.profile !== "Presenter" || user.isPresenterActive);
+              (user.profile !== "Presenter" || user.isPresenterActive)
+            );
           case "ativo_pendente":
-            return (user.profile === "Professor" && user.isActive && !user.isTeacherActive) ||
-                   (user.profile === "Presenter" && user.isActive && !user.isPresenterActive);
+            return (
+              (user.profile === "Professor" &&
+                user.isActive &&
+                !user.isTeacherActive) ||
+              (user.profile === "Presenter" &&
+                user.isActive &&
+                !user.isPresenterActive)
+            );
           case "inativo":
             return !user.isActive;
           default:
@@ -103,17 +112,19 @@ export default function Gerenciar() {
 
   // Stable filter update function
   const updateFilter = useCallback((filterType: string, value: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [filterType]: prev[filterType] === value ? "" : value
+      [filterType]: prev[filterType] === value ? "" : value,
     }));
   }, []);
 
   // Enhanced status calculation
   const getUserStatus = useCallback((user: User) => {
     if (!user.isActive) return "INATIVO";
-    if (user.profile === "Professor" && !user.isTeacherActive) return "ATIVO_PENDENTE";
-    if (user.profile === "Presenter" && !user.isPresenterActive) return "ATIVO_PENDENTE";
+    if (user.profile === "Professor" && !user.isTeacherActive)
+      return "ATIVO_PENDENTE";
+    if (user.profile === "Presenter" && !user.isPresenterActive)
+      return "ATIVO_PENDENTE";
     return "ATIVO";
   }, []);
 
@@ -127,68 +138,68 @@ export default function Gerenciar() {
   // Enhanced user badges
   const getUserBadges = useCallback((user: User): JSX.Element[] => {
     const badges: JSX.Element[] = [];
-    
+
     if (user.isSuperadmin) {
       badges.push(
         <span key="superadmin" className="badge bg-warning text-dark me-1">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
+            <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" />
           </svg>
           Superadmin
-        </span>
+        </span>,
       );
     } else if (user.isAdmin) {
       badges.push(
         <span key="admin" className="badge bg-primary me-1">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2L13.09 8.26L20 9L15 14L16.18 21L12 17.77L7.82 21L9 14L4 9L10.91 8.26L12 2Z"/>
+            <path d="M12 2L13.09 8.26L20 9L15 14L16.18 21L12 17.77L7.82 21L9 14L4 9L10.91 8.26L12 2Z" />
           </svg>
           Admin
-        </span>
+        </span>,
       );
     }
-    
+
     if (user.profile === "Professor") {
       if (user.isTeacherActive) {
         badges.push(
           <span key="teacher" className="badge bg-success me-1">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z"/>
+              <path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z" />
             </svg>
             Professor Aprovado
-          </span>
+          </span>,
         );
       } else {
         badges.push(
           <span key="pending" className="badge bg-warning text-dark me-1">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2A10 10 0 0 0 2 12A10 10 0 0 0 12 22A10 10 0 0 0 22 12A10 10 0 0 0 12 2M7 9.5C7 9.5 9 7.5 12 7.5S17 9.5 17 9.5S15 11.5 12 11.5S7 9.5 7 9.5M12 17.23C10.25 17.23 8.71 16.5 7.81 15.42L9.23 14C9.68 14.72 10.75 15.23 12 15.23S14.32 14.72 14.77 14L16.19 15.42C15.29 16.5 13.75 17.23 12 17.23Z"/>
+              <path d="M12 2A10 10 0 0 0 2 12A10 10 0 0 0 12 22A10 10 0 0 0 22 12A10 10 0 0 0 12 2M7 9.5C7 9.5 9 7.5 12 7.5S17 9.5 17 9.5S15 11.5 12 11.5S7 9.5 7 9.5M12 17.23C10.25 17.23 8.71 16.5 7.81 15.42L9.23 14C9.68 14.72 10.75 15.23 12 15.23S14.32 14.72 14.77 14L16.19 15.42C15.29 16.5 13.75 17.23 12 17.23Z" />
             </svg>
             Professor Pendente
-          </span>
+          </span>,
         );
       }
     }
-    
+
     if (user.profile === "Presenter") {
       badges.push(
         <span key="presenter" className="badge bg-info me-1">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M16,13C15.71,13 15.38,13 15.03,13.05C16.19,13.89 17,15 17,16.5V19H23V16.5C23,14.17 18.33,13 16,13M8,13C5.67,13 1,14.17 1,16.5V19H15V16.5C15,14.17 10.33,13 8,13M8,11A3,3 0 0,0 11,8A3,3 0 0,0 8,5A3,3 0 0,0 5,8A3,3 0 0,0 8,11M16,11A3,3 0 0,0 19,8A3,3 0 0,0 16,5A3,3 0 0,0 13,8A3,3 0 0,0 16,11Z"/>
+            <path d="M16,13C15.71,13 15.38,13 15.03,13.05C16.19,13.89 17,15 17,16.5V19H23V16.5C23,14.17 18.33,13 16,13M8,13C5.67,13 1,14.17 1,16.5V19H15V16.5C15,14.17 10.33,13 8,13M8,11A3,3 0 0,0 11,8A3,3 0 0,0 8,5A3,3 0 0,0 5,8A3,3 0 0,0 8,11M16,11A3,3 0 0,0 19,8A3,3 0 0,0 16,5A3,3 0 0,0 13,8A3,3 0 0,0 16,11Z" />
           </svg>
           Apresentador
-        </span>
+        </span>,
       );
     }
-    
+
     if (user.profile === "Listener") {
       badges.push(
         <span key="listener" className="badge bg-secondary me-1">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12,1A3,3 0 0,1 15,4V12A3,3 0 0,1 12,15A3,3 0 0,1 9,12V4A3,3 0 0,1 12,1M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/>
+            <path d="M12,1A3,3 0 0,1 15,4V12A3,3 0 0,1 12,15A3,3 0 0,1 9,12V4A3,3 0 0,1 12,1M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
           </svg>
           Ouvinte
-        </span>
+        </span>,
       );
     }
 
@@ -196,170 +207,233 @@ export default function Gerenciar() {
   }, []);
 
   // Enhanced action buttons with permission checking
-  const getActionButtons = useCallback((targetUser: User): JSX.Element[] => {
-    const actions: JSX.Element[] = [];
-    const isCurrentUserSuperadmin = currentUser?.level === "Superadmin";
-    const isCurrentUserAdmin = currentUser?.level === "Admin" || currentUser?.level === "Superadmin";
-    const isSelf = targetUser.id === currentUser?.id;
+  const getActionButtons = useCallback(
+    (targetUser: User): JSX.Element[] => {
+      const actions: JSX.Element[] = [];
+      const isCurrentUserSuperadmin = currentUser?.level === "Superadmin";
+      const isCurrentUserAdmin =
+        currentUser?.level === "Admin" || currentUser?.level === "Superadmin";
+      const isSelf = targetUser.id === currentUser?.id;
 
-    // Teacher approval (Admin and Superadmin only)
-    if (
-      isCurrentUserAdmin &&
-      targetUser.profile === "Professor" &&
-      targetUser.isActive &&
-      !targetUser.isTeacherActive
-    ) {
-      actions.push(
-        <button
-          key="approve"
-          className="btn btn-success btn-sm"
-          onClick={() => approveTeacher(targetUser.id)}
-          disabled={!Edicao?.isActive || loadingRoleAction}
-          title="Aprovar Professor"
-        >
-          <span className="d-none d-md-inline">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
-            </svg>
-            Aprovar Professor
-          </span>
-          <span className="d-md-none">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
-            </svg>
-          </span>
-        </button>
-      );
-    }
+      // Teacher approval (Admin and Superadmin only)
+      if (
+        isCurrentUserAdmin &&
+        targetUser.profile === "Professor" &&
+        targetUser.isActive &&
+        !targetUser.isTeacherActive
+      ) {
+        actions.push(
+          <button
+            key="approve"
+            className="btn btn-success btn-sm"
+            onClick={() => approveTeacher(targetUser.id)}
+            disabled={!Edicao?.isActive || loadingRoleAction}
+            title="Aprovar Professor"
+          >
+            <span className="d-none d-md-inline">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+              </svg>
+              Aprovar Professor
+            </span>
+            <span className="d-md-none">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+              </svg>
+            </span>
+          </button>,
+        );
+      }
 
-    // Presenter approval (Admin and Superadmin only)
-    if (
-      isCurrentUserAdmin &&
-      targetUser.profile === "Presenter" &&
-      targetUser.isActive &&
-      !targetUser.isPresenterActive
-    ) {
-      actions.push(
-        <button
-          key="approve-presenter"
-          className="btn btn-success btn-sm"
-          onClick={() => approvePresenter(targetUser.id)}
-          disabled={!Edicao?.isActive || loadingRoleAction}
-          title="Aprovar Apresentador"
-        >
-          <span className="d-none d-md-inline">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
-            </svg>
-            Aprovar Apresentador
-          </span>
-          <span className="d-md-none">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
-            </svg>
-          </span>
-        </button>
-      );
-    }
+      // Presenter approval (Admin and Superadmin only)
+      if (
+        isCurrentUserAdmin &&
+        targetUser.profile === "Presenter" &&
+        targetUser.isActive &&
+        !targetUser.isPresenterActive
+      ) {
+        actions.push(
+          <button
+            key="approve-presenter"
+            className="btn btn-success btn-sm"
+            onClick={() => approvePresenter(targetUser.id)}
+            disabled={!Edicao?.isActive || loadingRoleAction}
+            title="Aprovar Apresentador"
+          >
+            <span className="d-none d-md-inline">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+              </svg>
+              Aprovar Apresentador
+            </span>
+            <span className="d-md-none">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+              </svg>
+            </span>
+          </button>,
+        );
+      }
 
-    // Admin promotion (Superadmin only)
-    if (
-      isCurrentUserSuperadmin &&
-      targetUser.profile === "Professor" &&
-      targetUser.isTeacherActive &&
-      !targetUser.isAdmin &&
-      !targetUser.isSuperadmin &&
-      !isSelf
-    ) {
-      actions.push(
-        <button
-          key="promote-admin"
-          className="btn btn-primary btn-sm"
-          onClick={() => promoteToAdmin(targetUser.id)}
-          disabled={!Edicao?.isActive || loadingRoleAction}
-          title="Promover a Admin"
-        >
-          <span className="d-none d-md-inline">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"/>
-            </svg>
-            Promover a Admin
-          </span>
-          <span className="d-md-none">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"/>
-            </svg>
-          </span>
-        </button>
-      );
-    }
+      // Admin promotion (Superadmin only)
+      if (
+        isCurrentUserSuperadmin &&
+        targetUser.profile === "Professor" &&
+        targetUser.isTeacherActive &&
+        !targetUser.isAdmin &&
+        !targetUser.isSuperadmin &&
+        !isSelf
+      ) {
+        actions.push(
+          <button
+            key="promote-admin"
+            className="btn btn-primary btn-sm"
+            onClick={() => promoteToAdmin(targetUser.id)}
+            disabled={!Edicao?.isActive || loadingRoleAction}
+            title="Promover a Admin"
+          >
+            <span className="d-none d-md-inline">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z" />
+              </svg>
+              Promover a Admin
+            </span>
+            <span className="d-md-none">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z" />
+              </svg>
+            </span>
+          </button>,
+        );
+      }
 
-    // Superadmin promotion (Superadmin only)
-    if (
-      isCurrentUserSuperadmin &&
-      targetUser.isAdmin &&
-      !targetUser.isSuperadmin &&
-      !isSelf
-    ) {
-      actions.push(
-        <button
-          key="promote-superadmin"
-          className="btn btn-warning btn-sm"
-          onClick={() => promoteToSuperadmin(targetUser.id)}
-          disabled={!Edicao?.isActive || loadingRoleAction}
-          title="Promover a Superadmin"
-        >
-          <span className="d-none d-md-inline">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
-            </svg>
-            Promover a Superadmin
-          </span>
-          <span className="d-md-none">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
-            </svg>
-          </span>
-        </button>
-      );
-    }
+      // Superadmin promotion (Superadmin only)
+      if (
+        isCurrentUserSuperadmin &&
+        targetUser.isAdmin &&
+        !targetUser.isSuperadmin &&
+        !isSelf
+      ) {
+        actions.push(
+          <button
+            key="promote-superadmin"
+            className="btn btn-warning btn-sm"
+            onClick={() => promoteToSuperadmin(targetUser.id)}
+            disabled={!Edicao?.isActive || loadingRoleAction}
+            title="Promover a Superadmin"
+          >
+            <span className="d-none d-md-inline">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" />
+              </svg>
+              Promover a Superadmin
+            </span>
+            <span className="d-md-none">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" />
+              </svg>
+            </span>
+          </button>,
+        );
+      }
 
-    // Demotion (Superadmin only, cannot demote self)
-    if (
-      isCurrentUserSuperadmin &&
-      !isSelf &&
-      (targetUser.isAdmin || targetUser.isSuperadmin)
-    ) {
-      actions.push(
-        <button
-          key="demote"
-          className="btn btn-secondary btn-sm"
-          onClick={() => demoteUser(targetUser.id)}
-          disabled={!Edicao?.isActive || loadingRoleAction}
-          title="Rebaixar Usuário"
-        >
-          <span className="d-none d-md-inline">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/>
-            </svg>
-            Rebaixar
-          </span>
-          <span className="d-md-none">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/>
-            </svg>
-          </span>
-        </button>
-      );
-    }
+      // Demotion (Superadmin only, cannot demote self)
+      if (
+        isCurrentUserSuperadmin &&
+        !isSelf &&
+        (targetUser.isAdmin || targetUser.isSuperadmin)
+      ) {
+        actions.push(
+          <button
+            key="demote"
+            className="btn btn-secondary btn-sm"
+            onClick={() => demoteUser(targetUser.id)}
+            disabled={!Edicao?.isActive || loadingRoleAction}
+            title="Rebaixar Usuário"
+          >
+            <span className="d-none d-md-inline">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
+              </svg>
+              Rebaixar
+            </span>
+            <span className="d-md-none">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
+              </svg>
+            </span>
+          </button>,
+        );
+      }
 
-    return actions;
-  }, [currentUser, Edicao, loadingRoleAction, approveTeacher, approvePresenter, promoteToAdmin, promoteToSuperadmin, demoteUser]);
+      return actions;
+    },
+    [
+      currentUser,
+      Edicao,
+      loadingRoleAction,
+      approveTeacher,
+      approvePresenter,
+      promoteToAdmin,
+      promoteToSuperadmin,
+      demoteUser,
+    ],
+  );
 
   // Enhanced status class names
   const statusClassNames = {
     ATIVO: "status-ativo",
-    ATIVO_PENDENTE: "status-pendente", 
+    ATIVO_PENDENTE: "status-pendente",
     INATIVO: "status-inativo",
   };
 
@@ -441,44 +515,76 @@ export default function Gerenciar() {
               <option value="ouvinte">Ouvinte</option>
             </select>
           </div>
+
+          <button
+            className="btn btn-outline-secondary info-toggle-btn"
+            onClick={() => setShowInfoCards(!showInfoCards)}
+            title="Informações sobre status e permissões"
+            aria-label="Mostrar informações"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" />
+            </svg>
+          </button>
         </div>
       </div>
 
-      <div className="info-cards">
-        <div className="info-card info-card-teacher">
-          <div className="info-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z"/>
-            </svg>
+      {showInfoCards && (
+        <div className="info-cards">
+          <div className="info-card info-card-teacher">
+            <div className="info-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z" />
+              </svg>
+            </div>
+            <div className="info-content">
+              <div className="info-title">Professor Pendente</div>
+              <div className="info-desc">
+                Professor aguardando aprovação administrativa
+              </div>
+            </div>
           </div>
-          <div className="info-content">
-            <div className="info-title">Professor Pendente</div>
-            <div className="info-desc">Professor aguardando aprovação administrativa</div>
+          <div className="info-card info-card-admin">
+            <div className="info-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11.5C14.8,12.4 14.4,13.2 13.7,13.7V16.3C13.7,16.8 13.3,17.2 12.8,17.2H11.3C10.8,17.2 10.4,16.8 10.4,16.3V13.8C9.68,13.3 9.3,12.5 9.3,11.6V10C9.2,8.6 10.6,7 12,7Z" />
+              </svg>
+            </div>
+            <div className="info-content">
+              <div className="info-title">Administrador</div>
+              <div className="info-desc">
+                Pode aprovar professores e gerenciar usuários
+              </div>
+            </div>
+          </div>
+          <div className="info-card info-card-superadmin">
+            <div className="info-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" />
+              </svg>
+            </div>
+            <div className="info-content">
+              <div className="info-title">Superadministrador</div>
+              <div className="info-desc">Acesso completo ao sistema</div>
+            </div>
           </div>
         </div>
-        <div className="info-card info-card-admin">
-          <div className="info-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11.5C14.8,12.4 14.4,13.2 13.7,13.7V16.3C13.7,16.8 13.3,17.2 12.8,17.2H11.3C10.8,17.2 10.4,16.8 10.4,16.3V13.8C9.68,13.3 9.3,12.5 9.3,11.6V10C9.2,8.6 10.6,7 12,7Z"/>
-            </svg>
-          </div>
-          <div className="info-content">
-            <div className="info-title">Administrador</div>
-            <div className="info-desc">Pode aprovar professores e gerenciar usuários</div>
-          </div>
-        </div>
-        <div className="info-card info-card-superadmin">
-          <div className="info-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
-            </svg>
-          </div>
-          <div className="info-content">
-            <div className="info-title">Superadministrador</div>
-            <div className="info-desc">Acesso completo ao sistema</div>
-          </div>
-        </div>
-      </div>
+      )}
 
       <div className="listagem">
         {loadingUserList && (
@@ -504,27 +610,30 @@ export default function Gerenciar() {
                     </div>
                     <div className="user-badges">{userBadges}</div>
                   </div>
-                  
+
                   <div className="user-controls">
                     <div className="control-section">
-                      <div className="control-label">
-                        Status
-                      </div>
+                      <div className="control-label">Status</div>
                       <select
                         className={`control-select ${statusClassNames[userStatus]}`}
                         disabled={!Edicao?.isActive || loadingRoleAction}
                         onChange={(e) => {
                           switchActiveUser(
                             userValue.id,
-                            e.target.value === "ATIVO" || e.target.value === "ATIVO_PENDENTE"
+                            e.target.value === "ATIVO" ||
+                              e.target.value === "ATIVO_PENDENTE",
                           );
                         }}
                         value={userStatus}
                       >
-                        {(userValue.profile === "Professor" && !userValue.isTeacherActive) || 
-                         (userValue.profile === "Presenter" && !userValue.isPresenterActive) ? (
+                        {(userValue.profile === "Professor" &&
+                          !userValue.isTeacherActive) ||
+                        (userValue.profile === "Presenter" &&
+                          !userValue.isPresenterActive) ? (
                           <>
-                            <option value="ATIVO_PENDENTE">ATIVO PENDENTE</option>
+                            <option value="ATIVO_PENDENTE">
+                              ATIVO PENDENTE
+                            </option>
                             <option value="INATIVO">INATIVO</option>
                           </>
                         ) : (
@@ -537,27 +646,45 @@ export default function Gerenciar() {
                     </div>
 
                     <div className="control-section">
-                      <div className="control-label">
-                        Permissão
-                      </div>
+                      <div className="control-label">Permissão</div>
                       <div className="permission-badge">
-                        <span className={`badge ${
-                          userPermission === 'SUPERADMIN' ? 'badge-superadmin' :
-                          userPermission === 'ADMIN' ? 'badge-admin' : 'badge-normal'
-                        }`}>
-                          {userPermission === 'SUPERADMIN' && (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"/>
+                        <span
+                          className={`badge ${
+                            userPermission === "SUPERADMIN"
+                              ? "badge-superadmin"
+                              : userPermission === "ADMIN"
+                                ? "badge-admin"
+                                : "badge-normal"
+                          }`}
+                        >
+                          {userPermission === "SUPERADMIN" && (
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                            >
+                              <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" />
                             </svg>
                           )}
-                          {userPermission === 'ADMIN' && (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M12 2L13.09 8.26L20 9L15 14L16.18 21L12 17.77L7.82 21L9 14L4 9L10.91 8.26L12 2Z"/>
+                          {userPermission === "ADMIN" && (
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                            >
+                              <path d="M12 2L13.09 8.26L20 9L15 14L16.18 21L12 17.77L7.82 21L9 14L4 9L10.91 8.26L12 2Z" />
                             </svg>
                           )}
-                          {userPermission === 'NORMAL' && (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
+                          {userPermission === "NORMAL" && (
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                            >
+                              <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
                             </svg>
                           )}
                           {userPermission}
@@ -566,12 +693,20 @@ export default function Gerenciar() {
                     </div>
 
                     <div className="control-section">
-                      <div className="control-label">
-                        Ações
-                      </div>
+                      <div className="control-label">Ações</div>
                       <div className="action-buttons">
-                        {actionButtons.length > 0 ? actionButtons : (
-                          <div style={{color: '#6c757d', fontSize: '12px', textAlign: 'center'}}>Nenhuma ação disponível</div>
+                        {actionButtons.length > 0 ? (
+                          actionButtons
+                        ) : (
+                          <div
+                            style={{
+                              color: "#6c757d",
+                              fontSize: "12px",
+                              textAlign: "center",
+                            }}
+                          >
+                            Nenhuma ação disponível
+                          </div>
                         )}
                       </div>
                     </div>
@@ -579,7 +714,10 @@ export default function Gerenciar() {
 
                   {loadingRoleAction && (
                     <div className="loading-overlay">
-                      <div className="spinner-border spinner-border-sm" role="status">
+                      <div
+                        className="spinner-border spinner-border-sm"
+                        role="status"
+                      >
                         <span className="visually-hidden">Loading...</span>
                       </div>
                     </div>
@@ -600,16 +738,14 @@ export default function Gerenciar() {
                 height={90}
               />
               <h4 className="empty-state-title">
-                {searchValue || Object.values(filters).some(f => f) 
+                {searchValue || Object.values(filters).some((f) => f)
                   ? "Nenhum usuário encontrado"
-                  : "Nenhum usuário cadastrado"
-                }
+                  : "Nenhum usuário cadastrado"}
               </h4>
               <p className="empty-state-desc">
-                {searchValue || Object.values(filters).some(f => f)
+                {searchValue || Object.values(filters).some((f) => f)
                   ? "Tente ajustar os filtros de busca"
-                  : "Os usuários aparecerão aqui quando forem cadastrados"
-                }
+                  : "Os usuários aparecerão aqui quando forem cadastrados"}
               </p>
             </div>
           </div>
