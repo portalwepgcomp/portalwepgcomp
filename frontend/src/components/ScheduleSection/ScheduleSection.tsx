@@ -94,15 +94,19 @@ export default function ScheduleSection() {
 						{dates.map((date, index) => (
 							<button
 								key={index}
-								className='d-flex align-items-center fw-bold flex-start fs-5 date-button'
+								className='d-flex align-items-center fw-bold flex-start date-button'
 								style={{
+									width: "auto",
+									padding: "4px 10px",
+									fontSize: "0.95rem",
 									backgroundColor: selectedDate === date ? "#FFA90F" : "white",
 									color: selectedDate === date ? "white" : "#FFA90F",
+									minHeight: "32px",
 								}}
 								onClick={() => changeDate(date)}
 							>
-								<Calendar color={selectedDate === date ? "white" : "#FFA90F"} />
-								{moment(date).format("DD [de] MMMM")}
+								<Calendar color={selectedDate === date ? "white" : "#FFA90F"} style={{ width: 15, height: 15 }} />
+								<span style={{ marginLeft: 6 }}>{moment(date).format("DD [de] MMMM")}</span>
 							</button>
 						))}
 					</div>
