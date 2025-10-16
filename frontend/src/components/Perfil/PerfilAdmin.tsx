@@ -122,6 +122,18 @@ export default function PerfilAdmin({
             Premiação
           </Link>
         </li>
+        {role === "Superadmin" && (
+          <li>
+            <button
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target="#cadastroProfessorModal"
+              className="dropdown-item"
+            >
+              Professor
+            </button>
+          </li>
+        )}
         <li>
           <Link className="dropdown-item" href="/sessoes">
             Sessões
