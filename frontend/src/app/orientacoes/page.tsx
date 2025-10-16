@@ -18,39 +18,22 @@ export default function Orientacoes() {
 
     const isAdm = user?.level === "Superadmin";
 
-    const { postOrientacao, putOrientacao, getOrientacoes, orientacoes } =
+    const { postOrientacao, getOrientacoes, orientacoes } =
         useOrientacao();
 
     useEffect(() => {
         getOrientacoes();
     }, []);
 
-    const [content, setContent] = useState(orientacoes?.summary || "");
-
-    const handleEditOrientacao = () => {
-        const idOrientacao = orientacoes?.id;
-        const eventEditionId = getEventEditionIdStorage();
-
-        if (idOrientacao) {
-            putOrientacao(idOrientacao, {
-                eventEditionId: eventEditionId ?? "",
-                summary: content,
-            });
-        } else {
+    useEffect(() => {
+        if(orientacoes === undefined){
+            const eventEditionId = getEventEditionIdStorage();
             postOrientacao({
                 eventEditionId: eventEditionId ?? "",
-                summary: content,
+                summary: "Sumário criado",
             });
         }
-    };
-
-    useEffect(() => {
-        getOrientacoes();
-    }, []);
-
-    useEffect(() => {
-        setContent(orientacoes?.summary || "");
-    }, [orientacoes?.summary]);
+    }, [orientacoes])
 
     return (
         <div
@@ -60,20 +43,7 @@ export default function Orientacoes() {
                 gap: "50px",
             }}>
             <Banner title="Orientações" />
-            {!orientacoes?.id ? (
-                <div className="buttonWrapper">
-                    <h4 className="orientationTitle">
-                        Cadastre a primeira orientação abaixo clicando no botão
-                        abaixo.
-                    </h4>
-                    <HtmlEditorComponent
-                        content={content}
-                        onChange={(newValue) => setContent(newValue)}
-                        handleEditField={handleEditOrientacao}
-                    />
-                </div>
-            ) : (
-                <>
+            <>
                     <div className="button">
                         <div
                             className={
@@ -98,19 +68,11 @@ export default function Orientacoes() {
                         </div>
                     </div>
                     <>
-                        <div className="orientacoes">
-                            <HtmlEditorComponent
-                                content={content}
-                                onChange={(newValue) => setContent(newValue)}
-                                handleEditField={handleEditOrientacao}
-                            />
-                        </div>
                         {setion == 0 ? <OrientacoesAutores /> : ""}
                         {setion == 1 ? <OrientacoesAvaliadores /> : ""}
                         {setion == 2 ? <OrientacoesAudiencia /> : ""}
                     </>
                 </>
-            )}
         </div>
     );
 }
