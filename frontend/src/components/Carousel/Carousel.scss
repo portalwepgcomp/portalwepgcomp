@@ -1,12 +1,12 @@
 #carousel-wepgcomp {
-    min-height: 730px;
+  min-height: 300px;
 }
 
 .carousel-fade {
   .carousel-item {
     opacity: 0;
     transition-property: opacity;
-    transition-duration: .6s;
+    transition-duration: 0.6s;
     transition-timing-function: ease;
     position: relative;
     backface-visibility: hidden;
@@ -21,191 +21,186 @@
   z-index: 0;
 }
 
-.carousel-component{
-    .lead {
-        width: 100%;
+.carousel-component {
+  .lead {
+    width: 100%;
+  }
+  p {
+    text-align: center;
+    font-size: 22px;
+  }
+
+  .title {
+    font-weight: 800;
+    text-align: center;
+    font-size: 70px;
+  }
+
+  .indicators-content {
+    z-index: 3;
+    position: relative;
+
+    .indicators-buttons {
+      border-radius: 50%;
+      width: 15px;
+      height: 15px;
     }
-    p{
-        text-align: center;
-        font-size: 22px;
+  }
+
+  .schedule-button {
+    border-radius: 20px;
+    border: 2px solid white;
+    font-weight: 600;
+  }
+
+  .slide-2-content {
+    display: flex;
+    max-width: 70%;
+
+    .concept-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: -75px;
+
+      .concept-subtitle {
+        margin-bottom: 2.5rem;
+      }
+
+      .five-subtitle {
+        font-size: 8rem;
+        font-weight: 900;
+        line-height: 3rem;
+      }
+
+      .capes-subtitle {
+        margin-top: 0.5rem;
+      }
     }
 
-    .title{
-        font-weight: 800;
-        text-align: center;
-        font-size: 70px;
+    .info-subtitles {
+      display: flex;
+      flex-direction: column;
+      margin-left: 3rem;
+      p {
+        text-align: justify;
+      }
     }
-
-    .indicators-content{
-        z-index: 3;
-        position: relative;
-
-        .indicators-buttons{
-            border-radius: 50%;
-            width: 15px; 
-            height: 15px;
-        }
-    }
-
- 
-
-    .schedule-button {
-        border-radius: 20px;
-        border: 2px solid white;
-        font-weight: 600;
-    }
-
-    .slide-2-content{
-        display: flex;
-        max-width: 70%; 
-
-        .concept-content{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: -75px;
-
-            .concept-subtitle{
-                margin-bottom: 2.5rem;
-            }
-    
-            .five-subtitle{
-                font-size: 8rem;
-                font-weight: 900;
-                line-height: 3rem;
-            }
-    
-            .capes-subtitle{
-                margin-top: 0.5rem;
-            }
-        }
-
-        .info-subtitles{
-            display: flex;
-            flex-direction: column;
-            margin-left: 3rem;
-            p {
-                text-align: justify;
-            }
-        }
-    }
-    
+  }
 }
 
+.carousel-slide {
+  margin-bottom: 40px;
 
-.carousel-slide{
-    margin-bottom: 40px;
+  .carousel-slide-content {
+    width: 100vw;
+    height: 40vh;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 1rem 2rem 4rem;
 
-    .carousel-slide-content{
-        width: 100vw;
-        height: 80vh;
-        min-height: 730px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        padding: 1rem 2rem 4rem;
-
-        h1.text-center {
-            font-size: 70px;
-            line-height: 80px;   
-        }
-
-        .image-background{
-            z-index: -1;
-        }
+    h1.text-center {
+      font-size: 70px;
+      line-height: 80px;
     }
+
+    .image-background {
+      z-index: -1;
+    }
+  }
 }
 
 .carousel-indicators {
-    margin-top: 1rem;
-    margin-bottom: 0;
+  margin-top: 1rem;
+  margin-bottom: 0;
 }
 
-@media (max-width:1024px)  {
-    .carousel-component .slide-2-content .concept-content {
-        display: none;
-    }
+@media (max-width: 1024px) {
+  .carousel-component .slide-2-content .concept-content {
+    display: none;
+  }
 }
 
-@media (max-width:760px)  {
-    .carousel-slide-content {
-        height: 70vh;
-    }
+@media (max-width: 760px) {
+  .carousel-slide-content {
+    height: 35vh;
+  }
 
-    .carousel-component .title {
-        font-size: 1.6rem;
-    }
+  .carousel-component .title {
+    font-size: 1.6rem;
+  }
 
-    .carousel-component p {
-        font-size: 1rem;
-    }
+  .carousel-component p {
+    font-size: 1rem;
+  }
 
-    .carousel-component a {
-        font-size: 1rem !important;
-    }
+  .carousel-component a {
+    font-size: 1rem !important;
+  }
 
-    .carousel-component .lead {
-        text-align: center;
-    }
+  .carousel-component .lead {
+    text-align: center;
+  }
 
-    .slide-2-content {
-        flex-direction: column;
-    }
+  .slide-2-content {
+    flex-direction: column;
+  }
 }
 
-@media (max-width:700px)  {
-    .carousel-slide .carousel-slide-content{
-        height: 70vh;
-        min-height: 450px;
+@media (max-width: 700px) {
+  .carousel-slide .carousel-slide-content {
+    height: 35vh;
+    min-height: 250px;
 
-        h1.text-center {
-            font-size: 55px;   
-        }
+    h1.text-center {
+      font-size: 55px;
     }
+  }
 
-    #carousel-wepgcomp {
-        min-height: 450px;
-    }
+  #carousel-wepgcomp {
+    min-height: 250px;
+  }
 }
 
-@media (max-width:480px)  {
-    .carousel-indicators {
-        margin-top: .5rem;
+@media (max-width: 480px) {
+  .carousel-indicators {
+    margin-top: 0.5rem;
+  }
+
+  .carousel-component p {
+    text-align: left;
+
+    font-size: 1rem;
+  }
+
+  .slide-2-content {
+    max-width: 100% !important;
+
+    .concept-content {
+      margin-top: 0px !important;
     }
 
-    .carousel-component p {
-        text-align: left;
-        
-        font-size: 1rem;
+    .info-subtitles {
+      p {
+        text-align: left !important;
+      }
     }
+  }
 
-    .slide-2-content {
-        max-width: 100% !important; 
+  .carousel-slide .carousel-slide-content {
+    height: 35vh;
+    min-height: 180px;
 
-        .concept-content {
-            margin-top: 0px !important;
-        }
-
-        .info-subtitles{
-            p {
-                text-align: left !important;
-            }
-        }
+    h1.text-center {
+      font-size: 40px;
     }
+  }
 
-    .carousel-slide .carousel-slide-content{
-        height: 70vh;
-        min-height: 300px;
-
-        h1.text-center {
-            font-size: 40px;   
-        }
-    }
-
-    #carousel-wepgcomp {
-        min-height: 300px;
-    }
+  #carousel-wepgcomp {
+    min-height: 180px;
+  }
 }
-
