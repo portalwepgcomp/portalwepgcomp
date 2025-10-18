@@ -1,0 +1,23 @@
+.professores {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: #fafafa;
+    min-height: 100vh;
+
+    .wrapper-professores {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e9ecef;
+        text-align: center;
+
+        .header-professores {
+            margin-bottom: 2rem;
+        }
+        
+    }
+}
+
