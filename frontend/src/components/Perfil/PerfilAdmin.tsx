@@ -124,14 +124,18 @@ export default function PerfilAdmin({
         </li>
         {role === "Superadmin" && (
           <li>
-            <button
+{/*             <button
               type="button"
               data-bs-toggle="modal"
               data-bs-target="#cadastroProfessorModal"
               className="dropdown-item"
             >
               Professor
-            </button>
+            </button> */}
+
+            <Link className="dropdown-item" href="/professores">
+              Professores
+            </Link>
           </li>
         )}
         <li>
