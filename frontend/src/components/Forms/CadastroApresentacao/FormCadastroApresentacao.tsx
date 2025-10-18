@@ -174,6 +174,36 @@ export function FormCadastroApresentacao() {
     }
   };
 
+
+  const tratarPalavra = (w: string) =>
+    w
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z]/g, "");
+
+  const montarNomeArquivoPdf = (nomeCompleto: string, date = new Date(), titulo: string) => {
+    const parts = (nomeCompleto || "")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map(tratarPalavra)
+      .filter(Boolean);
+
+    const primeiro = parts[0] || "Arquivo";
+    const ultimo = parts.length > 1 ? parts[parts.length - 1] : "";
+    const parteNome = ultimo ? `${primeiro}_${ultimo}` : primeiro;
+    const tituloPart = titulo.replaceAll(' ', '_');
+
+    const hh = String(date.getHours()).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMinutes()).padStart(2, "0");
+    const mes = String(date.getMonth() + 1).padStart(2, "0");
+    const ano = date.getFullYear();
+    const segundos = String(date.getSeconds()).padStart(2, "0");
+
+    return `${parteNome}-${tituloPart}-${dd}.${mes}.${ano}.${hh}h.${mm}m.${segundos}s.pdf`;
+  };
+
   const aoEnviar = async (data: CadastroFormulario) => {
     if (!user) {
       showAlert({
@@ -187,8 +217,14 @@ export function FormCadastroApresentacao() {
     let arquivoEnviadoKey: string | null = null;
 
     try {
+      const nomeApresentador =
+        (data.apresentador &&
+          (userList.find(u => u.id === data.apresentador)?.name || "")) ||
+        user.name;
+
       if (arquivo) {
-        const respostaUpload = await sendFile(arquivo, user.id);
+        const nomeMontado = montarNomeArquivoPdf(nomeApresentador, new Date(), data.titulo);
+        const respostaUpload = await sendFile(arquivo, user.id, nomeMontado);
         if (!respostaUpload?.key) {
           throw new Error("Falha no upload do arquivo");
         }
@@ -350,8 +386,12 @@ export function FormCadastroApresentacao() {
           accept=".pdf"
           onChange={aoMudarArquivo}
         />
-        {nomeArquivo && (
+        {submission && submission.id ? (nomeArquivo && (
+          <p className="file-name">Arquivo selecionado: <a href={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${nomeArquivo}`} download target="_blank">{nomeArquivo}</a></p>
+        )) : (
+          nomeArquivo && (
           <p className="file-name">Arquivo selecionado: {nomeArquivo}</p>
+        )
         )}
         <p className="text-danger error-message">{errors.slide?.message}</p>
       </div>
