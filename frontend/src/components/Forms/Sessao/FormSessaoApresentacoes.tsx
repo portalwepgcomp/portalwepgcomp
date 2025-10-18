@@ -231,6 +231,25 @@ export default function FormSessaoApresentacoes({
     }
   }, [sessao?.id]);
 
+
+  const bloquearTeclasInvalidas = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const blockedKeys = ['e', 'E', '+', '-', ',', '.'];
+    if (blockedKeys.includes(e.key)) e.preventDefault();
+  };
+
+
+  const formatarEntradaNumerica = (e: React.FormEvent<HTMLInputElement>) => {
+    const t = e.currentTarget;
+    const clean = t.value.replace(/\D/g, '').replace(/^0+/, '');
+    t.value = clean;
+  };
+
+
+  const colarApenasNumeros = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const text = e.clipboardData.getData('text');
+    if (!/^\d+$/.test(text)) e.preventDefault();
+  };
+
   return (
     <form
       className="row g-3 form-sessao"
@@ -282,7 +301,15 @@ export default function FormSessaoApresentacoes({
           className="form-control input-title"
           id="sg-titulo-input"
           placeholder={formApresentacoesFields.n_apresentacoes.placeholder}
-          {...register("n_apresentacoes", { valueAsNumber: true })}
+          min={1}
+          step={1}
+          inputMode="numeric"
+          onKeyDown={bloquearTeclasInvalidas}
+          onInput={formatarEntradaNumerica}
+          onPaste={colarApenasNumeros}
+          {...register("n_apresentacoes", {
+            valueAsNumber: true,
+          })}
         />
         <p className="text-danger error-message">
           {errors.n_apresentacoes?.message}
