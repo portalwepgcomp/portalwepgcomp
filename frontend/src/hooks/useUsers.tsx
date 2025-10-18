@@ -7,9 +7,9 @@ import {
   useState,
 } from "react";
 
+import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { useSweetAlert } from "@/hooks/useAlert";
 import { userApi } from "@/services/user";
-import { AuthContext } from "@/context/AuthProvider/authProvider";
 
 interface UserProps {
   children: ReactNode;
@@ -45,6 +45,7 @@ interface UserProviderData {
   promoteToAdmin: (userId: string) => Promise<void>;
   promoteToSuperadmin: (userId: string) => Promise<void>;
   demoteUser: (userId: string) => Promise<void>;
+  deleteUser: (userId: string) => Promise<void>;
 }
 
 export const UserContext = createContext<UserProviderData>(
@@ -536,6 +537,33 @@ export const UserProvider = ({ children }: UserProps) => {
     }
   };
 
+  const deleteUser = async (userId: string) => {
+    setLoadingRoleAction(true);
+
+    try {
+      await userApi.deleteUser(userId);
+      showAlert({
+        icon: "success",
+        title: "Usuário excluído com sucesso!",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+      getUsers({});
+    } catch (err: any) {
+      showAlert({
+        icon: "error",
+        title: "Erro ao excluir usuário",
+        text:
+          err.response?.data?.message ||
+          "Ocorreu um erro ao tentar excluir o usuário. Tente novamente!",
+        confirmButtonText: "Retornar",
+      });
+    } finally {
+      setLoadingRoleAction(false);
+    }
+    
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -568,6 +596,7 @@ export const UserProvider = ({ children }: UserProps) => {
         promoteToAdmin,
         promoteToSuperadmin,
         demoteUser,
+        deleteUser,
       }}
     >
       {children}
