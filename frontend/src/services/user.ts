@@ -109,4 +109,10 @@ export const userApi = {
 
         return data;
     },
+
+    deleteUser: async (userId: string) => {
+        const { data } = await instance.delete(`${baseUrl}/delete/${userId}`);
+        
+        return data;
+    }
 }

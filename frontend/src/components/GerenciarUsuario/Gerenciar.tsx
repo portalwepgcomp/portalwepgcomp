@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
-import "./enhanced-style.scss";
-import { useContext, useEffect, useState, useCallback, useMemo } from "react";
-import { useUsers } from "@/hooks/useUsers";
-import LoadingPage from "../LoadingPage";
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { useEdicao } from "@/hooks/useEdicao";
+import { useUsers } from "@/hooks/useUsers";
+import Image from "next/image";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import LoadingPage from "../LoadingPage";
 import ModalCadastroProfessor from "../Modals/ModalCadastroProfessor/ModalCadastroProfessor";
+import "./enhanced-style.scss";
 
 export default function Gerenciar() {
   const { user: currentUser } = useContext(AuthContext);
@@ -27,6 +27,7 @@ export default function Gerenciar() {
     promoteToAdmin,
     promoteToSuperadmin,
     demoteUser,
+    deleteUser,
   } = useUsers();
 
   // Filter states
@@ -215,6 +216,38 @@ export default function Gerenciar() {
       const isCurrentUserAdmin =
         currentUser?.level === "Admin" || currentUser?.level === "Superadmin";
       const isSelf = targetUser.id === currentUser?.id;
+
+      actions.push(
+                  <button
+            key="approve"
+            className="btn btn-danger btn-sm"
+            onClick={() => deleteUser(targetUser.id)}
+            title="Excluir Usuário"
+          >
+            <span className="d-none d-md-inline">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="red"
+              >
+                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+              </svg>
+              Excluir Usuário
+            </span>
+            
+            <span className="d-md-none">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+              </svg>
+            </span>
+          </button>,
+      )
 
       // Teacher approval (Admin and Superadmin only)
       if (
