@@ -48,10 +48,20 @@ export default function Gerenciar() {
       filtered = filtered.filter((user) => user.profile === "Presenter");
     }
 
+    function normalizaString(str: string) {
+      return str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9\s@.]/g, "")
+        .toLowerCase();
+    }
+
+
     // Search filter
     if (searchValue.trim()) {
+      const normalizedSearch = normalizaString(searchValue.trim());
       filtered = filtered.filter((user) =>
-        user?.name?.toLowerCase().includes(searchValue.trim().toLowerCase()),
+        normalizaString(user?.name ?? "").includes(normalizedSearch),
       );
     }
 
