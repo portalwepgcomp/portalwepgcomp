@@ -1,5 +1,15 @@
-.form-sessao{
-    .button-sessao-auxiliar {
-        background-color: #FFA90F !important;
-    }
+.form-sessao {
+  .button-sessao-auxiliar {
+    background-color: #ffa90f !important;
+  }
+  .react-datepicker__day--keyboard-selected:not(
+      .react-datepicker__day--selected
+    ) {
+    background-color: transparent !important;
+    color: inherit !important;
+  }
+  .react-datepicker__day--selected {
+    background-color: #0d6efd !important;
+    color: #fff !important;
+  }
 }
