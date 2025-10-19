@@ -23,45 +23,58 @@ import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const formSessaoAuxiliarSchema = z.object({
-  titulo: z
-    .string({
-      invalid_type_error: "Campo inválido!",
-    })
-    .min(1, "Título é obrigatório."),
+const formSessaoAuxiliarSchema = z
+  .object({
+    titulo: z
+      .string({
+        invalid_type_error: "Campo inválido!",
+      })
+      .min(1, "Título é obrigatório."),
 
-  nome: z
-    .string({
-      invalid_type_error: "Campo inválido!",
-    })
-    .optional(),
+    nome: z
+      .string({
+        invalid_type_error: "Campo inválido!",
+      })
+      .optional(),
 
-  sala: z
-    .string({
-      invalid_type_error: "Campo inválido!",
-    })
-    .min(1, "Sala é obrigatória!"),
+    sala: z
+      .string({
+        invalid_type_error: "Campo inválido!",
+      })
+      .min(1, "Sala é obrigatória!"),
 
-  inicio: z
-    .string({
-      invalid_type_error: "Campo inválido!",
-    })
-    .datetime({
-      message: "Data ou horário inválidos!",
-    })
-    .min(1, "Data e horário de início são obrigatórios!")
-    .nullable(),
+    inicio: z
+      .string({
+        invalid_type_error: "Campo inválido!",
+      })
+      .datetime({
+        message: "Data ou horário inválidos!",
+      })
+      .min(1, "Data e horário de início são obrigatórios!")
+      .nullable(),
 
-  final: z
-    .string({
-      invalid_type_error: "Campo inválido!",
-    })
-    .datetime({
-      message: "Data ou horário inválidos!",
-    })
-    .min(1, "Data e horário de final são obrigatórios!")
-    .nullable(),
-});
+    final: z
+      .string({
+        invalid_type_error: "Campo inválido!",
+      })
+      .datetime({
+        message: "Data ou horário inválidos!",
+      })
+      .min(1, "Data e horário de final são obrigatórios!")
+      .nullable(),
+  })
+  .refine(
+    (data) => {
+      if (!data.inicio || !data.final) return true;
+      const inicio = new Date(data.inicio).getTime();
+      const final = new Date(data.final).getTime();
+      return final > inicio;
+    },
+    {
+      message: "A data e horário de fim devem ser posteriores ao início.",
+      path: ["final"],
+    },
+  );
 
 interface FormSessaoAuxiliarProps {
   disabledIntervals: { start: Date; end: Date }[];
@@ -268,7 +281,9 @@ export default function FormSessaoAuxiliar({
                   .tz("America/Sao_Paulo", true)
                   .toDate()}
                 isClearable
-                filterTime={combinedTimeFilter}
+                filterTime={(time) =>
+                  field.value ? combinedTimeFilter(time) : false
+                }
                 placeholderText={formAuxiliarFields.inicio.placeholder}
                 toggleCalendarOnIconClick
               />
@@ -309,7 +324,9 @@ export default function FormSessaoAuxiliar({
                   .tz("America/Sao_Paulo", true)
                   .toDate()}
                 isClearable
-                filterTime={combinedTimeFilter}
+                filterTime={(time) =>
+                  field.value ? combinedTimeFilter(time) : false
+                }
                 placeholderText={formAuxiliarFields.final.placeholder}
                 toggleCalendarOnIconClick
               />
