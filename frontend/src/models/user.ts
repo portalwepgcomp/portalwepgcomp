@@ -37,6 +37,7 @@ interface User extends RegisterUserParams {
     isPresenterActive: boolean;
     isAdmin: boolean; 
     isSuperadmin: boolean; 
+    hasSubmission: boolean;
 }
 
 interface ResetPasswordSendEmailParams {
