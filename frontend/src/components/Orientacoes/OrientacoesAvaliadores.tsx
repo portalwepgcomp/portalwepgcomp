@@ -9,7 +9,7 @@ import { useOrientacao } from "@/hooks/useOrientacao";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 
 export default function OrientacoesAvaliadores() {
-  const { putOrientacao, orientacoes } = useOrientacao();
+  const { putOrientacao, orientacoes, getOrientacoes } = useOrientacao();
 
   const [content, setContent] = useState(orientacoes?.reviewerGuidance || "");
 
@@ -22,6 +22,7 @@ export default function OrientacoesAvaliadores() {
         eventEditionId: eventEditionId ?? "",
         reviewerGuidance: content,
       });
+      getOrientacoes()
     }
   };
 
