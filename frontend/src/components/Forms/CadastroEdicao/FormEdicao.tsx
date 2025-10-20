@@ -405,7 +405,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       )}
 
       <div className="d-flex flex-column justify-content-center">
-        <div className="fs-4"> Comissão Organizadora </div>
         <div className="col-12 mb-1">
           <label className="form-label  form-title">
             Comissão organizadora
