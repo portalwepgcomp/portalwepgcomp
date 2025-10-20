@@ -36,9 +36,6 @@ export default function Organizacao(/*{props} : {props: OrganizacaoProps}*/) {
     const groupedMembers = useMemo(() => {
         const groups: Record<string, string[]> = {
             comissao: [],
-            ti: [],
-            comunicacao: [],
-            administracao: [],
         };
 
         if (committerList.length === 0) return groups;
@@ -50,15 +47,6 @@ export default function Organizacao(/*{props} : {props: OrganizacaoProps}*/) {
             switch (member.role) {
                 case "OrganizingCommittee":
                     groups.comissao.push(member.userName);
-                    break;
-                case "ITSupport":
-                    groups.ti.push(member.userName);
-                    break;
-                case "Communication":
-                    groups.comunicacao.push(member.userName);
-                    break;
-                case "AdministativeSupport":
-                    groups.administracao.push(member.userName);
                     break;
                 default:
                     break;
@@ -130,24 +118,6 @@ export default function Organizacao(/*{props} : {props: OrganizacaoProps}*/) {
                             Comissão organizadora:
                         </span>{" "}
                         {formatTeam(groupedMembers.comissao)}
-                    </p>
-                    <p>
-                        <span style={{ fontWeight: "700", color: "white" }}>
-                            Apoio à TI:
-                        </span>{" "}
-                        {formatTeam(groupedMembers.ti)}
-                    </p>
-                    <p>
-                        <span style={{ fontWeight: "700", color: "white" }}>
-                            Comunicação:
-                        </span>{" "}
-                        {formatTeam(groupedMembers.comunicacao)}
-                    </p>
-                    <p>
-                        <span style={{ fontWeight: "700", color: "white" }}>
-                            Apoio administrativo:
-                        </span>{" "}
-                        {formatTeam(groupedMembers.administracao)}
                     </p>
                 </div>
             </div>
