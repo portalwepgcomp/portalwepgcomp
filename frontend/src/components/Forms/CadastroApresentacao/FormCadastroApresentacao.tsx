@@ -252,15 +252,10 @@ export function FormCadastroApresentacao() {
       } else {
         throw new Error("Falha ao processar submissão");
       }
-    } catch (_) {
+    } catch (e) {
       if (arquivoEnviadoKey) {
         await limparArquivoOrfao(arquivoEnviadoKey);
       }
-      showAlert({
-        icon: "error",
-        text: "Erro ao processar submissão. Tente novamente.",
-        confirmButtonText: "OK",
-      });
     }
   };
 
