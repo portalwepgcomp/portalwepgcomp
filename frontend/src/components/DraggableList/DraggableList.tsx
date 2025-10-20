@@ -156,7 +156,7 @@ export default function DraggableList({
               <div className="col-11">
                 <div className="card-listagem-text">
                   <p>{data[labelTitle]}</p>
-                  <p>{data[labelSubtitle]}</p>
+                  <p>{data[labelSubtitle]?.length > 150 ? data[labelSubtitle].substring(0, 150) + '...' : data[labelSubtitle]}</p>
                 </div>
               </div>
             </div>
@@ -165,4 +165,4 @@ export default function DraggableList({
       ))}
     </ReactDragListView>
   );
-};
+}
