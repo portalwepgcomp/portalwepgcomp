@@ -2,15 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
 import ModalEditarCadastro from "@/components/Modals/ModalEdicaoCadastro/ModalEditarCadastro";
 import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 import { useAuth } from "@/hooks/useAuth";
+import { useEdicao } from "@/hooks/useEdicao";
 import { useSubmission } from "@/hooks/useSubmission";
+import { useSubmissionFile } from "@/hooks/useSubmissionFile";
 import { ApresentacoesMock } from "@/mocks/Apresentacoes";
 import Listagem, { mapCardList } from "@/templates/Listagem/Listagem";
-import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
-import { useEdicao } from "@/hooks/useEdicao";
 
 export default function Apresentacoes() {
   const { title, userArea } = ApresentacoesMock;
