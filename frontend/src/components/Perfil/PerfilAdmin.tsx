@@ -1,5 +1,5 @@
 "use client";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 import Link from "next/link";
 import "./style.scss";
@@ -8,6 +8,7 @@ import { useCertificate } from "@/services/certificate";
 import { useSweetAlert } from "@/hooks/useAlert";
 import ModalMelhoresAvaliadores from "../Modals/ModalMelhoresAvaliadores/ModalMelhoresAvaliadores";
 import ModalCriterios from "../Modals/ModalCriterios/ModalCriterios";
+import { createPortal } from "react-dom";
 
 interface PerfilAdminProps {
     profile: ProfileType;
@@ -22,6 +23,7 @@ export default function PerfilAdmin({
     const { Edicao } = useEdicao();
     const { showAlert } = useSweetAlert();
     const { downloadCertificate } = useCertificate();
+  const [mounted, setMounted] = useState(false);
 
     const certificateDownload = async () => {
         const response = await downloadCertificate(Edicao?.id || "");
@@ -42,6 +44,8 @@ export default function PerfilAdmin({
             showConfirmButton: false,
         });
     };
+
+  useEffect(() => setMounted(true), []);
 
     return (
         <div className="dropdown">
@@ -118,7 +122,7 @@ export default function PerfilAdmin({
                 </li>
                 {role === "Superadmin" && (
                   <li>
-                    <Link className="dropdown-item" href="/professores">
+                                <Link className="dropdown-item" href="/professores">
                       Professores
                     </Link>
                   </li>
@@ -144,8 +148,14 @@ export default function PerfilAdmin({
                     </Link>
                 </li>
             </ul>
-            <ModalMelhoresAvaliadores />
-            <ModalCriterios />
+      {mounted &&
+        createPortal(
+          <>
+                  <ModalMelhoresAvaliadores />
+                  <ModalCriterios />
+          </>,
+          document.body,
+        )}
         </div>
     );
 }

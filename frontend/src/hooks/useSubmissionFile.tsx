@@ -21,7 +21,8 @@ interface SubmissionFileProviderData {
   getFiles: () => Promise<void>;
   sendFile: (
     file: File,
-    idSubmission: string
+    idSubmission: string,
+    desiredFilename?: string
   ) => Promise<SubmissionFile | null>;
   deleteFile: (idFile: string) => Promise<any>;
 }
@@ -70,19 +71,17 @@ export const SubmissionFileProvider = ({ children }: SubmissionFileProps) => {
     }
   };
 
-  const sendFile = async (file: File, idUser: string) => {
+  const sendFile = async (file: File, idUser: string, desiredFilename?: string) => {
     setLoadingSubmissionFile(true);
 
     try {
-       const formData = new FormData();
-        formData.append("file", file);
-        formData.append("idSubmission", idUser);
+      const formData = new FormData();
+      formData.append("file", file, desiredFilename || file.name);
+      formData.append("idSubmission", idUser);
 
-        const { data } = await instance.post(`${baseUrl}`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        });
+      const { data } = await instance.post(`${baseUrl}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
 
       setSubmissionFile(data);
       setLoadingSubmissionFile(false);
@@ -99,7 +98,6 @@ export const SubmissionFileProvider = ({ children }: SubmissionFileProps) => {
 
   const deleteFile = async (idFile: string) => {
       const { data } = await instance.delete(`${baseUrl}/${idFile}`, {method: 'DELETE'});
-      console.log("DELETE", data)
       return data;
     }
 

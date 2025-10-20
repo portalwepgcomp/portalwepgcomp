@@ -320,6 +320,25 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
 
   const onInvalid = (errors) => console.error(errors);
 
+
+  const bloquearTeclasInvalidas = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const blockedKeys = ["e", "E", "+", "-", ",", "."];
+    if (blockedKeys.includes(e.key)) e.preventDefault();
+  };
+
+
+  const formatarEntradaNumerica = (e: React.FormEvent<HTMLInputElement>) => {
+    const t = e.currentTarget;
+    const clean = t.value.replace(/\D/g, "").replace(/^0+/, "");
+    t.value = clean;
+  };
+
+
+  const colarApenasNumeros = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const text = e.clipboardData.getData("text");
+    if (!/^\d+$/.test(text)) e.preventDefault();
+  };
+
   return (
     <form
       className="row g-3 w-75"
@@ -559,6 +578,12 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
               className="form-control input-title"
               id="quantidadeSessão"
               placeholder="Quantidade de sessões"
+              min={1}
+              step={1}
+              inputMode="numeric"
+              onKeyDown={bloquearTeclasInvalidas}
+              onInput={formatarEntradaNumerica}
+              onPaste={colarApenasNumeros}
               {...register("sessoes", { valueAsNumber: true })}
             />
             <p className="text-danger error-message">
@@ -576,6 +601,12 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
               className="form-control input-title"
               id="sessao"
               placeholder="ex.: 20 minutos"
+              min={1}
+              step={1}
+              inputMode="numeric"
+              onKeyDown={bloquearTeclasInvalidas}
+              onInput={formatarEntradaNumerica}
+              onPaste={colarApenasNumeros}
               {...register("duracao", { valueAsNumber: true })}
             />
             <p className="text-danger error-message">

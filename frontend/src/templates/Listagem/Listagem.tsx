@@ -156,6 +156,7 @@ export default function Listagem({
                   onClickItem={() => onEdit && onEdit(card?.id ?? "")}
                   onEdit={() => onEdit && onEdit(card?.id ?? "")}
                   onDelete={() => onDelete && onDelete(card?.id ?? "")}
+                  fileUrl={card.pdfFile || card.fileUrl}
                 />
               ) : (
                 <PresentationCard
@@ -184,6 +185,7 @@ export default function Listagem({
                   advisor={card.advisor?.name ?? "Sem nome"}
                   showFavorite
                   onClickItem={() => onClickItem && onClickItem(card)}
+                  fileUrl={card.pdfFile || card.fileUrl}
                 />
               ) : (
                 <PresentationCard
