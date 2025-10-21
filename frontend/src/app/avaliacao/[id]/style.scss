@@ -11,14 +11,15 @@
     justify-content: flex-start;
 }
 .avalieElementos{
-    display: flex;
+    //display: flex;
+    text-align: center;
     flex-direction: row;
     align-items: center;
     justify-content: left;
     padding-left: 5px;
-    border: solid;
+    //border: solid;
     border-radius: 12px;
-    border-color: #F17F0C;
+    //border-color: #F17F0C;
     width: 800px;
     height: 90px;
     gap: 6px;
