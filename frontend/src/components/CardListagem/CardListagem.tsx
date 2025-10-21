@@ -21,6 +21,7 @@ interface CardListagem {
   onClickItem?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  onClickItemDrag: () => void;
   fileUrl?: string;
 }
 
@@ -36,6 +37,7 @@ export default function CardListagem({
   idModalEdit,
   onDelete,
   onEdit,
+  onClickItemDrag,
   fileUrl,
 }: Readonly<CardListagem>) {
   const { showAlert } = useSweetAlert();
@@ -72,6 +74,7 @@ export default function CardListagem({
             className="button-general"
             data-bs-toggle="modal"
             data-bs-target={`#${idGeneralModal}`}
+            onClick={() => onClickItemDrag()}
           >
             {generalButtonLabel}
           </button>
