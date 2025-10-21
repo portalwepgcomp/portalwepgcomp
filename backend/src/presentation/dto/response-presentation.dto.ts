@@ -4,6 +4,7 @@ import {
   SubmissionStatus,
   UserAccount,
 } from '@prisma/client';
+import { ResponseUserDto } from '../../user/dto/response-user.dto';
 
 export class PresentationResponseDto {
   id: string;
@@ -15,15 +16,9 @@ export class PresentationResponseDto {
   submission: {
     id: string;
     advisorId: string;
-    advisor?: {
-      name: string;
-      email: string;
-    };
+    advisor?: ResponseUserDto;
     mainAuthorId: string;
-    mainAuthor?: {
-      name: string;
-      email: string;
-    };
+    mainAuthor?: ResponseUserDto;
     eventEditionId: string;
     title: string;
     abstract: string;
@@ -56,9 +51,13 @@ export class PresentationResponseDto {
     this.submission = {
       id: presentation.submission.id,
       advisorId: presentation.submission.advisorId,
-      advisor: presentation.submission.advisor,
+      advisor: presentation.submission.advisor
+        ? new ResponseUserDto(presentation.submission.advisor)
+        : null,
       mainAuthorId: presentation.submission.mainAuthorId,
-      mainAuthor: presentation.submission.mainAuthor,
+      mainAuthor: presentation.submission.mainAuthor
+        ? new ResponseUserDto(presentation.submission.mainAuthor)
+        : null,
       eventEditionId: presentation.submission.eventEditionId,
       title: presentation.submission.title,
       abstract: presentation.submission.abstract,
