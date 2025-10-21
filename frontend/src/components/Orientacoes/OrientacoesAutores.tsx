@@ -9,7 +9,7 @@ import { useOrientacao } from "@/hooks/useOrientacao";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 
 export default function OrientacoesAutores() {
-  const { putOrientacao, orientacoes } = useOrientacao();
+  const { putOrientacao, orientacoes, getOrientacoes } = useOrientacao();
 
   const [content, setContent] = useState(orientacoes?.authorGuidance || "");
 
@@ -22,6 +22,7 @@ export default function OrientacoesAutores() {
         eventEditionId: eventEditionId ?? "",
         authorGuidance: content,
       });
+      getOrientacoes()
     }
   };
 

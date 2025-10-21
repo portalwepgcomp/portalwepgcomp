@@ -98,7 +98,6 @@ export const SubmissionFileProvider = ({ children }: SubmissionFileProps) => {
 
   const deleteFile = async (idFile: string) => {
       const { data } = await instance.delete(`${baseUrl}/${idFile}`, {method: 'DELETE'});
-      console.log("DELETE", data)
       return data;
     }
 
