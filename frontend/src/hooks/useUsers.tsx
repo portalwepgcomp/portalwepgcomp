@@ -9,11 +9,19 @@ import {
 
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { useSweetAlert } from "@/hooks/useAlert";
+import { UpdateUserRequest } from "@/models/update-user";
 import { userApi } from "@/services/user";
 
 interface UserProps {
   children: ReactNode;
 }
+
+import axiosInstance from '@/utils/api';
+
+const baseUrl = "/users";
+const authBaseUrl = "/auth";
+const instance = axiosInstance;
+
 
 interface UserProviderData {
   loadingCreateUser: boolean;
@@ -46,6 +54,7 @@ interface UserProviderData {
   promoteToSuperadmin: (userId: string) => Promise<void>;
   demoteUser: (userId: string) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
+  updateUser: (email: string, updateUserRequest: UpdateUserRequest) => Promise<void>;
 }
 
 export const UserContext = createContext<UserProviderData>(
@@ -472,11 +481,12 @@ export const UserProvider = ({ children }: UserProps) => {
       });
       getUsers({});
     } catch (err: any) {
+      console.error(err.response.data.message.message);
       showAlert({
         icon: "error",
         title: "Erro ao promover usuário",
         text:
-          err.response?.data?.message ||
+          err.response?.data?.message?.message ||
           "Ocorreu um erro ao tentar promover o usuário. Tente novamente!",
         confirmButtonText: "Retornar",
       });
@@ -561,8 +571,32 @@ export const UserProvider = ({ children }: UserProps) => {
     } finally {
       setLoadingRoleAction(false);
     }
-    
+
   }
+
+  const updateUser = async (email: string, updateUserRequest: UpdateUserRequest) => {
+    try {
+      await instance.patch(`${baseUrl}/edit/${email}`, updateUserRequest);
+      showAlert({
+        icon: "success",
+        title: "Usuário editado com sucesso!",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+      getUsers({});
+    } catch (err: any) {
+      showAlert({
+        icon: "error",
+        title: "Erro ao editar usuário",
+        text:
+          err.response?.data?.message ||
+          "Ocorreu um erro ao tentar editar o usuário. Tente novamente!",
+        confirmButtonText: "Retornar",
+      });
+    } finally {
+      setLoadingRoleAction(false);
+    }
+  };
 
   return (
     <UserContext.Provider
@@ -597,6 +631,7 @@ export const UserProvider = ({ children }: UserProps) => {
         promoteToSuperadmin,
         demoteUser,
         deleteUser,
+        updateUser
       }}
     >
       {children}

@@ -67,3 +67,8 @@ interface UserProfile {
     level: RoleType;
     isActive: boolean;
 }
+
+interface RegistrationNumberType {
+  CPF: 'CPF';
+  MATRICULA: 'MATRICULA';
+}
