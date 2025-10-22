@@ -3,7 +3,6 @@
 import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
 import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
 import { usePresentation } from "@/hooks/usePresentation";
-import { FavoritosMock } from "@/mocks/Favoritos";
 import Listagem, { mapCardList } from "@/templates/Listagem/Listagem";
 import { useEffect, useState } from "react";
 
@@ -13,7 +12,6 @@ export default function Favoritos() {
     getPresentationBookmarks,
     deletePresentationBookmark,
   } = usePresentation();
-  const { title, userArea } = FavoritosMock;
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [sessionsListValues, setSessionsListValues] = useState<any[]>([]);
@@ -78,13 +76,13 @@ export default function Favoritos() {
         <IndicadorDeCarregamento />
       ) : (
         <Listagem
-          title={title}
+          title="Apresentações Favoritas"
           cardsList={mapCardList(sessionMaped, "title", "abstract")}
           isFavorites
-          idModal={title.trim() + "-modal"}
+          idModal={"Apresentações Favoritas".trim() + "-modal"}
           searchValue={searchValue}
           onChangeSearchValue={(value) => setSearchValue(value)}
-          searchPlaceholder={userArea.search}
+          searchPlaceholder="Pesquise pelo título da apresentação"
           onDelete={handleDelete}
           onEdit={(item) => favoriteItem(item)}
           fullInfo={true}

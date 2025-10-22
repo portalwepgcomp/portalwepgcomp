@@ -8,12 +8,10 @@ import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { useEdicao } from "@/hooks/useEdicao";
 import { useSubmission } from "@/hooks/useSubmission";
-import { useSubmissionFile } from "@/hooks/useSubmissionFile";
-import { ApresentacoesMock } from "@/mocks/Apresentacoes";
 import Listagem, { mapCardList } from "@/templates/Listagem/Listagem";
 
 export default function Apresentacoes() {
-  const { title, userArea } = ApresentacoesMock;
+
   const { user } = useAuth();
 
   const {
@@ -88,11 +86,11 @@ export default function Apresentacoes() {
       <div className="d-flex flex-column before-list">
         <Listagem
           idModal="editarApresentacaoModal"
-          title={title}
-          labelAddButton={userArea.add}
+          title="Apresentações"
+          labelAddButton="Incluir Apresentação"
           searchValue={searchValue}
           onChangeSearchValue={setSearchValue}
-          searchPlaceholder={userArea.search}
+          searchPlaceholder="Pesquise pelo nome da apresentação"
           cardsList={mapCardList(filteredSubmissions, "title", "abstract")}
           isLoading={loadingSubmissionList}
           onEdit={handleEdit}

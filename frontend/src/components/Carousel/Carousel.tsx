@@ -1,5 +1,4 @@
 "use client";
-import { CarouselMock } from "@/mocks/Carousel";
 import "./Carousel.scss";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -11,7 +10,6 @@ import CarouselSlide from "./CarouselSlide";
 export default function Carousel() {
 	const { Edicao } = useEdicao();
 	const { signed } = useAuth();
-	const { slide1, slide2, slide3 } = CarouselMock;
 
 	return (
 		<div
@@ -22,7 +20,7 @@ export default function Carousel() {
 		>
 			<div className='carousel-inner'>
 				<CarouselSlide
-					imageUrl={slide1.backgroundUrl || ""}
+					imageUrl="/assets/images/slide1.png"
 					slideIndex='0'
 					isActive
 				>
@@ -41,32 +39,36 @@ export default function Carousel() {
 						className='btn btn-outline-light mt-3 px-4 py-2 schedule-button fs-4'
 						href='#Programacao'
 					>
-						{slide1.labelButton}
+						Confira a programação
 					</Link>
 				</CarouselSlide>
 
-				<CarouselSlide imageUrl={slide2.backgroundUrl || ""} slideIndex='1'>
-					<h2 className='display-4 title'>{slide2.title}</h2>
+				<CarouselSlide imageUrl="/assets/images/slide2.png" slideIndex='1'>
+					<h2 className='display-4 title'>SOBRE</h2>
 					<div className='slide-2-content'>
 						<div className='concept-content'>
 							<p className='lead concept-subtitle fw-semibold'>
-								{slide2.concept_subtitles[0]}
+								CONCEITO
 							</p>
 							<p className='lead five-subtitle '>
-								{slide2.concept_subtitles[1]}
+								5
 							</p>
 							<p className='lead fs-2 capes-subtitle fw-semibold'>
-								{slide2.concept_subtitles[2]}
+								CAPS
 							</p>
 						</div>
 						<div className='info-subtitles'>
-							<p className='lead'>{slide2.subtitles[0]}</p>
+							<p className='lead'>
+								Workshop de Estudantes da Pós-Graduação em Ciência da Computação (WEPGCOMP) da Universidade Federal da Bahia (UFBA).
+								O objetivo do evento é apresentar as pesquisas em andamento realizadas pelos alunos de doutorado (a partir do segundo ano),
+								bem como propiciar um ambiente de troca de conhecimento e integração entre a comunidade.
+							</p>
 						</div>
 					</div>
 				</CarouselSlide>
 
-				<CarouselSlide imageUrl={slide3.backgroundUrl || ""} slideIndex='2'>
-					<h2 className='display-4 title'>{slide3.title}</h2>
+				<CarouselSlide imageUrl= "/assets/images/slide3.png" slideIndex='2'>
+					<h2 className='display-4 title'>DATAS IMPORTANTES</h2>
 					<p className='lead'>
 						Inscrições: até {formatDateUniq(Edicao?.startDate)}
 					</p>
@@ -86,7 +88,7 @@ export default function Carousel() {
 							className='btn btn-outline-light mt-3 px-4 py-2 schedule-button'
 							href='/cadastro'
 						>
-							{slide3.labelButton}
+							INSCREVA-SE JÁ!
 						</Link>
 					)}
 				</CarouselSlide>

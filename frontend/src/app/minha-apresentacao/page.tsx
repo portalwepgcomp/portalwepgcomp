@@ -9,13 +9,11 @@ import { useEdicao } from "@/hooks/useEdicao";
 import { SubmissionFileProvider } from "@/hooks/useSubmissionFile";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubmission } from "@/hooks/useSubmission";
-import { MinhasApresentacoesMock } from "@/mocks/MinhasApresentacoes";
 import Listagem, { mapCardList } from "@/templates/Listagem/Listagem";
 
 import "./style.scss";
 
 export default function MinhasApresentacoes() {
-  const { title, userArea } = MinhasApresentacoesMock;
   const { user } = useAuth();
   const router = useRouter();
 
@@ -114,11 +112,11 @@ export default function MinhasApresentacoes() {
       <ProtectedLayout>
         <div className="d-flex flex-column before-list">
           <Listagem
-            title={title}
-            labelAddButton={userArea.add}
+            title="Minha Apresentação"
+            labelAddButton="Incluir Apresentação"
             searchValue={searchValue}
             onChangeSearchValue={(value) => setSearchValue(value)}
-            searchPlaceholder={userArea.search}
+            searchPlaceholder="Pesquise pelo nome da apresentação"
             cardsList={mapCardList(sessionsListValues, "title", "abstract")}
             isLoading={loadingSubmissionList}
             onDelete={handleDelete}
