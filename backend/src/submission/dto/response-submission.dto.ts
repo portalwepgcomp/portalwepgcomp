@@ -1,11 +1,13 @@
 import { Submission, SubmissionStatus, UserAccount } from '@prisma/client';
-import { ResponseUserDto } from '../../user/dto/response-user.dto';
 
 export class ResponseSubmissionDto {
   id: string;
   advisorId: string;
   mainAuthorId: string;
-  mainAuthor?: ResponseUserDto;
+  mainAuthor?: {
+    name: string;
+    email: string;
+  };
   eventEditionId: string;
   title: string;
   abstract: string;
@@ -18,7 +20,10 @@ export class ResponseSubmissionDto {
   status: SubmissionStatus;
   createdAt: Date;
   updatedAt: Date;
-  advisor?: ResponseUserDto;
+  advisor?: {
+    name: string;
+    email: string;
+  };
 
   constructor(
     submission: Submission & { mainAuthor?: UserAccount } & {
@@ -30,10 +35,16 @@ export class ResponseSubmissionDto {
     this.advisorId = submission.advisorId;
     this.mainAuthorId = submission.mainAuthorId;
     this.mainAuthor = submission.mainAuthor
-      ? new ResponseUserDto(submission.mainAuthor)
+      ? {
+          name: submission.mainAuthor.name,
+          email: submission.mainAuthor.email,
+        }
       : null;
     this.advisor = submission.advisor
-      ? new ResponseUserDto(submission.advisor)
+      ? {
+          name: submission.advisor.name,
+          email: submission.advisor.email,
+        }
       : null;
     this.eventEditionId = submission.eventEditionId;
     this.title = submission.title;
