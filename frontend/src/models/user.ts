@@ -37,6 +37,7 @@ interface User extends RegisterUserParams {
     isPresenterActive: boolean;
     isAdmin: boolean; 
     isSuperadmin: boolean; 
+    hasSubmission: boolean;
 }
 
 interface ResetPasswordSendEmailParams {
@@ -65,4 +66,9 @@ interface UserProfile {
     profile: ProfileType;
     level: RoleType;
     isActive: boolean;
+}
+
+interface RegistrationNumberType {
+  CPF: 'CPF';
+  MATRICULA: 'MATRICULA';
 }

@@ -212,7 +212,7 @@ export default function FormSessaoApresentacoes({
           };
         }),
       );
-      setValue("n_apresentacoes", sessao?.numPresentations ?? 3);
+      setValue("n_apresentacoes", sessao?.numPresentations);
       setValue("sala", sessao?.roomId);
       setValue("inicio", sessao?.startTime);
       setValue(

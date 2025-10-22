@@ -103,6 +103,7 @@ export default function Avaliacao({ params }) {
                 <div className="avalieApresentador">
                   {presentation?.submission?.mainAuthor?.name}
                 </div>
+                <hr className="avalieDivisor" />
                 <div className="avaliePesquisa">
                   {presentation?.submission?.title}
                 </div>
@@ -163,7 +164,7 @@ export default function Avaliacao({ params }) {
                 onClick={sendEvaluation}
                 disabled={loadingEvaluation || !Edicao?.isActive}
               >
-                Enviar
+                Avaliar
               </button>
               <i
                 className="bi bi-info-circle ms-4 gap-3 fs-5"
