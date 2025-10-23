@@ -24,7 +24,6 @@ export default function Realizacao() {
 
   const apoioLogos: Logo[] = useMemo(
     () => [
-      { src: "/assets/images/WEX_Logo_Red_Vector.svg", alt: "WEX Logo", width: 150, height: 150, priority: true },
     ],
     []
   );
@@ -48,7 +47,7 @@ export default function Realizacao() {
   }, [Edicao?.partnersText, content]);
 
   const sizes = "(max-width: 768px) 120px, 150px";
-
+  console.log(Edicao)
   return (
     <div className="realizacao">
       <div className="realizacao-lista">
