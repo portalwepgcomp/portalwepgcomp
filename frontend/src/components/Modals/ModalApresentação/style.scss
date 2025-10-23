@@ -1,15 +1,26 @@
+#presentation-modal-main-wrapper {
+  max-height: 70vh;
+  overflow-y: scroll;
+}
+
 .before-title {
     padding: 0 2.5rem 2.5rem 2.5rem;
     gap: 1rem;
 }
 
 .title-div {
+  width: 100%;
     gap: 1.25rem;
     border-bottom: 0.1rem solid #000000;
     padding-bottom: 1.25rem;
+
+    h3{
+  width: 100% !important;
+}
 }
 
 .title-text {
+    min-width: 100% !important;
     line-height: 2rem;
     font-size: 2rem;
 }
@@ -56,10 +67,6 @@
 
 .abstract-text {
     text-align: justify;
-}
-
-h3{
-  max-width: 300px;
 }
 
 @media (max-width: 1000px) {

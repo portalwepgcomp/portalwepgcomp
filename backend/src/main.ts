@@ -15,7 +15,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
+      transform: true,            
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());

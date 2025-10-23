@@ -7,7 +7,7 @@ interface SessaoParams {
   roomId: string;
   startTime: string;
   title?: string;
-  numPresentations?: number;
+  numPresentations: number;
   speakerName?: string;
   duration?: number;
   apresentacoes?: string[];

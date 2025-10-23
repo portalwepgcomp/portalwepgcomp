@@ -1,64 +1,93 @@
 "use client";
 
-import Image from "next/image";
-
-import { useEdicao } from "@/hooks/useEdicao";
-import HtmlEditorComponent from "../HtmlEditorComponent/HtmlEditorComponent";
-import { useEffect, useState } from "react";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
+import { useEdicao } from "@/hooks/useEdicao";
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import HtmlEditorComponent from "../HtmlEditorComponent/HtmlEditorComponent";
 
 import "./style.scss";
+
+type Logo = { src: string; alt: string; width: number; height: number; priority?: boolean };
 
 export default function Realizacao() {
   const [content, setContent] = useState("");
   const { updateEdicao, Edicao } = useEdicao();
 
-  const handleEditPartners = () => {
-    const eventEditionId = getEventEditionIdStorage();
+  const realizacaoLogos: Logo[] = useMemo(
+    () => [
+      { src: "/assets/images/ic_logo_padrao.png", alt: "Computação UFFBA Logo", width: 150, height: 150, priority: true },
+      { src: "/assets/images/brasao_ufba.jpg", alt: "UFBA Logo", width: 150, height: 150, priority: true },
+    ],
+    []
+  );
 
-    if (Edicao) {
-      updateEdicao(eventEditionId ?? "", {
-        partnersText: content,
-        name: Edicao.name
-      });
-    }
-  };
+  const apoioLogos: Logo[] = useMemo(
+    () => [
+    ],
+    []
+  );
+
+  const uniqueBySrc = useCallback((logos: Logo[]) => {
+    const seen = new Set<string>();
+    return logos.filter(l => (seen.has(l.src) ? false : (seen.add(l.src), true)));
+  }, []);
+
+  const handleChange = useCallback((v: string) => setContent(v), []);
+
+  const handleEditPartners = useCallback(async () => {
+    const id = getEventEditionIdStorage();
+    if (!Edicao || !id) return;
+    await updateEdicao(id, { partnersText: content, name: Edicao.name });
+  }, [Edicao, content, updateEdicao]);
 
   useEffect(() => {
-    setContent(Edicao?.partnersText ?? "");
-  }, [Edicao?.partnersText]);
+    const incoming = Edicao?.partnersText ?? "";
+    if (incoming !== content) setContent(incoming);
+  }, [Edicao?.partnersText, content]);
 
+  const sizes = "(max-width: 768px) 120px, 150px";
+  console.log(Edicao)
   return (
     <div className="realizacao">
       <div className="realizacao-lista">
         <div className="realizacao-titulo">Realização:</div>
-
         <div className="realizacao-parceiros">
-          <Image
-            src={"/assets/images/ic_logo_padrao.png"}
-            alt="Computação Logo"
-            width={150}
-            height={150}
-            style={{objectFit: "contain"}}
-            priority
-          />
-          <Image
-            src={"/assets/images/brasao_ufba.jpg"}
-            alt="UFBA Logo"
-            width={150}
-            height={150}
-            style={{objectFit: "contain"}}
-            priority
-          />
+          {uniqueBySrc(realizacaoLogos).map((logo) => (
+            <Image
+              key={logo.src}
+              src={logo.src}
+              alt={logo.alt}
+              width={logo.width}
+              height={logo.height}
+              style={{ objectFit: "contain" }}
+              priority={logo.priority}
+              sizes={sizes}
+            />
+          ))}
         </div>
       </div>
 
-      <div className="realizacao-apoio-lista">
-        <div className="realizacao-apoio-titulo">Apoio:</div>
+      <div className="realizacao-lista">
+        <div className="realizacao-titulo">Apoio:</div>
+        <div className="realizacao-parceiros">
+          {uniqueBySrc(apoioLogos).map((logo) => (
+            <Image
+              key={logo.src}
+              src={logo.src}
+              alt={logo.alt}
+              width={logo.width}
+              height={logo.height}
+              style={{ objectFit: "contain" }}
+              priority={logo.priority}
+              sizes={sizes}
+            />
+          ))}
+        </div>
 
         <HtmlEditorComponent
           content={content}
-          onChange={(newValue) => setContent(newValue)}
+          onChange={handleChange}
           handleEditField={handleEditPartners}
         />
       </div>

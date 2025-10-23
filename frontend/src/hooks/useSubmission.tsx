@@ -10,6 +10,11 @@ import {
 
 import { useSweetAlert } from "@/hooks/useAlert";
 import { submissionApi } from "@/services/submission";
+import axiosInstance from '@/utils/api';
+
+const uploadPath = "/uploads";
+
+const instance = axiosInstance;
 
 interface SubmissionProps {
   children: ReactNode;

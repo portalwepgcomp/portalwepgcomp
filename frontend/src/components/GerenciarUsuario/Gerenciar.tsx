@@ -35,6 +35,7 @@ export default function Gerenciar() {
     status: "",
     permission: "",
     profile: "",
+    showPresenters: false
   });
   const [searchValue, setSearchValue] = useState<string>("");
   const [showInfoCards, setShowInfoCards] = useState<boolean>(false);
@@ -43,10 +44,24 @@ export default function Gerenciar() {
   const filteredUsers = useMemo(() => {
     let filtered = userList || [];
 
+    if (filters.showPresenters) {
+      filtered = filtered.filter((user) => user.profile === "Presenter");
+    }
+
+    function normalizaString(str: string) {
+      return str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9\s@.]/g, "")
+        .toLowerCase();
+    }
+
+
     // Search filter
     if (searchValue.trim()) {
+      const normalizedSearch = normalizaString(searchValue.trim());
       filtered = filtered.filter((user) =>
-        user?.name?.toLowerCase().includes(searchValue.trim().toLowerCase()),
+        normalizaString(user?.name ?? "").includes(normalizedSearch),
       );
     }
 
@@ -550,6 +565,50 @@ export default function Gerenciar() {
               <option value="ouvinte">Ouvinte</option>
             </select>
           </div>
+
+            <div className="filter-checkbox">
+{/*               <label className="filter-checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={filters.showPresenters || false}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      showPresenters: e.target.checked,
+                    }))
+                  }
+                  style={{ marginRight: "8px" }}
+                />
+                Exibir apenas apresentadores
+              </label> */}
+              <div className="filter-checkbox">
+  <label className="filter-checkbox-label" style={{ display: "flex", alignItems: "center", cursor: "pointer", fontWeight: 500, color: "#333" }}>
+    <input
+      type="checkbox"
+      checked={filters.showPresenters || false}
+      onChange={(e) =>
+        setFilters((prev) => ({
+          ...prev,
+          showPresenters: e.target.checked,
+        }))
+      }
+      style={{
+        accentColor: "#0066cc;",
+        width: "18px",
+        height: "18px",
+        marginRight: "10px",
+        borderRadius: "4px",
+        border: "2px solid #0066cc;",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+        outline: "none",
+        cursor: "pointer",
+        transition: "box-shadow 0.2s"
+      }}
+    />
+    <span style={{ fontSize: "16px" }}>Exibir apenas apresentadores</span>
+  </label>
+</div>
+            </div>
 
           <button
             className="btn btn-outline-secondary info-toggle-btn"

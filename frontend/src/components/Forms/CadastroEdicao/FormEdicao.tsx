@@ -64,39 +64,6 @@ const formEdicaoSchema = z.object({
     )
     .optional(),
 
-  apoio: z
-    .array(
-      z.object({
-        label: z.string(),
-        value: z.string({
-          invalid_type_error: "Campo inválido!",
-        }),
-      }),
-    )
-    .optional(),
-
-  apoioAd: z
-    .array(
-      z.object({
-        label: z.string(),
-        value: z.string({
-          invalid_type_error: "Campo inválido!",
-        }),
-      }),
-    )
-    .optional(),
-
-  comunicacao: z
-    .array(
-      z.object({
-        label: z.string(),
-        value: z.string({
-          invalid_type_error: "Campo inválido!",
-        }),
-      }),
-    )
-    .optional(),
-
   sessoes: z
     .number({
       invalid_type_error: "O número de sessões é obrigatório!",
@@ -185,30 +152,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
             return { value: v.userId, label: v.userName };
           }),
       );
-      setValue(
-        "apoio",
-        committerList
-          ?.filter((value) => value.role === "ITSupport")
-          ?.map((v) => {
-            return { value: v.userId, label: v.userName };
-          }),
-      );
-      setValue(
-        "apoioAd",
-        committerList
-          ?.filter((value) => value.role === "AdministativeSupport")
-          ?.map((v) => {
-            return { value: v.userId, label: v.userName };
-          }),
-      );
-      setValue(
-        "comunicacao",
-        committerList
-          ?.filter((value) => value.role === "Communication")
-          ?.map((v) => {
-            return { value: v.userId, label: v.userName };
-          }),
-      );
       setValue("duracao", edicaoData.presentationDuration);
       setValue("sessoes", edicaoData.presentationsPerPresentationBlock);
       setValue("submissao", edicaoData.callForPapersText);
@@ -240,9 +183,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       local,
       sala,
       comissao,
-      apoio,
-      apoioAd,
-      comunicacao,
       sessoes,
       duracao,
       submissao,
@@ -267,9 +207,9 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       roomName: !edicaoData?.id ? sala : undefined,
       coordinatorId: user?.id,
       organizingCommitteeIds: comissao?.map((v) => v.value) || [],
-      itSupportIds: apoio?.map((v) => v.value) || [],
-      administrativeSupportIds: apoioAd?.map((v) => v.value) || [],
-      communicationIds: comunicacao?.map((v) => v.value) || [],
+      itSupportIds: [],
+      administrativeSupportIds: [],
+      communicationIds: [],
       presentationDuration: duracao,
       presentationsPerPresentationBlock: sessoes,
       callForPapersText: submissao,
@@ -319,6 +259,25 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
   }, [edicaoData]);
 
   const onInvalid = (errors) => console.error(errors);
+
+
+  const bloquearTeclasInvalidas = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const blockedKeys = ["e", "E", "+", "-", ",", "."];
+    if (blockedKeys.includes(e.key)) e.preventDefault();
+  };
+
+
+  const formatarEntradaNumerica = (e: React.FormEvent<HTMLInputElement>) => {
+    const t = e.currentTarget;
+    const clean = t.value.replace(/\D/g, "").replace(/^0+/, "");
+    t.value = clean;
+  };
+
+
+  const colarApenasNumeros = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const text = e.clipboardData.getData("text");
+    if (!/^\d+$/.test(text)) e.preventDefault();
+  };
 
   return (
     <form
@@ -446,7 +405,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       )}
 
       <div className="d-flex flex-column justify-content-center">
-        <div className="fs-4"> Comissão Organizadora </div>
         <div className="col-12 mb-1">
           <label className="form-label  form-title">
             Comissão organizadora
@@ -470,79 +428,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
             {errors.comissao?.message}
           </p>
         </div>
-        <div className="col-12 mb-1">
-          <label className="form-label  form-title">
-            Apoio TI
-            <span className="text-danger ms-1 form-title">*</span>
-          </label>
-          <Controller
-            name="apoio"
-            control={control}
-            render={({ field }) => (
-              <Select
-                id="apoio-select"
-                {...field}
-                isMulti
-                options={avaliadoresOptions}
-                placeholder="Escolha o(s) usuário(s)"
-                className="basic-multi-select"
-                classNamePrefix="select"
-              />
-            )}
-          />
-
-          <p className="text-danger error-message">{errors.apoio?.message}</p>
-        </div>
-
-        <div className="col-12 mb-1">
-          <label className="form-label  form-title">
-            Apoio Administrativo
-            <span className="text-danger ms-1 form-title">*</span>
-          </label>
-          <Controller
-            name="apoioAd"
-            control={control}
-            render={({ field }) => (
-              <Select
-                {...field}
-                id="apoioAd-select"
-                isMulti
-                options={avaliadoresOptions}
-                placeholder="Escolha o(s) usuário(s)"
-                className="basic-multi-select"
-                classNamePrefix="select"
-              />
-            )}
-          />
-
-          <p className="text-danger error-message">{errors.apoioAd?.message}</p>
-        </div>
-
-        <div className="col-12 mb-1">
-          <label className="form-label  form-title">
-            Comunicação
-            <span className="text-danger ms-1 form-title">*</span>
-          </label>
-          <Controller
-            name="comunicacao"
-            control={control}
-            render={({ field }) => (
-              <Select
-                {...field}
-                id="comunicacao-select"
-                isMulti
-                options={avaliadoresOptions}
-                placeholder="Escolha o(s) usuário(s)"
-                className="basic-multi-select"
-                classNamePrefix="select"
-              />
-            )}
-          />
-
-          <p className="text-danger error-message">
-            {errors.comunicacao?.message}
-          </p>
-        </div>
       </div>
 
       <div className="d-flex flex-column justify-content-start">
@@ -559,6 +444,12 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
               className="form-control input-title"
               id="quantidadeSessão"
               placeholder="Quantidade de sessões"
+              min={1}
+              step={1}
+              inputMode="numeric"
+              onKeyDown={bloquearTeclasInvalidas}
+              onInput={formatarEntradaNumerica}
+              onPaste={colarApenasNumeros}
               {...register("sessoes", { valueAsNumber: true })}
             />
             <p className="text-danger error-message">
@@ -576,6 +467,12 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
               className="form-control input-title"
               id="sessao"
               placeholder="ex.: 20 minutos"
+              min={1}
+              step={1}
+              inputMode="numeric"
+              onKeyDown={bloquearTeclasInvalidas}
+              onInput={formatarEntradaNumerica}
+              onPaste={colarApenasNumeros}
               {...register("duracao", { valueAsNumber: true })}
             />
             <p className="text-danger error-message">
