@@ -1,118 +1,137 @@
-"use client"
-import axiosInstance from '@/utils/api';
+"use client";
+import axiosInstance from "@/utils/api";
+import { UpdateUserRequest } from "@/models/update-user";
 
 const baseUrl = "/users";
 const authBaseUrl = "/auth";
 const instance = axiosInstance;
 
 export const userApi = {
-    getUsers: async (params: GetUserParams) => {
+  getUsers: async (params: GetUserParams) => {
+    const { data } = await instance.get(`${baseUrl}`, { params });
 
-        const { data } = await instance.get(`${baseUrl}`, { params });
+    return data;
+  },
 
-        return data;
-    },
+  getAdvisors: async () => {
+    const { data } = await instance.get(`${baseUrl}/advisors`);
 
-    getAdvisors: async () => {
+    return data;
+  },
 
-        const { data } = await instance.get(`${baseUrl}/advisors`);
+  getAdmins: async () => {
+    const { data } = await instance.get(`${baseUrl}/admins`);
 
-        return data;
-    },
+    return data;
+  },
 
-    getAdmins: async () => {
-        
-        const { data } = await instance.get(`${baseUrl}/admins`);
+  switchActiveUser: async (userId: string, activate: boolean) => {
+    const { data } = await instance.patch(
+      `${baseUrl}/toggle-activation/${userId}?activate=${activate}`,
+    );
 
-        return data;
-    },
+    return data;
+  },
 
-    switchActiveUser: async (userId: string, activate: boolean) => {
+  markAsDefaultUser: async (body: SetPermissionParams) => {
+    const { data } = await instance.post(`${baseUrl}/set-default`, body);
 
-        const { data } = await instance.patch(`${baseUrl}/toggle-activation/${userId}?activate=${activate}`);
+    return data;
+  },
 
-        return data;
-    },
+  markAsAdminUser: async (body: SetPermissionParams) => {
+    const { data } = await instance.post(`${baseUrl}/set-admin`, body);
 
-    markAsDefaultUser: async (body: SetPermissionParams) => {
-        const { data } = await instance.post(`${baseUrl}/set-default`, body);
+    return data;
+  },
 
-        return data;
-    },
+  markAsSpAdminUser: async (body: SetPermissionParams) => {
+    const { data } = await instance.post(`${baseUrl}/set-super-admin`, body);
 
-    markAsAdminUser: async (body: SetPermissionParams) => {
-        const { data } = await instance.post(`${baseUrl}/set-admin`, body);
+    return data;
+  },
 
-        return data;
-    },
+  approveTeacher: async (userId: string) => {
+    const { data } = await instance.patch(`${baseUrl}/${userId}/approve`);
+    return data;
+  },
 
-    markAsSpAdminUser: async (body: SetPermissionParams) => {
-        const { data } = await instance.post(`${baseUrl}/set-super-admin`, body);
+  approvePresenter: async (userId: string) => {
+    const { data } = await instance.patch(
+      `${baseUrl}/${userId}/approve-presenter`,
+    );
+    return data;
+  },
 
-        return data;
-    },
+  promoteToAdmin: async (userId: string) => {
+    const { data } = await instance.patch(`${baseUrl}/${userId}/promote-admin`);
+    return data;
+  },
 
-    approveTeacher: async (userId: string) => {
-        const { data } = await instance.patch(`${baseUrl}/${userId}/approve`);
-        return data;
-    },
+  promoteToSuperadmin: async (userId: string) => {
+    const { data } = await instance.patch(
+      `${baseUrl}/${userId}/promote-superadmin`,
+    );
+    return data;
+  },
 
-    approvePresenter: async (userId: string) => {
-        const { data } = await instance.patch(`${baseUrl}/${userId}/approve-presenter`);
-        return data;
-    },
+  demoteUser: async (userId: string) => {
+    const { data } = await instance.patch(`${baseUrl}/${userId}/demote`);
+    return data;
+  },
 
-    promoteToAdmin: async (userId: string) => {
-        const { data } = await instance.patch(`${baseUrl}/${userId}/promote-admin`);
-        return data;
-    },
+  demoteUserToLevel: async (userId: string, targetLevel: string) => {
+    const { data } = await instance.patch(
+      `${baseUrl}/${userId}/demote-to/${targetLevel}`,
+    );
+    return data;
+  },
 
-    promoteToSuperadmin: async (userId: string) => {
-        const { data } = await instance.patch(`${baseUrl}/${userId}/promote-superadmin`);
-        return data;
-    },
+  registerUser: async (body: RegisterUserParams) => {
+    const { data } = await instance.post(`${baseUrl}/register`, body);
 
-    demoteUser: async (userId: string) => {
-        const { data } = await instance.patch(`${baseUrl}/${userId}/demote`);
-        return data;
-    },
+    return data;
+  },
 
-    demoteUserToLevel: async (userId: string, targetLevel: string) => {
-        const { data } = await instance.patch(`${baseUrl}/${userId}/demote-to/${targetLevel}`);
-        return data;
-    },
+  createProfessorBySuperadmin: async (
+    body: CreateProfessorBySuperadminParams,
+  ) => {
+    const { data } = await instance.post(`${baseUrl}/create-professor`, body);
 
-    registerUser: async (body: RegisterUserParams) => {
+    return data;
+  },
 
-        const { data } = await instance.post(`${baseUrl}/register`, body);
+  resetPasswordSendEmail: async (body: ResetPasswordSendEmailParams) => {
+    const { data } = await instance.post(
+      `${authBaseUrl}/forgot-password`,
+      body,
+    );
 
-        return data;
-    },
+    return data;
+  },
 
-    createProfessorBySuperadmin: async (body: CreateProfessorBySuperadminParams) => {
+  resetPassword: async (body: ResetPasswordParams) => {
+    const { data } = await instance.post(
+      `${authBaseUrl}/reset-password?token=${body.token}`,
+      { newPassword: body.newPassword },
+    );
 
-        const { data } = await instance.post(`${baseUrl}/create-professor`, body);
+    return data;
+  },
 
-        return data;
-    },
+  deleteUser: async (userId: string) => {
+    const { data } = await instance.delete(`${baseUrl}/delete/${userId}`);
 
-    resetPasswordSendEmail: async (body: ResetPasswordSendEmailParams) => {
+    return data;
+  },
 
-        const { data } = await instance.post(`${authBaseUrl}/forgot-password`, body);
+  updateUser: async (email: string, updateData: UpdateUserRequest) => {
+    const encodedEmail = encodeURIComponent(email);
+    const { data } = await instance.patch(
+      `${baseUrl}/edit/${encodedEmail}`,
+      updateData,
+    );
 
-        return data;
-    },
-
-    resetPassword: async (body: ResetPasswordParams) => {
-
-        const { data } = await instance.post(`${authBaseUrl}/reset-password?token=${body.token}`, { newPassword: body.newPassword });
-
-        return data;
-    },
-
-    deleteUser: async (userId: string) => {
-        const { data } = await instance.delete(`${baseUrl}/delete/${userId}`);
-        
-        return data;
-    }
-}
+    return data;
+  },
+};

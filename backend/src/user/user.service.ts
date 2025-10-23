@@ -29,7 +29,7 @@ export class UserService {
     private prismaClient: PrismaService,
     private jwtService: JwtService,
     private mailingService: MailingService,
-  ) { }
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     // Validacao de e-mail @ufba.br para quem nao eh de fora.
@@ -842,7 +842,11 @@ export class UserService {
     });
   }
 
-  async editUserBySuperAdmin(email: string, updateUserDto: UpdateUserDto, superadminEmail: string): Promise<ResponseUpdatedUserDto> {
+  async editUserBySuperAdmin(
+    email: string,
+    updateUserDto: UpdateUserDto,
+    superadminEmail: string,
+  ): Promise<ResponseUpdatedUserDto> {
     const decodedEmail = decodeURIComponent(email);
 
     const existingUser = await this.findUserByEmailOrFail(decodedEmail);
@@ -874,7 +878,7 @@ export class UserService {
 
   private async validateEmailRules(
     updateData: UpdateUserDto,
-    existingUser: UserAccount
+    existingUser: UserAccount,
   ): Promise<void> {
     if (updateData.email && updateData.email !== existingUser.email) {
       const finalProfile = updateData.profile ?? existingUser.profile;
@@ -882,18 +886,20 @@ export class UserService {
       if (finalProfile !== Profile.Listener) {
         if (!updateData.email.toLowerCase().endsWith('@ufba.br')) {
           throw new BadRequestException(
-            'Apenas usuários com perfil "Listener" podem ter email diferente de @ufba.br.'
+            'Apenas usuários com perfil "Listener" podem ter email diferente de @ufba.br.',
           );
         }
       }
 
       const emailExists = await this.prismaClient.userAccount.findUnique({
         where: { email: updateData.email },
-        select: { id: true }
+        select: { id: true },
       });
 
       if (emailExists) {
-        throw new BadRequestException('Este email já está em uso por outro usuário.');
+        throw new BadRequestException(
+          'Este email já está em uso por outro usuário.',
+        );
       }
     }
   }
@@ -901,23 +907,48 @@ export class UserService {
   private async validateBusinessRules(
     email: string,
     updateData: UpdateUserDto,
-    existingUser: UserAccount
+    existingUser: UserAccount,
   ): Promise<void> {
     await this.validateRegistrationNumberUniqueness(updateData, existingUser);
 
     if (updateData.profile) {
       const emailToValidate = updateData.email ?? email;
-      this.validateProfileEmailRequirements(emailToValidate, updateData.profile);
+      this.validateProfileEmailRequirements(
+        emailToValidate,
+        updateData.profile,
+      );
+    }
+
+    // Prevent demoting the last superadmin
+    if (updateData.level && updateData.level !== UserLevel.Superadmin) {
+      const isSuperadmin =
+        existingUser.isSuperadmin ||
+        existingUser.level === UserLevel.Superadmin;
+      if (isSuperadmin) {
+        const superadminCount = await this.prismaClient.userAccount.count({
+          where: {
+            OR: [{ isSuperadmin: true }, { level: UserLevel.Superadmin }],
+          },
+        });
+
+        if (superadminCount <= 1) {
+          throw new BadRequestException(
+            'Não é possível rebaixar o último superadministrador do sistema.',
+          );
+        }
+      }
     }
   }
 
-
-  private processUpdateData(updateData: UpdateUserDto, existingUser: UserAccount): any {
+  private processUpdateData(
+    updateData: UpdateUserDto,
+    existingUser: UserAccount,
+  ): any {
     const cleanData = this.removeUndefinedFields(updateData);
     const derivedFields = UserFieldCalculator.calculateDerivedFields(
       updateData.profile ?? existingUser.profile,
       updateData.level ?? existingUser.level,
-      updateData
+      updateData,
     );
 
     return { ...cleanData, ...derivedFields };
@@ -932,16 +963,19 @@ export class UserService {
 
   private async validateRegistrationNumberUniqueness(
     updateData: UpdateUserDto,
-    existingUser: UserAccount
+    existingUser: UserAccount,
   ): Promise<void> {
-    if (!updateData.registrationNumber || updateData.registrationNumber === existingUser.registrationNumber) {
+    if (
+      !updateData.registrationNumber ||
+      updateData.registrationNumber === existingUser.registrationNumber
+    ) {
       return;
     }
 
     const exists = await this.prismaClient.userAccount.findFirst({
       where: {
         registrationNumber: updateData.registrationNumber,
-        id: { not: existingUser.id }
+        id: { not: existingUser.id },
       },
       select: { id: true },
     });
@@ -951,21 +985,20 @@ export class UserService {
     }
   }
 
-  private validateProfileEmailRequirements(email: string, profile?: Profile): void {
+  private validateProfileEmailRequirements(
+    email: string,
+    profile?: Profile,
+  ): void {
     if (profile && profile !== Profile.Listener) {
       if (!email.toLowerCase().endsWith('@ufba.br')) {
-        throw new BadRequestException(
-          `${profile} deve ter um email @ufba.br`,
-        );
+        throw new BadRequestException(`${profile} deve ter um email @ufba.br`);
       }
     }
   }
 
   private removeUndefinedFields(data: any): any {
     return Object.fromEntries(
-      Object.entries(data).filter(([_, value]) => value !== undefined)
+      Object.entries(data).filter(([, value]) => value !== undefined),
     );
   }
-
-
 }

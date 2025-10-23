@@ -38,7 +38,7 @@ import { UserService } from './user.service';
 @Controller('users')
 @UseGuards(JwtAuthGuard, UserLevelGuard)
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Public()
   @Post('register')
@@ -303,27 +303,31 @@ export class UserController {
   async editUserBySuperAdmin(
     @Param('email') rawEmail: string,
     @Body() updateUserDto: UpdateUserDto,
-    @Req() req: Request & { user: any }
+    @Req() req: Request & { user: any },
   ) {
     const email = this.parseEmailParam(rawEmail);
     this.validateUpdateData(updateUserDto);
 
-    return await this.userService.editUserBySuperAdmin(email, updateUserDto, req.user.email);
+    return await this.userService.editUserBySuperAdmin(
+      email,
+      updateUserDto,
+      req.user.email,
+    );
   }
 
   private parseEmailParam(rawEmail: string): string {
     try {
       return decodeURIComponent(rawEmail);
-    } catch (error) {
+    } catch {
       throw new BadRequestException('Email inválido no parâmetro da URL.');
     }
   }
   private validateUpdateData(updateUserDto: UpdateUserDto): void {
-    const hasData = Object.values(updateUserDto).some(value => value !== undefined);
+    const hasData = Object.values(updateUserDto).some(
+      (value) => value !== undefined,
+    );
     if (!hasData) {
       throw new BadRequestException('Nenhum campo fornecido para atualização.');
     }
   }
-
-
 }

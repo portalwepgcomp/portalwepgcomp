@@ -16,12 +16,11 @@ interface UserProps {
   children: ReactNode;
 }
 
-import axiosInstance from '@/utils/api';
+import axiosInstance from "@/utils/api";
 
 const baseUrl = "/users";
 const authBaseUrl = "/auth";
 const instance = axiosInstance;
-
 
 interface UserProviderData {
   loadingCreateUser: boolean;
@@ -39,7 +38,9 @@ interface UserProviderData {
   admins: User[];
   getUsers: (params: GetUserParams) => void;
   registerUser: (body: RegisterUserParams) => Promise<void>;
-  createProfessorBySuperadmin: (body: CreateProfessorBySuperadminParams) => Promise<void>;
+  createProfessorBySuperadmin: (
+    body: CreateProfessorBySuperadminParams,
+  ) => Promise<void>;
   resetPasswordSendEmail: (body: ResetPasswordSendEmailParams) => Promise<void>;
   resetPassword: (body: ResetPasswordParams) => Promise<void>;
   getAdvisors: () => Promise<void>;
@@ -54,7 +55,10 @@ interface UserProviderData {
   promoteToSuperadmin: (userId: string) => Promise<void>;
   demoteUser: (userId: string) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
-  updateUser: (email: string, updateUserRequest: UpdateUserRequest) => Promise<void>;
+  updateUser: (
+    email: string,
+    updateUserRequest: UpdateUserRequest,
+  ) => Promise<void>;
 }
 
 export const UserContext = createContext<UserProviderData>(
@@ -65,7 +69,8 @@ export const useUsers = () => useContext(UserContext);
 
 export const UserProvider = ({ children }: UserProps) => {
   const [loadingCreateUser, setLoadingCreateUser] = useState<boolean>(false);
-  const [loadingCreateProfessor, setLoadingCreateProfessor] = useState<boolean>(false);
+  const [loadingCreateProfessor, setLoadingCreateProfessor] =
+    useState<boolean>(false);
   const [loadingUserList, setLoadingUserList] = useState<boolean>(false);
   const [loadingSendEmail, setLoadingSendEmail] = useState<boolean>(false);
   const [loadingResetPassword, setLoadingResetPassword] =
@@ -111,9 +116,8 @@ export const UserProvider = ({ children }: UserProps) => {
             setLoadingUserList(false);
           });
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [authUser?.id, showAlert],
+    [authUser, showAlert],
   );
 
   const registerUser = async (body: RegisterUserParams) => {
@@ -148,7 +152,9 @@ export const UserProvider = ({ children }: UserProps) => {
     }
   };
 
-  const createProfessorBySuperadmin = async (body: CreateProfessorBySuperadminParams) => {
+  const createProfessorBySuperadmin = async (
+    body: CreateProfessorBySuperadminParams,
+  ) => {
     setLoadingCreateProfessor(true);
 
     try {
@@ -472,7 +478,12 @@ export const UserProvider = ({ children }: UserProps) => {
     setLoadingRoleAction(true);
 
     try {
-      await userApi.promoteToAdmin(userId);
+      const user = userList.find((u) => u.id === userId);
+      if (!user) {
+        throw new Error("Usuário não encontrado");
+      }
+
+      await userApi.updateUser(user.email, { level: "Admin" });
       showAlert({
         icon: "success",
         title: "Usuário promovido a Administrador!",
@@ -481,12 +492,13 @@ export const UserProvider = ({ children }: UserProps) => {
       });
       getUsers({});
     } catch (err: any) {
-      console.error(err.response.data.message.message);
+      console.error(err.response?.data?.message || err.message);
       showAlert({
         icon: "error",
         title: "Erro ao promover usuário",
         text:
-          err.response?.data?.message?.message ||
+          err.response?.data?.message ||
+          err.message ||
           "Ocorreu um erro ao tentar promover o usuário. Tente novamente!",
         confirmButtonText: "Retornar",
       });
@@ -499,7 +511,12 @@ export const UserProvider = ({ children }: UserProps) => {
     setLoadingRoleAction(true);
 
     try {
-      await userApi.promoteToSuperadmin(userId);
+      const user = userList.find((u) => u.id === userId);
+      if (!user) {
+        throw new Error("Usuário não encontrado");
+      }
+
+      await userApi.updateUser(user.email, { level: "Superadmin" });
       showAlert({
         icon: "success",
         title: "Usuário promovido a Superadministrador!",
@@ -513,6 +530,7 @@ export const UserProvider = ({ children }: UserProps) => {
         title: "Erro ao promover usuário",
         text:
           err.response?.data?.message ||
+          err.message ||
           "Ocorreu um erro ao tentar promover o usuário. Tente novamente!",
         confirmButtonText: "Retornar",
       });
@@ -525,7 +543,20 @@ export const UserProvider = ({ children }: UserProps) => {
     setLoadingRoleAction(true);
 
     try {
-      await userApi.demoteUser(userId);
+      const user = userList.find((u) => u.id === userId);
+      if (!user) {
+        throw new Error("Usuário não encontrado");
+      }
+
+      // Determine target level based on current level
+      let targetLevel: RoleType = "Default";
+      if (user.isSuperadmin) {
+        targetLevel = "Admin";
+      } else if (user.isAdmin) {
+        targetLevel = "Default";
+      }
+
+      await userApi.updateUser(user.email, { level: targetLevel });
       showAlert({
         icon: "success",
         title: "Usuário rebaixado com sucesso!",
@@ -539,6 +570,7 @@ export const UserProvider = ({ children }: UserProps) => {
         title: "Erro ao rebaixar usuário",
         text:
           err.response?.data?.message ||
+          err.message ||
           "Ocorreu um erro ao tentar rebaixar o usuário. Tente novamente!",
         confirmButtonText: "Retornar",
       });
@@ -571,10 +603,12 @@ export const UserProvider = ({ children }: UserProps) => {
     } finally {
       setLoadingRoleAction(false);
     }
+  };
 
-  }
-
-  const updateUser = async (email: string, updateUserRequest: UpdateUserRequest) => {
+  const updateUser = async (
+    email: string,
+    updateUserRequest: UpdateUserRequest,
+  ) => {
     try {
       await instance.patch(`${baseUrl}/edit/${email}`, updateUserRequest);
       showAlert({
@@ -631,7 +665,7 @@ export const UserProvider = ({ children }: UserProps) => {
         promoteToSuperadmin,
         demoteUser,
         deleteUser,
-        updateUser
+        updateUser,
       }}
     >
       {children}

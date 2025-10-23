@@ -35,7 +35,7 @@ export default function Gerenciar() {
     status: "",
     permission: "",
     profile: "",
-    showPresenters: false
+    showPresenters: false,
   });
   const [searchValue, setSearchValue] = useState<string>("");
   const [showInfoCards, setShowInfoCards] = useState<boolean>(false);
@@ -55,7 +55,6 @@ export default function Gerenciar() {
         .replace(/[^a-zA-Z0-9\s@.]/g, "")
         .toLowerCase();
     }
-
 
     // Search filter
     if (searchValue.trim()) {
@@ -233,36 +232,26 @@ export default function Gerenciar() {
       const isSelf = targetUser.id === currentUser?.id;
 
       actions.push(
-                  <button
-            key="approve"
-            className="btn btn-danger btn-sm"
-            onClick={() => deleteUser(targetUser.id)}
-            title="Excluir Usuário"
-          >
-            <span className="d-none d-md-inline">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="red"
-              >
-                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
-              </svg>
-              Excluir Usuário
-            </span>
-            
-            <span className="d-md-none">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
-              </svg>
-            </span>
-          </button>,
-      )
+        <button
+          key="approve"
+          className="btn btn-danger btn-sm"
+          onClick={() => deleteUser(targetUser.id)}
+          title="Excluir Usuário"
+        >
+          <span className="d-none d-md-inline">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="red">
+              <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+            </svg>
+            Excluir Usuário
+          </span>
+
+          <span className="d-md-none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+            </svg>
+          </span>
+        </button>,
+      );
 
       // Teacher approval (Admin and Superadmin only)
       if (
@@ -344,11 +333,9 @@ export default function Gerenciar() {
         );
       }
 
-      // Admin promotion (Superadmin only)
+      // Admin promotion (Superadmin only) - All profiles can be promoted
       if (
         isCurrentUserSuperadmin &&
-        targetUser.profile === "Professor" &&
-        targetUser.isTeacherActive &&
         !targetUser.isAdmin &&
         !targetUser.isSuperadmin &&
         !isSelf
@@ -432,13 +419,20 @@ export default function Gerenciar() {
         !isSelf &&
         (targetUser.isAdmin || targetUser.isSuperadmin)
       ) {
+        const demoteLabel = targetUser.isSuperadmin
+          ? "REBAIXAR PARA ADMIN"
+          : "REBAIXAR PARA PADRÃO";
+        const demoteTitle = targetUser.isSuperadmin
+          ? "Rebaixar para Administrador"
+          : "Rebaixar para Usuário Padrão";
+
         actions.push(
           <button
             key="demote"
             className="btn btn-secondary btn-sm"
             onClick={() => demoteUser(targetUser.id)}
             disabled={!Edicao?.isActive || loadingRoleAction}
-            title="Rebaixar Usuário"
+            title={demoteTitle}
           >
             <span className="d-none d-md-inline">
               <svg
@@ -449,7 +443,7 @@ export default function Gerenciar() {
               >
                 <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
               </svg>
-              Rebaixar
+              {demoteLabel}
             </span>
             <span className="d-md-none">
               <svg
@@ -476,6 +470,7 @@ export default function Gerenciar() {
       promoteToAdmin,
       promoteToSuperadmin,
       demoteUser,
+      deleteUser,
     ],
   );
 
@@ -489,7 +484,7 @@ export default function Gerenciar() {
   // Load users on component mount with stable dependency
   useEffect(() => {
     getUsers({});
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Remove getUsers dependency to prevent infinite loops
 
   // Remove the debounced effect that was causing unnecessary renders
@@ -566,8 +561,8 @@ export default function Gerenciar() {
             </select>
           </div>
 
-            <div className="filter-checkbox">
-{/*               <label className="filter-checkbox-label">
+          <div className="filter-checkbox">
+            {/*               <label className="filter-checkbox-label">
                 <input
                   type="checkbox"
                   checked={filters.showPresenters || false}
@@ -581,34 +576,45 @@ export default function Gerenciar() {
                 />
                 Exibir apenas apresentadores
               </label> */}
-              <div className="filter-checkbox">
-  <label className="filter-checkbox-label" style={{ display: "flex", alignItems: "center", cursor: "pointer", fontWeight: 500, color: "#333" }}>
-    <input
-      type="checkbox"
-      checked={filters.showPresenters || false}
-      onChange={(e) =>
-        setFilters((prev) => ({
-          ...prev,
-          showPresenters: e.target.checked,
-        }))
-      }
-      style={{
-        accentColor: "#0066cc;",
-        width: "18px",
-        height: "18px",
-        marginRight: "10px",
-        borderRadius: "4px",
-        border: "2px solid #0066cc;",
-        boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-        outline: "none",
-        cursor: "pointer",
-        transition: "box-shadow 0.2s"
-      }}
-    />
-    <span style={{ fontSize: "16px" }}>Exibir apenas apresentadores</span>
-  </label>
-</div>
+            <div className="filter-checkbox">
+              <label
+                className="filter-checkbox-label"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  fontWeight: 500,
+                  color: "#333",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={filters.showPresenters || false}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      showPresenters: e.target.checked,
+                    }))
+                  }
+                  style={{
+                    accentColor: "#0066cc;",
+                    width: "18px",
+                    height: "18px",
+                    marginRight: "10px",
+                    borderRadius: "4px",
+                    border: "2px solid #0066cc;",
+                    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                    outline: "none",
+                    cursor: "pointer",
+                    transition: "box-shadow 0.2s",
+                  }}
+                />
+                <span style={{ fontSize: "16px" }}>
+                  Exibir apenas apresentadores
+                </span>
+              </label>
             </div>
+          </div>
 
           <button
             className="btn btn-outline-secondary info-toggle-btn"
@@ -845,7 +851,7 @@ export default function Gerenciar() {
           </div>
         )}
       </div>
-      
+
       {/* Modal for professor registration */}
       {currentUser?.level === "Superadmin" && (
         <ModalCadastroProfessor onSuccess={() => getUsers({})} />
