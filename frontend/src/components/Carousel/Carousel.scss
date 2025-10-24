@@ -119,6 +119,22 @@
   margin-bottom: 0;
 }
 
+@media (max-width: 1200px) {
+  .carousel-slide .carousel-slide-content {
+    padding-top: 6rem;
+  }
+
+  .carousel-component .title {
+    font-size: 2.75rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .carousel-slide .carousel-slide-content {
+    padding-top: 6rem;
+  }
+}
+
 @media (max-width: 1024px) {
   .carousel-component .slide-2-content .concept-content {
     display: none;
