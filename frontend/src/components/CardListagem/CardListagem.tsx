@@ -21,7 +21,7 @@ interface CardListagem {
   onClickItem?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
-  onClickItemDrag: () => void;
+  onClickItemDrag?: () => void | undefined;
   fileUrl?: string;
 }
 
@@ -74,7 +74,7 @@ export default function CardListagem({
             className="button-general"
             data-bs-toggle="modal"
             data-bs-target={`#${idGeneralModal}`}
-            onClick={() => onClickItemDrag()}
+            onClick={() => onClickItemDrag &&  onClickItemDrag()}
           >
             {generalButtonLabel}
           </button>
