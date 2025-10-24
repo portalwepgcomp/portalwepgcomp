@@ -157,6 +157,11 @@ export default function Listagem({
                   onEdit={() => onEdit && onEdit(card?.id ?? "")}
                   onDelete={() => onDelete && onDelete(card?.id ?? "")}
                   fileUrl={card.pdfFile || card.fileUrl}
+                  onClickItemDrag={() => {
+                    if (onEdit && onClickItem) {
+                      onClickItem(card?.id);
+                    }
+                  }}
                 />
               ) : (
                 <PresentationCard
