@@ -4,7 +4,9 @@
 /build
 /node_modules
 ./node_modules
-
+env
+.env
+./env
 # Logs
 logs
 *.log
