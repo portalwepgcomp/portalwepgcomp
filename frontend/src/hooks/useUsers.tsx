@@ -46,9 +46,6 @@ interface UserProviderData {
   getAdvisors: () => Promise<void>;
   getAdmins: () => Promise<void>;
   switchActiveUser: (userId: string, activate: boolean) => Promise<void>;
-  markAsDefaultUser: (body: SetPermissionParams) => Promise<void>;
-  markAsAdminUser: (body: SetPermissionParams) => Promise<void>;
-  markAsSpAdminUser: (body: SetPermissionParams) => Promise<void>;
   approveTeacher: (userId: string) => Promise<void>;
   approvePresenter: (userId: string) => Promise<void>;
   promoteToAdmin: (userId: string) => Promise<void>;
@@ -275,90 +272,6 @@ export const UserProvider = ({ children }: UserProps) => {
             err.response?.data?.message?.message ||
             err.response?.data?.message ||
             "Ocorreu um erro ao tentar alterar status. Tente novamente!",
-          confirmButtonText: "Retornar",
-        });
-      })
-      .finally(() => setLoadingSwitchActive(false));
-  };
-
-  const markAsDefaultUser = async (body: SetPermissionParams) => {
-    setLoadingSwitchActive(true);
-
-    userApi
-      .markAsDefaultUser(body)
-      .then(() => {
-        showAlert({
-          icon: "success",
-          title: "Nível de permissão alterado com sucesso!",
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        getUsers({});
-      })
-      .catch((err) => {
-        showAlert({
-          icon: "error",
-          title: "Erro ao alterar permissão",
-          text:
-            err.response?.data?.message?.message ||
-            err.response?.data?.message ||
-            "Ocorreu um erro ao tentar alterar permissão. Tente novamente!",
-          confirmButtonText: "Retornar",
-        });
-      })
-      .finally(() => setLoadingSwitchActive(false));
-  };
-
-  const markAsAdminUser = async (body: SetPermissionParams) => {
-    setLoadingSwitchActive(true);
-
-    userApi
-      .markAsAdminUser(body)
-      .then(() => {
-        showAlert({
-          icon: "success",
-          title: "Nível de permissão alterado com sucesso!",
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        getUsers({});
-      })
-      .catch((err) => {
-        showAlert({
-          icon: "error",
-          title: "Erro ao alterar permissão",
-          text:
-            err.response?.data?.message?.message ||
-            err.response?.data?.message ||
-            "Ocorreu um erro ao tentar alterar permissão. Tente novamente!",
-          confirmButtonText: "Retornar",
-        });
-      })
-      .finally(() => setLoadingSwitchActive(false));
-  };
-
-  const markAsSpAdminUser = async (body: SetPermissionParams) => {
-    setLoadingSwitchActive(true);
-
-    userApi
-      .markAsSpAdminUser(body)
-      .then(() => {
-        showAlert({
-          icon: "success",
-          title: "Nível de permissão alterado com sucesso!",
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        getUsers({});
-      })
-      .catch((err) => {
-        showAlert({
-          icon: "error",
-          title: "Erro ao alterar permissão",
-          text:
-            err.response?.data?.message?.message ||
-            err.response?.data?.message ||
-            "Ocorreu um erro ao tentar alterar permissão. Tente novamente!",
           confirmButtonText: "Retornar",
         });
       })
@@ -656,9 +569,6 @@ export const UserProvider = ({ children }: UserProps) => {
         getAdvisors,
         getAdmins,
         switchActiveUser,
-        markAsDefaultUser,
-        markAsAdminUser,
-        markAsSpAdminUser,
         approveTeacher,
         approvePresenter,
         promoteToAdmin,

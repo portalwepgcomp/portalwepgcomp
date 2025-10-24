@@ -33,24 +33,6 @@ export const userApi = {
     return data;
   },
 
-  markAsDefaultUser: async (body: SetPermissionParams) => {
-    const { data } = await instance.post(`${baseUrl}/set-default`, body);
-
-    return data;
-  },
-
-  markAsAdminUser: async (body: SetPermissionParams) => {
-    const { data } = await instance.post(`${baseUrl}/set-admin`, body);
-
-    return data;
-  },
-
-  markAsSpAdminUser: async (body: SetPermissionParams) => {
-    const { data } = await instance.post(`${baseUrl}/set-super-admin`, body);
-
-    return data;
-  },
-
   approveTeacher: async (userId: string) => {
     const { data } = await instance.patch(`${baseUrl}/${userId}/approve`);
     return data;
@@ -59,30 +41,6 @@ export const userApi = {
   approvePresenter: async (userId: string) => {
     const { data } = await instance.patch(
       `${baseUrl}/${userId}/approve-presenter`,
-    );
-    return data;
-  },
-
-  promoteToAdmin: async (userId: string) => {
-    const { data } = await instance.patch(`${baseUrl}/${userId}/promote-admin`);
-    return data;
-  },
-
-  promoteToSuperadmin: async (userId: string) => {
-    const { data } = await instance.patch(
-      `${baseUrl}/${userId}/promote-superadmin`,
-    );
-    return data;
-  },
-
-  demoteUser: async (userId: string) => {
-    const { data } = await instance.patch(`${baseUrl}/${userId}/demote`);
-    return data;
-  },
-
-  demoteUserToLevel: async (userId: string, targetLevel: string) => {
-    const { data } = await instance.patch(
-      `${baseUrl}/${userId}/demote-to/${targetLevel}`,
     );
     return data;
   },

@@ -28,7 +28,6 @@ import { AppException } from '../exceptions/app.exception';
 import {
   CreateProfessorByAdminDto,
   CreateUserDto,
-  SetAdminDto,
 } from './dto/create-user.dto';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -90,27 +89,6 @@ export class UserController {
     );
   }
 
-  @Post('set-default')
-  @UserLevels(UserLevel.Superadmin, UserLevel.Admin)
-  @ApiBearerAuth()
-  async setDefault(@Body() setDefaultDto: SetAdminDto) {
-    return await this.userService.setDefault(setDefaultDto);
-  }
-
-  @Post('set-admin')
-  @UserLevels(UserLevel.Superadmin, UserLevel.Admin)
-  @ApiBearerAuth()
-  async setAdmin(@Body() setAdminDto: SetAdminDto) {
-    return await this.userService.setAdmin(setAdminDto);
-  }
-
-  @Post('set-super-admin')
-  @UserLevels(UserLevel.Superadmin)
-  @ApiBearerAuth()
-  async setSuperAdmin(@Body() setAdminDto: SetAdminDto) {
-    return await this.userService.setSuperAdmin(setAdminDto);
-  }
-
   @Delete('delete/:id')
   @UserLevels(UserLevel.Superadmin)
   @ApiBearerAuth()
@@ -165,66 +143,6 @@ export class UserController {
   @ApiBearerAuth()
   async approvePresenter(@Param('id') id: string) {
     const result = await this.userService.approvePresenter(id);
-    return new ResponseUserDto(result);
-  }
-
-  /**
-   * Promotes an approved teacher to ADMIN.
-   * Only accessible by users who are SUPERADMINs.
-   * @param id - The ID of the user to be promoted to admin.
-   */
-  @Patch(':id/promote-admin')
-  @UseGuards(JwtAuthGuard, UserLevelGuard)
-  @UserLevels(UserLevel.Superadmin)
-  @ApiBearerAuth()
-  async promoteToAdmin(@Param('id') id: string) {
-    const result = await this.userService.promoteToAdmin(id);
-    return new ResponseUserDto(result);
-  }
-
-  /**
-   * Promotes an admin to SUPERADMIN.
-   * Only accessible by users who are already SUPERADMINs.
-   * @param id - The ID of the user to be promoted to superadmin.
-   */
-  @Patch(':id/promote-superadmin')
-  @UseGuards(JwtAuthGuard, UserLevelGuard)
-  @UserLevels(UserLevel.Superadmin)
-  @ApiBearerAuth()
-  async promoteToSuperadmin(@Param('id') id: string) {
-    const result = await this.userService.promoteToSuperadmin(id);
-    return new ResponseUserDto(result);
-  }
-
-  /**
-   * Demotes a user from their current admin role.
-   * Only accessible by users who are SUPERADMINs.
-   * @param id - The ID of the user to be demoted.
-   */
-  @Patch(':id/demote')
-  @UseGuards(JwtAuthGuard, UserLevelGuard)
-  @UserLevels(UserLevel.Superadmin)
-  @ApiBearerAuth()
-  async demoteUser(@Param('id') id: string) {
-    const result = await this.userService.demoteUser(id);
-    return new ResponseUserDto(result);
-  }
-
-  /**
-   * Demotes a user to a specific level in the hierarchy.
-   * Only accessible by users who are SUPERADMINs.
-   * @param id - The ID of the user to be demoted.
-   * @param targetLevel - The target level (default, teacher, admin).
-   */
-  @Patch(':id/demote-to/:targetLevel')
-  @UseGuards(JwtAuthGuard, UserLevelGuard)
-  @UserLevels(UserLevel.Superadmin)
-  @ApiBearerAuth()
-  async demoteUserToLevel(
-    @Param('id') id: string,
-    @Param('targetLevel') targetLevel: 'default' | 'teacher' | 'admin',
-  ) {
-    const result = await this.userService.demoteUserToLevel(id, targetLevel);
     return new ResponseUserDto(result);
   }
 

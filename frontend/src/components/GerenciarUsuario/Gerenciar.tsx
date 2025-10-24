@@ -15,9 +15,6 @@ export default function Gerenciar() {
 
   const {
     userList,
-    markAsAdminUser,
-    markAsDefaultUser,
-    markAsSpAdminUser,
     switchActiveUser,
     loadingUserList,
     loadingRoleAction,
