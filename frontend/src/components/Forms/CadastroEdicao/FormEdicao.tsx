@@ -92,9 +92,6 @@ const formEdicaoSchema = z.object({
     .datetime({
       message: "Data inválida!",
     }),
-
-  coordinatorId: z.string().optional(),
-  partnersText: z.string().optional(),
 });
 type FormEdicaoSchema = z.infer<typeof formEdicaoSchema>;
 
@@ -143,7 +140,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       setValue("final", edicaoData.endDate);
       setValue("local", edicaoData.location);
       setValue("sala", edicaoData?.roomName);
-      setValue("coordinatorId", user?.id);
       setValue(
         "comissao",
         committerList
@@ -156,7 +152,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       setValue("sessoes", edicaoData.presentationsPerPresentationBlock);
       setValue("submissao", edicaoData.callForPapersText);
       setValue("limite", edicaoData.submissionDeadline);
-      setValue("partnersText", "");
     }
   }, [committerList]);
 
@@ -216,7 +211,6 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       startDate: inicio,
       submissionDeadline: limite,
       endDate: final,
-      partnersText: "",
     } as EdicaoParams;
     if (edicaoData?.id) {
       updateEdicao(edicaoData?.id, body);
