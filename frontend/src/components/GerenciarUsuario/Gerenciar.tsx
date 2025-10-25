@@ -338,7 +338,6 @@ export default function Gerenciar() {
                 key="edit-user"
                 className="btn btn-info btn-sm"
                 onClick={() => {
-                  console.log('oi')
                   router.push('/gerenciamento/' + targetUser.id + '/editar')
                 }}
                 disabled={!Edicao?.isActive || loadingRoleAction}
@@ -480,6 +479,7 @@ export default function Gerenciar() {
       return actions;
     },
     [
+        router,
       currentUser,
       Edicao,
       loadingRoleAction,
