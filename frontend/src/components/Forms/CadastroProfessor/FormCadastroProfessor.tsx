@@ -9,6 +9,7 @@ import { useUsers } from "@/hooks/useUsers";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import "./style.scss";
+import InfoBox from "@/components/InfoBox/InfoBox";
 
 const formCadastroProfessorSchema = z.object({
   nome: z
@@ -163,20 +164,13 @@ export function FormCadastroProfessor({ onSuccess, formRef, showButtons = true }
           )}
         </div>
 
+
         <div className="col-12 mb-3">
-          <div className="alert alert-info" role="alert">
-            <div className="d-flex align-items-center">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="me-2">
-                <path d="M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
-              </svg>
-              <div>
-                <strong>Informação importante:</strong>
-                <br />
-                Uma senha temporária será gerada automaticamente e enviada por email para o professor.
-                O professor poderá alterar a senha no primeiro acesso.
-              </div>
-            </div>
-          </div>
+          <InfoBox
+              title="Informação importante:"
+              message="Uma senha temporária será gerada automaticamente e enviada por email para o professor.
+                O professor poderá alterar a senha no primeiro acesso."
+          />
         </div>
 
         {showButtons && (
