@@ -23,7 +23,8 @@ interface RegisterUserParams {
     profile: ProfileType,
     areaExpertise?: string,
     biography?: string,
-    registrationNumber?: string
+    registrationNumber?: string,
+    registrationNumberType?: 'CPF' | 'MATRICULA';
 }
 
 interface User extends RegisterUserParams {

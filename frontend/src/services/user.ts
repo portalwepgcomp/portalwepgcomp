@@ -92,4 +92,10 @@ export const userApi = {
 
     return data;
   },
+
+    getById: async (userId: string) => {
+        const { data } = await instance.get(`${baseUrl}/${userId}`);
+
+        return data;
+    }
 };

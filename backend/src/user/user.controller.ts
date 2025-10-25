@@ -9,7 +9,7 @@ import {
   Patch,
   Post,
   Query,
-  Req,
+  Req, Res,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -247,5 +247,13 @@ export class UserController {
     if (!hasData) {
       throw new BadRequestException('Nenhum campo fornecido para atualização.');
     }
+  }
+
+  @Get(':id')
+  @UserLevels(UserLevel.Superadmin)
+  @ApiBearerAuth()
+  async getById(@Param('id') id: string) {
+    const result = await this.userService.findById(id);
+    return new ResponseUserDto(result);
   }
 }
