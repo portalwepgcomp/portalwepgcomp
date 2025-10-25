@@ -1,10 +1,10 @@
-import { Profile, UserAccount, UserLevel } from "@prisma/client";
-import { RegistrationNumberType } from "../dto/create-user.dto";
+import { Profile, UserAccount, UserLevel } from '@prisma/client';
+import { RegistrationNumberType } from '../dto/create-user.dto';
 
 export class UserFieldCalculator {
   static calculateDerivedFields(
-    profile: Profile, 
-    level: UserLevel, 
+    profile: Profile,
+    level: UserLevel,
     updateData: any
   ): Partial<UserAccount> {
     const derived: any = {};
@@ -18,13 +18,13 @@ export class UserFieldCalculator {
   }
 
   private static setRegistrationNumberType(
-    derived: any, 
-    profile: Profile, 
+    derived: any,
+    profile: Profile,
     updateData: any
   ): void {
     if (updateData.registrationNumber && !updateData.registrationNumberType) {
-      derived.registrationNumberType = profile === Profile.Listener 
-        ? RegistrationNumberType.CPF 
+      derived.registrationNumberType = profile === Profile.Listener
+        ? RegistrationNumberType.CPF
         : RegistrationNumberType.MATRICULA;
     }
   }
@@ -46,7 +46,11 @@ export class UserFieldCalculator {
     }
   }
 
-  private static setProfileFlags(derived: any, profile: Profile, updateData: any): void {
+  private static setProfileFlags(
+    derived: any,
+    profile: Profile,
+    updateData: any,
+  ): void {
     switch (profile) {
       case Profile.Professor:
         if (!updateData.hasOwnProperty('isTeacherActive')) {
@@ -76,8 +80,8 @@ export class UserFieldCalculator {
   }
 
   private static applyConsistencyRules(
-    derived: any, 
-    profile: Profile, 
+    derived: any,
+    profile: Profile,
     level: UserLevel
   ): void {
     if (level === UserLevel.Superadmin) {
@@ -109,10 +113,14 @@ export class UserFieldCalculator {
     }
 
     if (profile === Profile.Listener) {
+      if (!derived.hasOwnProperty('isAdmin')) {
+        derived.isAdmin = false;
+      }
+      if (!derived.hasOwnProperty('isSuperadmin')) {
+        derived.isSuperadmin = false;
+      }
       derived.isTeacherActive = false;
       derived.isPresenterActive = false;
-      derived.isAdmin = false;
-      derived.isSuperadmin = false;
     }
   }
 }

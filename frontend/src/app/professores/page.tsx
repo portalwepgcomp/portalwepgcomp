@@ -16,13 +16,6 @@ export default function Professores() {
     <ProtectedLayout>
         <div className="professores">
             <div className="wrapper-professores">
-{/*                 <div className="modal-header-content">
-                  <h2 className="modal-title">Cadastrar Novo Professor</h2>
-                  <p className="modal-subtitle">
-                    Preencha os dados abaixo para cadastrar um novo professor. 
-                    Uma senha temporária será gerada e enviada por email.
-                  </p>
-                </div> */}
                 <div className="header-professores">
                     <h2 className="titulo modal-title">Cadastrar Novo Professor</h2>
                     <p className="subtitulo modal-subtitle">

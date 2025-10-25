@@ -175,14 +175,6 @@ export function FormCadastroProfessor({ onSuccess, formRef, showButtons = true }
 
         {showButtons && (
           <div className="col-12 d-flex justify-content-end gap-3">
-{/*             <button
-              type="button"
-              className="btn btn-outline-secondary btn-lg"
-              onClick={handleCancel}
-              disabled={loadingCreateProfessor}
-            >
-              Cancelar
-            </button> */}
             <button
               type="submit"
               className="btn btn-primary btn-lg"
