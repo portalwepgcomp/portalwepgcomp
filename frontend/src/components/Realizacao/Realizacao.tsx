@@ -8,7 +8,13 @@ import HtmlEditorComponent from "../HtmlEditorComponent/HtmlEditorComponent";
 
 import "./style.scss";
 
-type Logo = { src: string; alt: string; width: number; height: number; priority?: boolean };
+type Logo = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  priority?: boolean;
+};
 
 export default function Realizacao() {
   const [content, setContent] = useState("");
@@ -16,21 +22,31 @@ export default function Realizacao() {
 
   const realizacaoLogos: Logo[] = useMemo(
     () => [
-      { src: "/assets/images/ic_logo_padrao.png", alt: "Computação UFFBA Logo", width: 150, height: 150, priority: true },
-      { src: "/assets/images/brasao_ufba.jpg", alt: "UFBA Logo", width: 150, height: 150, priority: true },
+      {
+        src: "/assets/images/ic_logo_padrao.png",
+        alt: "Computação UFFBA Logo",
+        width: 150,
+        height: 150,
+        priority: true,
+      },
+      {
+        src: "/assets/images/brasao_ufba.jpg",
+        alt: "UFBA Logo",
+        width: 150,
+        height: 150,
+        priority: true,
+      },
     ],
-    []
+    [],
   );
 
-  const apoioLogos: Logo[] = useMemo(
-    () => [
-    ],
-    []
-  );
+  const apoioLogos: Logo[] = useMemo(() => [], []);
 
   const uniqueBySrc = useCallback((logos: Logo[]) => {
     const seen = new Set<string>();
-    return logos.filter(l => (seen.has(l.src) ? false : (seen.add(l.src), true)));
+    return logos.filter((l) =>
+      seen.has(l.src) ? false : (seen.add(l.src), true),
+    );
   }, []);
 
   const handleChange = useCallback((v: string) => setContent(v), []);
@@ -47,7 +63,6 @@ export default function Realizacao() {
   }, [Edicao?.partnersText, content]);
 
   const sizes = "(max-width: 768px) 120px, 150px";
-  console.log(Edicao)
   return (
     <div className="realizacao">
       <div className="realizacao-lista">

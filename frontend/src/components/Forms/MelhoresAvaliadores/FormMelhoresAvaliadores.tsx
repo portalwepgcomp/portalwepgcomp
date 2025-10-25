@@ -17,7 +17,7 @@ const formMelhorAvaliadorSchema = z.object({
         value: z.string({
           invalid_type_error: "Campo inválido!",
         }),
-      })
+      }),
     )
     .max(3, { message: "Você deve selecionar até 3 avaliadores!" }),
   eventEditionId: z.string(),
@@ -32,7 +32,7 @@ export function FormMelhorAvaliador() {
     usePremiacao();
 
   const [avaliadoresOptions, setAvaliadoresOptions] = useState<OptionType[]>(
-    []
+    [],
   );
   const {
     control,
@@ -101,28 +101,29 @@ export function FormMelhorAvaliador() {
 
   return (
     <form
-      className='row g-3 w-80'
+      className="row g-3 w-80"
+      id="avaliadores-form"
       onSubmit={handleSubmit(handleFormAvaliadores, onInvalid)}
     >
-      <div className='col-12 mb-1'>
+      <div className="col-12 mb-1">
         <Controller
-          name='avaliadores'
+          name="avaliadores"
           control={control}
           rules={{ required: "Você deve selecionar exatamente 3 avaliadores!" }}
           render={({ field }) => (
             <Select
               {...field}
-              id='melhoresAvaliadores-select'
+              id="melhoresAvaliadores-select"
               isMulti
               options={avaliadoresOptions}
-              placeholder='Escolha o(s) usuário(s)'
+              placeholder="Escolha o(s) usuário(s)"
               isClearable
               onChange={(selected) => field.onChange(selected)}
               value={field.value || []}
             />
           )}
         />
-        <p className='text-danger error-message'>
+        <p className="text-danger error-message">
           {errors.avaliadores?.message}
         </p>
       </div>
