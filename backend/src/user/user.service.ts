@@ -842,7 +842,11 @@ export class UserService {
     });
   }
 
-  async editUserBySuperAdmin(email: string, updateUserDto: UpdateUserDto, superadminEmail: string): Promise<ResponseUpdatedUserDto> {
+  async editUserBySuperAdmin(
+    email: string,
+    updateUserDto: UpdateUserDto,
+    superadminEmail: string,
+  ): Promise<ResponseUpdatedUserDto> {
     const decodedEmail = decodeURIComponent(email);
 
     const existingUser = await this.findUserByEmailOrFail(decodedEmail);
@@ -967,5 +971,16 @@ export class UserService {
     );
   }
 
+  public async findById(userId: string) {
+    const user = await this.prismaClient.userAccount.findUnique({
+      where: { id: userId },
+    });
 
+    if (!user) {
+      // Dispara a exceção 404 Not Found
+      throw new NotFoundException(`Usuário com ID ${userId} não encontrado.`);
+    }
+
+    return user;
+  }
 }

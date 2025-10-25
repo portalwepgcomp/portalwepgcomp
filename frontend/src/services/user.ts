@@ -114,5 +114,11 @@ export const userApi = {
         const { data } = await instance.delete(`${baseUrl}/delete/${userId}`);
         
         return data;
+    },
+
+    getById: async (userId: string) => {
+        const { data } = await instance.get(`${baseUrl}/${userId}`);
+
+        return data;
     }
 }

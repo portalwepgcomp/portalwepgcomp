@@ -55,6 +55,7 @@ interface UserProviderData {
   demoteUser: (userId: string) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
   updateUser: (email: string, updateUserRequest: UpdateUserRequest) => Promise<void>;
+  findUserById: (userId: string) => Promise<void>;
 }
 
 export const UserContext = createContext<UserProviderData>(
@@ -75,6 +76,7 @@ export const UserProvider = ({ children }: UserProps) => {
   const [loadingSwitchActive, setLoadingSwitchActive] =
     useState<boolean>(false);
   const [loadingRoleAction, setLoadingRoleAction] = useState<boolean>(false);
+  const [loadingUser, setLoadingUser] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [userList, setUserList] = useState<User[]>([]);
   const [advisors, setAdvisors] = useState<User[]>([]);
@@ -598,6 +600,29 @@ export const UserProvider = ({ children }: UserProps) => {
     }
   };
 
+  const findUserById = async (id: string) => {
+    await userApi.getById(id)
+        .then((response) => {
+          setUser(response);
+        })
+        .catch((err) => {
+          setUser(null);
+
+          showAlert({
+            icon: "error",
+            title: "Erro ao encontrar o usuário",
+            text:
+                err.response?.data?.message?.message ||
+                err.response?.data?.message ||
+                "Ocorreu um erro durante a busca.",
+            confirmButtonText: "Retornar",
+          });
+        })
+        .finally(() => {
+          setLoadingUser(false);
+        });
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -631,7 +656,8 @@ export const UserProvider = ({ children }: UserProps) => {
         promoteToSuperadmin,
         demoteUser,
         deleteUser,
-        updateUser
+        updateUser,
+        findUserById
       }}
     >
       {children}

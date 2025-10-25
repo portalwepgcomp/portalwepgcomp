@@ -9,7 +9,7 @@ import {
   Patch,
   Post,
   Query,
-  Req,
+  Req, Res,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -308,7 +308,11 @@ export class UserController {
     const email = this.parseEmailParam(rawEmail);
     this.validateUpdateData(updateUserDto);
 
-    return await this.userService.editUserBySuperAdmin(email, updateUserDto, req.user.email);
+    return await this.userService.editUserBySuperAdmin(
+      email,
+      updateUserDto,
+      req.user.email,
+    );
   }
 
   private parseEmailParam(rawEmail: string): string {
@@ -325,5 +329,11 @@ export class UserController {
     }
   }
 
-
+  @Get(':id')
+  @UserLevels(UserLevel.Superadmin)
+  @ApiBearerAuth()
+  async getById(@Param('id') id: string) {
+    const result = await this.userService.findById(id);
+    return new ResponseUserDto(result);
+  }
 }
