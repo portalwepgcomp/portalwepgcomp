@@ -9,6 +9,8 @@ import { useSweetAlert } from "@/hooks/useAlert";
 import { z } from "zod";
 import { UpdateUserRequest } from "@/models/update-user";
 import { maskCPF, unmask } from "@/utils/masks";
+import {useRouter} from "next/navigation";
+import {ProtectedLayout} from "@/components/ProtectedLayout/protectedLayout";
 
 const updateUserSchema = z.object({
     name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres."),
@@ -24,6 +26,7 @@ const updateUserSchema = z.object({
 });
 
 const EditarUsuario = ({ params }: { params: { id: string } }) => {
+    const router = useRouter();
     const { updateUser } = useUsers();
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -129,6 +132,7 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
     }
 
     return (
+        <ProtectedLayout>
         <div className="d-flex flex-column" style={{ gap: "30px" }}>
             <Banner title="Editar Usuário"/>
             <div className="align-self-center">
@@ -264,7 +268,7 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
                         </div>
 
                         <div className="d-flex justify-content-end mt-4" style={{gap: "10px"}}>
-                            <button type="button" className="btn btn-outline-secondary" disabled={isSubmitting}>
+                            <button type="button" onClick={() => { router.push('/gerenciamento') }} className="btn btn-outline-secondary" disabled={isSubmitting}>
                                 Cancelar
                             </button>
                             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
@@ -275,6 +279,7 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
                 </div>
             </div>
         </div>
+</ProtectedLayout>
     );
 };
 
