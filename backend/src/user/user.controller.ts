@@ -9,7 +9,7 @@ import {
   Patch,
   Post,
   Query,
-  Req, Res,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -250,7 +250,7 @@ export class UserController {
   }
 
   @Get(':id')
-  @UserLevels(UserLevel.Superadmin)
+  @UserLevels(UserLevel.Superadmin, UserLevel.Admin)
   @ApiBearerAuth()
   async getById(@Param('id') id: string) {
     const result = await this.userService.findById(id);
