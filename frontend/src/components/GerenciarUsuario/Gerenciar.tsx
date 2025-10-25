@@ -8,9 +8,11 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import LoadingPage from "../LoadingPage";
 import ModalCadastroProfessor from "../Modals/ModalCadastroProfessor/ModalCadastroProfessor";
 import "./enhanced-style.scss";
+import {useRouter} from "next/navigation";
 
 export default function Gerenciar() {
   const { user: currentUser } = useContext(AuthContext);
+  const router = useRouter();
   const { Edicao } = useEdicao();
 
   const {
@@ -344,6 +346,25 @@ export default function Gerenciar() {
         );
       }
 
+      if (isCurrentUserSuperadmin) {
+        actions.push(
+            <button
+                key="edit-user"
+                className="btn btn-info btn-sm"
+                onClick={() => {
+                  console.log('oi')
+                  router.push('/gerenciamento/' + targetUser.id + '/editar')
+                }}
+                disabled={!Edicao?.isActive || loadingRoleAction}
+                title="Editar usuário"
+            >
+              <span className="d-none d-md-inline">
+                Editar usuário
+              </span>
+            </button>
+        );
+      }
+
       // Admin promotion (Superadmin only)
       if (
         isCurrentUserSuperadmin &&
@@ -593,7 +614,7 @@ export default function Gerenciar() {
         }))
       }
       style={{
-        accentColor: "#0066cc;",
+        accentColor: "#0066cc",
         width: "18px",
         height: "18px",
         marginRight: "10px",
