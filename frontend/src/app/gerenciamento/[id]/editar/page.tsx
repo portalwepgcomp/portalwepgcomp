@@ -84,17 +84,15 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
             level: formData.get('permissao'),
         };
 
-        if (!user?.registrationNumberType) {
-            const docTypeFromForm = formData.get('registrationNumberType') as string;
-            let rawDocumentNumber = formData.get('registrationNumber') as string;
+        const docTypeFromForm = formData.get('registrationNumberType') as string;
+        let rawDocumentNumber = formData.get('registrationNumber') as string;
 
-            if (docTypeFromForm === 'CPF' && rawDocumentNumber) {
-                rawDocumentNumber = unmask(rawDocumentNumber);
-            }
-
-            dataToValidate.registrationNumberType = docTypeFromForm;
-            dataToValidate.registrationNumber = rawDocumentNumber;
+        if (docTypeFromForm === 'CPF' && rawDocumentNumber) {
+            rawDocumentNumber = unmask(rawDocumentNumber);
         }
+
+        dataToValidate.registrationNumberType = docTypeFromForm;
+        dataToValidate.registrationNumber = rawDocumentNumber;
 
         const validationResult = updateUserSchema.safeParse(dataToValidate);
 
