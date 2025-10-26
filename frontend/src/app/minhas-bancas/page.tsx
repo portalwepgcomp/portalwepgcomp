@@ -13,77 +13,78 @@ import PresentationCard from "@/components/CardApresentacao/PresentationCard";
 import "./style.scss";
 
 export default function MinhasBancas() {
-	const { listPresentionBlockByPanelist, presentationBlockByPanelistList } =
-		useSession();
-	const { user } = useContext(AuthContext);
+  const { listPresentionBlockByPanelist, presentationBlockByPanelistList } =
+    useSession();
+  const { user } = useContext(AuthContext);
 
-	const { Edicao } = useEdicao();
+  const { Edicao } = useEdicao();
 
-	const eventEditionId = Edicao?.id;
+  const eventEditionId = Edicao?.id;
 
-	useEffect(() => {
-		if (eventEditionId)
-			listPresentionBlockByPanelist(eventEditionId, user?.id ?? "");
-	}, [eventEditionId]);
+  useEffect(() => {
+    if (eventEditionId)
+      listPresentionBlockByPanelist(eventEditionId, user?.id ?? "");
+  }, [eventEditionId]);
 
-	return (
-		<div
-			className='d-flex flex-column'
-			style={{
-				gap: "20px",
-			}}
-		>
-			<Banner title='Minhas bancas' />
-			<div className='minhas-bancas'>
-				<p>
-					Esta página exibe as bancas pelas quais você, como professor
-					avaliador, é responsável. As apresentações estão organizadas por
-					sessão, e cada sessão é destacada com uma cor distinta para facilitar
-					a identificação.
-				</p>
-				<div className='d-flex flex-column gap-3'>
-					{!!presentationBlockByPanelistList?.length &&
-						presentationBlockByPanelistList
-							?.toSorted(
-								(a, b) =>
-									new Date(a.startTime).getTime() -
-									new Date(b.startTime).getTime()
-							)
-							?.map((item) => {
-								return item.presentations
-									?.toSorted(
-										(a, b) => a.positionWithinBlock - b.positionWithinBlock
-									)
-									.map((pres) => {
-										return (
-											<PresentationCard
-												key={pres.id}
-												id={pres.id}
-												title={pres?.submission?.title ?? ""}
-												subtitle={pres?.submission?.abstract ?? ""}
-												name={pres?.submission?.mainAuthor?.name ?? ""}
-												pdfFile={pres?.submission?.pdfFile ?? ""}
-												email={pres?.submission?.mainAuthor?.email ?? ""}
-												advisorName={pres?.submission?.advisor?.name ?? ""}
-											/>
-										);
-									});
-							})}
-				</div>
-				{!presentationBlockByPanelistList.length && (
-					<div className='d-flex align-items-center justify-content-center p-3 mt-4 me-5'>
-						<h4 className='empty-list mb-0'>
-							<Image
-								src='/assets/images/empty_box.svg'
-								alt='Lista vazia'
-								width={90}
-								height={90}
-							/>
-							Essa lista ainda está vazia
-						</h4>
-					</div>
-				)}
-			</div>
-		</div>
-	);
+  return (
+    <div
+      className="d-flex flex-column"
+      style={{
+        gap: "20px",
+      }}
+    >
+      <Banner title="Minhas bancas" />
+      <div className="minhas-bancas">
+        <p>
+          Esta página exibe as bancas pelas quais você, como professor
+          avaliador, é responsável. As apresentações estão organizadas por
+          sessão, e cada sessão é destacada com uma cor distinta para facilitar
+          a identificação.
+        </p>
+        <div className="d-flex flex-column gap-3">
+          {!!presentationBlockByPanelistList?.length &&
+            presentationBlockByPanelistList
+              ?.toSorted(
+                (a, b) =>
+                  new Date(a.startTime).getTime() -
+                  new Date(b.startTime).getTime(),
+              )
+              ?.map((item) => {
+                return item.presentations
+                  ?.toSorted(
+                    (a, b) => a.positionWithinBlock - b.positionWithinBlock,
+                  )
+                  .map((pres) => {
+                    return (
+                      <PresentationCard
+                        key={pres.id}
+                        id={pres.id}
+                        title={pres?.submission?.title ?? ""}
+                        subtitle={pres?.submission?.abstract ?? ""}
+                        name={pres?.submission?.mainAuthor?.name ?? ""}
+                        pdfFile={pres?.submission?.pdfFile ?? ""}
+                        email={pres?.submission?.mainAuthor?.email ?? ""}
+                        advisorName={pres?.submission?.advisor?.name ?? ""}
+                        presentationData={pres?.startTime ?? ""}
+                      />
+                    );
+                  });
+              })}
+        </div>
+        {!presentationBlockByPanelistList.length && (
+          <div className="d-flex align-items-center justify-content-center p-3 mt-4 me-5">
+            <h4 className="empty-list mb-0">
+              <Image
+                src="/assets/images/empty_box.svg"
+                alt="Lista vazia"
+                width={90}
+                height={90}
+              />
+              Essa lista ainda está vazia
+            </h4>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
