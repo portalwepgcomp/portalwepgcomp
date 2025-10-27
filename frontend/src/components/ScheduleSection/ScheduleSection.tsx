@@ -135,12 +135,14 @@ export default function ScheduleSection() {
           );
 
         const groupedByTitle = filteredSessions
-          ?.filter((sessao) => sessao.type !== "General")
+          ?.filter((sessao) => sessao.type !== "General" && sessao.title !== undefined)
           ?.reduce((acc, sessao) => {
-            acc[sessao.title] = acc[sessao.title] || [];
-            acc[sessao.title].push(sessao);
+            if (sessao.title !== undefined) {
+              acc[sessao.title] = acc[sessao.title] || [];
+              acc[sessao.title].push(sessao);
+            }
             return acc;
-          }, {});
+          }, {} as Record<string, typeof filteredSessions[number]>);
 
         return (
           <>
@@ -192,7 +194,7 @@ export default function ScheduleSection() {
                               }
                               title={pres?.submission?.title ?? ""}
                               onClickEvent={() => openModalPresentation(pres)}
-                              cardColor="#f5b301"
+                              cardColor="#D3E1F1"
                             />
                           </div>
                         ))
