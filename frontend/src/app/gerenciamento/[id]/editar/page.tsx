@@ -60,8 +60,6 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
                     }
                 })
                 .catch((err) => {
-                    // Este catch agora pega erros *inesperados* que possam ocorrer
-                    // dentro do bloco '.then()'
                     setUser(null);
                     showAlert({
                         icon: "error",
