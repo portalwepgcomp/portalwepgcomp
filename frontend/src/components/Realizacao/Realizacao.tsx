@@ -17,7 +17,7 @@ export default function Realizacao() {
   const realizacaoLogos: Logo[] = useMemo(
     () => [
       { src: "/assets/images/ic_logo_padrao.png", alt: "Computação UFFBA Logo", width: 150, height: 150, priority: true },
-      { src: "/assets/images/brasao_ufba.jpg", alt: "UFBA Logo", width: 150, height: 150, priority: true },
+      { src: "/assets/images/brasao_ufba.jpg", alt: "UFBA Logo", width: 100, height: 130, priority: true },
     ],
     []
   );
@@ -46,51 +46,52 @@ export default function Realizacao() {
     if (incoming !== content) setContent(incoming);
   }, [Edicao?.partnersText, content]);
 
-  const sizes = "(max-width: 768px) 120px, 150px";
-  console.log(Edicao)
   return (
-    <div className="realizacao">
-      <div className="realizacao-lista">
-        <div className="realizacao-titulo">Realização:</div>
-        <div className="realizacao-parceiros">
-          {uniqueBySrc(realizacaoLogos).map((logo) => (
-            <Image
-              key={logo.src}
-              src={logo.src}
-              alt={logo.alt}
-              width={logo.width}
-              height={logo.height}
-              style={{ objectFit: "contain" }}
-              priority={logo.priority}
-              sizes={sizes}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="realizacao-lista">
-        <div className="realizacao-titulo">Apoio:</div>
-        <div className="realizacao-parceiros">
-          {uniqueBySrc(apoioLogos).map((logo) => (
-            <Image
-              key={logo.src}
-              src={logo.src}
-              alt={logo.alt}
-              width={logo.width}
-              height={logo.height}
-              style={{ objectFit: "contain" }}
-              priority={logo.priority}
-              sizes={sizes}
-            />
-          ))}
-        </div>
-
-        <HtmlEditorComponent
-          content={content}
-          onChange={handleChange}
-          handleEditField={handleEditPartners}
-        />
+<div className="realizacao">
+  <div className="realizacao-container">
+    <div className="realizacao-grupo">
+      <h3 className="realizacao-titulo">Realização</h3>
+      <div className="realizacao-parceiros">
+        {uniqueBySrc(realizacaoLogos).map((logo) => (
+          <Image
+            key={logo.src}
+            src={logo.src}
+            alt={logo.alt}
+            width={logo.width}
+            height={logo.height}
+            priority={logo.priority}
+            className="realizacao-logo"
+            sizes="(max-width: 768px) 100px, 150px"
+          />
+        ))}
       </div>
     </div>
+
+    <div className="realizacao-grupo">
+      <h3 className="realizacao-titulo">Apoio</h3>
+      <div className="realizacao-parceiros">
+        {uniqueBySrc(apoioLogos).map((logo) => (
+          <Image
+            key={logo.src}
+            src={logo.src}
+            alt={logo.alt}
+            width={logo.width}
+            height={logo.height}
+            priority={logo.priority}
+            className="realizacao-logo"
+            sizes="(max-width: 768px) 100px, 150px"
+          />
+        ))}
+      </div>
+
+      <HtmlEditorComponent
+        content={content}
+        onChange={handleChange}
+        handleEditField={handleEditPartners}
+      />
+    </div>
+  </div>
+</div>
+
   );
 }

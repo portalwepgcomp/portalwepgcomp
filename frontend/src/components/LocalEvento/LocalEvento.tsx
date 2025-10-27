@@ -8,9 +8,6 @@ export default function LocalEvento() {
     <section
       id="Contato"
       className="contatoWrapper"
-      style={{
-        backgroundColor: "#0074BA",
-      }}
     >
       <div
         className="d-flex flex-row justify-content-evenly contato"
