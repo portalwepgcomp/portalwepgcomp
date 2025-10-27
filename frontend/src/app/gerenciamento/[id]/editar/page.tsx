@@ -4,7 +4,6 @@ import Banner from "@/components/UI/Banner";
 import InfoBox from "@/components/InfoBox/InfoBox";
 import { useEffect, useState } from "react";
 import { useUsers } from "@/hooks/useUsers";
-import { userApi } from "@/services/user";
 import { useSweetAlert } from "@/hooks/useAlert";
 import { z } from "zod";
 import { UpdateUserRequest } from "@/models/update-user";
@@ -27,7 +26,7 @@ const updateUserSchema = z.object({
 
 const EditarUsuario = ({ params }: { params: { id: string } }) => {
     const router = useRouter();
-    const { updateUser } = useUsers();
+    const { updateUser, findUserById } = useUsers();
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,27 +40,33 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
             if (!id) return;
             setIsLoading(true);
 
-            await userApi.getById(id)
-                .then((data: User) => {
-                    setUser(data);
+            findUserById(id)
+                .then((data: User | undefined) => {
+                    if (data) {
+                        setUser(data);
 
-                    const type = data.registrationNumberType;
-                    const number = data.registrationNumber || '';
+                        const type = data.registrationNumberType;
+                        const number = data.registrationNumber || '';
 
-                    if (type) {
-                        setDocType(type);
-                        setDocumentNumber(type === 'CPF' ? maskCPF(number) : number);
+                        if (type) {
+                            setDocType(type);
+                            setDocumentNumber(type === 'CPF' ? maskCPF(number) : number);
+                        } else {
+                            setDocType('CPF');
+                            setDocumentNumber('');
+                        }
                     } else {
-                        setDocType('CPF');
-                        setDocumentNumber('');
+                        setUser(null);
                     }
                 })
                 .catch((err) => {
+                    // Este catch agora pega erros *inesperados* que possam ocorrer
+                    // dentro do bloco '.then()'
                     setUser(null);
                     showAlert({
                         icon: "error",
-                        title: "Erro ao encontrar o usuário",
-                        text: err.response?.data?.message || "Ocorreu um erro."
+                        title: "Erro ao processar dados",
+                        text: err.response?.data?.message || "Ocorreu um erro local."
                     });
                 })
                 .finally(() => setIsLoading(false));

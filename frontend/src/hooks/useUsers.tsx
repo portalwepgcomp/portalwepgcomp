@@ -56,7 +56,7 @@ interface UserProviderData {
     email: string,
     updateUserRequest: UpdateUserRequest,
   ) => Promise<void>;
-  findUserById: (userId: string) => Promise<void>;
+  findUserById: (userId: string) => Promise<User | undefined>;
 }
 
 export const UserContext = createContext<UserProviderData>(
@@ -538,7 +538,7 @@ export const UserProvider = ({ children }: UserProps) => {
         icon: "error",
         title: "Erro ao editar usuário",
         text:
-          err.response?.data?.message ||
+          err.response?.data?.message.message[0] ||
           "Ocorreu um erro ao tentar editar o usuário. Tente novamente!",
         confirmButtonText: "Retornar",
       });
@@ -548,13 +548,14 @@ export const UserProvider = ({ children }: UserProps) => {
   };
 
   const findUserById = async (id: string) => {
-    await userApi.getById(id)
-        .then((response) => {
-          setUser(response);
+    setLoadingUser(true);
+    return instance.get(`${baseUrl}/${id}`)
+        .then(({ data }) => {
+          setUser(data);
+          return data
         })
         .catch((err) => {
           setUser(null);
-
           showAlert({
             icon: "error",
             title: "Erro ao encontrar o usuário",
@@ -564,6 +565,7 @@ export const UserProvider = ({ children }: UserProps) => {
                 "Ocorreu um erro durante a busca.",
             confirmButtonText: "Retornar",
           });
+          return undefined;
         })
         .finally(() => {
           setLoadingUser(false);
