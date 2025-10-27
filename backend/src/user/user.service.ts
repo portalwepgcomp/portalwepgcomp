@@ -105,8 +105,6 @@ export class UserService {
         ? await this.checkProfessorShouldBeSuperAdmin()
         : false;
 
-    console.log('[TESTE] createUserDto:', createUserDto);
-
     const user = await this.prismaClient.userAccount.create({
       data: {
         name: createUserDto.name,
