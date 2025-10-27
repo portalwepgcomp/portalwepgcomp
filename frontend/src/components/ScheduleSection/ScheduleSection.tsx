@@ -89,28 +89,32 @@ export default function ScheduleSection() {
           Programação
         </h1>
 
-				<div className='d-flex justify-content-center'>
-					<div className='programacao-dias'>
-						{dates.map((date, index) => (
-							<button
-								key={index}
-								className='d-flex align-items-center fw-bold flex-start date-button'
-								style={{
-									width: "auto",
-									padding: "4px 10px",
-									fontSize: "0.95rem",
-									backgroundColor: selectedDate === date ? "#FFA90F" : "white",
-									color: selectedDate === date ? "white" : "#FFA90F",
-									minHeight: "32px",
-								}}
-								onClick={() => changeDate(date)}
-							>
-								<Calendar color={selectedDate === date ? "white" : "#FFA90F"} />
-								<span style={{ marginLeft: 6 }}>{moment(date).format("DD [de] MMMM")}</span>
-							</button>
-						))}
-					</div>
-				</div>
+        <div className="d-flex justify-content-center">
+          <div className="programacao-dias" style={{ gap: 20, display: "flex" }}>
+            {dates.map((date, index) => (
+              <button
+          key={index}
+          className="date-button"
+          style={{
+            border: "none",
+            borderRadius: 8,
+            background: selectedDate === date ? "#FFA90F" : "#F7F7F7",
+            color: selectedDate === date ? "#fff" : "#FFA90F",
+            padding: "6px 16px",
+            fontWeight: 600,
+            fontSize: "1rem",
+            boxShadow: selectedDate === date ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+            transition: "background 0.2s, color 0.2s",
+            cursor: "pointer",
+            outline: selectedDate === date ? "2px solid #FFA90F" : "none",
+          }}
+          onClick={() => changeDate(date)}
+              >
+          {moment(date).format("DD [de] MMMM")}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {loadingRoomsList ? (
           <IndicadorDeCarregamento />
