@@ -20,8 +20,9 @@
   }
 }
 
-@media (max-width:480px) {
+@media (max-width:768px) {
   .contato {
+    width: 100%;
     flex-direction: column !important;
     padding-right: 0 !important;
   }
