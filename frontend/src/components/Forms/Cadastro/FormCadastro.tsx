@@ -23,16 +23,18 @@ const formCadastroSchema = z
       required_error: "A escolha do perfil é obrigatória!",
       invalid_type_error: "Campo inválido!",
     }),
+    subperfil: z
+      .enum(["doutorando", "mestrando", "graduando", "outro"])
+      .nullable()
+      .optional(),
     matricula: z.string().optional(),
     email: z
       .string({ invalid_type_error: "Campo inválido!" })
       .min(1, "O email é obrigatório.")
       .email({ message: "E-mail inválido!" }),
-    senha: z
-      .string({ invalid_type_error: "Campo inválido" })
-      .min(8, {
-        message: "A senha é obrigatória e deve ter, pelo menos, 8 caracteres.",
-      }),
+    senha: z.string({ invalid_type_error: "Campo inválido" }).min(8, {
+      message: "A senha é obrigatória e deve ter, pelo menos, 8 caracteres.",
+    }),
     confirmaSenha: z
       .string({ invalid_type_error: "Campo inválido" })
       .min(1, { message: "Confirmação de senha é obrigatória!" }),
@@ -50,7 +52,8 @@ const formCadastroSchema = z
       });
       return;
     }
-    if (data.perfil === "ouvinte") {
+
+    if (data.perfil === "ouvinte" && data.subperfil === "outro") {
       const digits = raw.replace(/\D/g, "");
       if (!/^\d{11}$/.test(digits)) {
         ctx.addIssue({
@@ -68,14 +71,25 @@ const formCadastroSchema = z
         });
       }
     }
+
     if (
-      data.perfil !== "ouvinte" &&
+      (data.perfil === "professor" ||
+        data.perfil === "apresentador" ||
+        (data.perfil === "ouvinte" && data.subperfil !== "outro")) &&
       data.email &&
       !data.email.toLowerCase().endsWith("@ufba.br")
     ) {
       ctx.addIssue({
         path: ["email"],
         message: "E-mail inválido. Deve ser um e-mail da UFBA.",
+        code: z.ZodIssueCode.custom,
+      });
+    }
+
+    if (data.perfil === "ouvinte" && !data.subperfil) {
+      ctx.addIssue({
+        path: ["subperfil"],
+        message: "Selecione um subperfil",
         code: z.ZodIssueCode.custom,
       });
     }
@@ -127,7 +141,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
   const handleMudancaMatricula = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
-    if (perfil === "ouvinte") {
+    if (perfil === "ouvinte" && watch("subperfil") === "outro") {
       const maskedValue = aplicarMascaraCpf(value);
       setValue("matricula", maskedValue);
     } else {
@@ -137,7 +151,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
   };
 
   const handleFormCadastro = (data: FormCadastroSchema) => {
-    const { nome, email, senha, perfil, matricula = "" } = data; // default assegura string
+    const { nome, email, senha, perfil, matricula = "", subperfil } = data; // default assegura string
 
     const profileFormated: Record<string, ProfileType> = {
       apresentador: "Presenter",
@@ -145,9 +159,18 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
       ouvinte: "Listener",
     };
 
+    const subprofileFormated: Record<string, SubprofileType> = {
+      doutorando: "Doctorate",
+      mestrando: "Master",
+      graduando: "Bachelor",
+      outro: "Other",
+    };
+
     const raw = matricula.trim();
     const registrationNumber =
-      perfil === "ouvinte" ? raw.replace(/\D/g, "") : raw;
+      perfil === "ouvinte" && watch("subperfil") === "outro"
+        ? raw.replace(/\D/g, "")
+        : raw;
 
     const body = {
       name: nome,
@@ -156,8 +179,11 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
       registrationNumber,
       profile: profileFormated[perfil],
       registrationNumberType: perfil === "ouvinte" ? "CPF" : "MATRICULA",
+      subprofile:
+        perfil === "ouvinte"
+          ? (subprofileFormated[subperfil ?? "outro"] ?? null)
+          : null,
     };
-
     registerUser(body);
   };
 
@@ -269,16 +295,52 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
                 </label>
               </div>
             </div>
-            <p className="text-danger error-message">{errors.perfil?.message}</p>
+            <p className="text-danger error-message">
+              {errors.perfil?.message}
+            </p>
           </div>
+
+          {perfil === "ouvinte" && (
+            <div className="col-12 mb-1">
+              <label className="form-label fw-bold fs-5">
+                Tipo de ouvinte
+                <span className="text-danger ms-1 fs-5">*</span>
+              </label>
+              <div className="d-flex flex-wrap">
+                {["doutorando", "mestrando", "graduando", "outro"].map(
+                  (tipo) => (
+                    <div key={tipo} className="form-check me-3">
+                      <input
+                        type="radio"
+                        className="form-check-input"
+                        id={`sub-${tipo}`}
+                        value={tipo}
+                        {...register("subperfil")}
+                      />
+                      <label
+                        className="form-check-label fw-bold input-title"
+                        htmlFor={`sub-${tipo}`}
+                      >
+                        {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+                      </label>
+                    </div>
+                  ),
+                )}
+              </div>
+              <p className="text-danger error-message">
+                {errors.subperfil?.message}
+              </p>
+            </div>
+          )}
 
           <div className="col-12 mb-1">
             <label className="form-label fw-bold fs-5">
-              {perfil === "ouvinte"
+              {perfil === "ouvinte" &&
+              ["outro"].includes(watch("subperfil") ?? "")
                 ? "CPF"
                 : perfil === "professor"
-                ? "Matrícula SIAPE"
-                : "Matrícula"}
+                  ? "Matrícula SIAPE"
+                  : "Matrícula"}
               <span className="text-danger ms-1 fs-5">*</span>
             </label>
             <input
@@ -289,14 +351,21 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
                 perfil === "ouvinte"
                   ? "000.000.000-00"
                   : perfil === "professor"
-                  ? "Insira sua matrícula SIAPE"
-                  : "Insira sua matrícula"
+                    ? "Insira sua matrícula SIAPE"
+                    : "Insira sua matrícula"
               }
               {...register("matricula")}
               onChange={handleMudancaMatricula}
-              maxLength={perfil === "ouvinte" ? 14 : undefined} // 14 caracteres para CPF com máscara
+              maxLength={
+                perfil === "ouvinte" &&
+                ["outro"].includes(watch("subperfil") ?? "")
+                  ? 14
+                  : undefined
+              } // 14 caracteres para CPF com máscara
             />
-            <p className="text-danger error-message">{errors.matricula?.message}</p>
+            <p className="text-danger error-message">
+              {errors.matricula?.message}
+            </p>
           </div>
 
           <div className="col-12 mb-1">
