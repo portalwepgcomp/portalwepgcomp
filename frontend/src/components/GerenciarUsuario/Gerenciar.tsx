@@ -123,6 +123,61 @@ export default function Gerenciar() {
     return filtered;
   }, [userList, searchValue, filters]);
 
+  // Calculate counts for filters
+  const filterCounts = useMemo(() => {
+    const counts = {
+      status: {
+        ativo: 0,
+        ativo_pendente: 0,
+        inativo: 0,
+      },
+      permission: {
+        superadmin: 0,
+        admin: 0,
+        normal: 0,
+      },
+      profile: {
+        apresentador: 0,
+        professor: 0,
+        ouvinte: 0,
+      },
+    };
+
+    (userList || []).forEach((user) => {
+      // Status counts
+      if (!user.isActive) {
+        counts.status.inativo++;
+      } else if (
+        (user.profile === "Professor" && !user.isTeacherActive) ||
+        (user.profile === "Presenter" && !user.isPresenterActive)
+      ) {
+        counts.status.ativo_pendente++;
+      } else {
+        counts.status.ativo++;
+      }
+
+      // Permission counts
+      if (user.isSuperadmin) {
+        counts.permission.superadmin++;
+      } else if (user.isAdmin) {
+        counts.permission.admin++;
+      } else {
+        counts.permission.normal++;
+      }
+
+      // Profile counts
+      if (user.profile === "Presenter") {
+        counts.profile.apresentador++;
+      } else if (user.profile === "Professor") {
+        counts.profile.professor++;
+      } else if (user.profile === "Listener") {
+        counts.profile.ouvinte++;
+      }
+    });
+
+    return counts;
+  }, [userList]);
+
   // Stable filter update function
   const updateFilter = useCallback((filterType: string, value: string) => {
     setFilters((prev) => ({
@@ -524,9 +579,9 @@ export default function Gerenciar() {
               value={filters.status}
             >
               <option value="">Todos os status</option>
-              <option value="ativo">Apenas Ativos</option>
-              <option value="ativo_pendente">Apenas Ativos Pendentes</option>
-              <option value="inativo">Apenas Inativos</option>
+              <option value="ativo">Apenas Ativos ({filterCounts.status.ativo})</option>
+              <option value="ativo_pendente">Apenas Ativos Pendentes ({filterCounts.status.ativo_pendente})</option>
+              <option value="inativo">Apenas Inativos ({filterCounts.status.inativo})</option>
             </select>
           </div>
 
@@ -538,9 +593,9 @@ export default function Gerenciar() {
               value={filters.permission}
             >
               <option value="">Todas as permissões</option>
-              <option value="superadmin">Super Admin</option>
-              <option value="admin">Admin</option>
-              <option value="normal">Normal</option>
+              <option value="superadmin">Super Admin ({filterCounts.permission.superadmin})</option>
+              <option value="admin">Admin ({filterCounts.permission.admin})</option>
+              <option value="normal">Normal ({filterCounts.permission.normal})</option>
             </select>
           </div>
 
@@ -552,9 +607,9 @@ export default function Gerenciar() {
               value={filters.profile}
             >
               <option value="">Todos os cargos</option>
-              <option value="apresentador">Apresentador</option>
-              <option value="professor">Professor</option>
-              <option value="ouvinte">Ouvinte</option>
+              <option value="apresentador">Apresentador ({filterCounts.profile.apresentador})</option>
+              <option value="professor">Professor ({filterCounts.profile.professor})</option>
+              <option value="ouvinte">Ouvinte ({filterCounts.profile.ouvinte})</option>
             </select>
           </div>
           <button
