@@ -55,7 +55,7 @@ interface UserProviderData {
   updateUser: (
     email: string,
     updateUserRequest: UpdateUserRequest,
-  ) => Promise<void>;
+  ) => Promise<boolean |void>;
   findUserById: (userId: string) => Promise<User | undefined>;
 }
 
@@ -407,7 +407,6 @@ export const UserProvider = ({ children }: UserProps) => {
       });
       getUsers({});
     } catch (err: any) {
-      console.error(err.response?.data?.message || err.message);
       showAlert({
         icon: "error",
         title: "Erro ao promover usuário",
@@ -533,6 +532,7 @@ export const UserProvider = ({ children }: UserProps) => {
         showConfirmButton: false,
       });
       getUsers({});
+      return true;
     } catch (err: any) {
       showAlert({
         icon: "error",
@@ -544,6 +544,7 @@ export const UserProvider = ({ children }: UserProps) => {
           "Ocorreu um erro ao tentar editar o usuário. Tente novamente!",
         confirmButtonText: "Retornar",
       });
+      return false;
     } finally {
       setLoadingRoleAction(false);
     }

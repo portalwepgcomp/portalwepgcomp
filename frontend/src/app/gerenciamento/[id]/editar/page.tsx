@@ -125,11 +125,13 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
             return;
         }
 
-        await updateUser(user?.email as string, validationResult.data as UpdateUserRequest)
-            .then(() => router.push('/gerenciamento'))
-            .finally(() => {
-                setIsSubmitting(false)
-            })
+        const success = await updateUser(user?.email as string, validationResult.data as UpdateUserRequest)
+
+        setIsSubmitting(false);
+
+        if (success) {
+            router.push('/gerenciamento');
+        }
     };
 
     const handleDocumentNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
