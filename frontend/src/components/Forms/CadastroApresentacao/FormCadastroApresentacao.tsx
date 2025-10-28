@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UUID } from "crypto";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -45,6 +45,8 @@ const esquemaCadastro = z.object({
             message: "O envio do slide em PDF é obrigatório",
         }),
 });
+
+
 
 type CadastroFormulario = z.infer<typeof esquemaCadastro>;
 
@@ -105,6 +107,29 @@ export function FormCadastroApresentacao() {
         }
     }, [submission, setValue]);
 
+    const apresentadores = userList.filter(
+        (usuario) => usuario.profile === "Presenter" && !usuario.hasSubmission
+    );
+
+    const apresentadoresComApresentacao = userList.filter(
+        (usuario) => usuario.profile === "Presenter" && usuario.hasSubmission
+    );
+
+    const presenterOptionsForSelect = useMemo(() => {
+  const base = submission?.id ? apresentadoresComApresentacao : apresentadores;
+  if (submission?.id && submission.mainAuthorId) {
+    const exists = base.some((u) => u.id === submission.mainAuthorId);
+    if (!exists) {
+      const fromList = userList.find((u) => u.id === submission.mainAuthorId);
+      const fallback = { id: submission.mainAuthorId, name: submission?.mainAuthor ?? "Apresentador" };
+      return [fromList ?? fallback, ...base];
+    }
+  }
+  return base;
+}, [submission?.id, submission?.mainAuthorId, apresentadores, apresentadoresComApresentacao, userList]);
+
+
+
     useEffect(() => {
         if (!professoresCarregou) {
             getAdvisors();
@@ -118,13 +143,13 @@ export function FormCadastroApresentacao() {
         }
     }, [user?.level, userList.length, getUsers]);
 
-    const apresentadores = userList.filter(
+/*     const apresentadores = userList.filter(
         (usuario) => usuario.profile === "Presenter" && !usuario.hasSubmission
     );
 
     const apresentadoresComApresentacao = userList.filter(
         (usuario) => usuario.profile === "Presenter" && usuario.hasSubmission
-    );
+    ); */
 
     const aoMudarArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
         const arquivoSelecionado = e.target.files?.[0];
@@ -316,7 +341,7 @@ export function FormCadastroApresentacao() {
                         Selecionar apresentador
                         <span className="text-danger ms-1">*</span>
                     </label>
-                    {submission?.id ? (
+{/*                     {submission?.id ? (
                         <select
                             id="apresentador-select"
                             className="form-control input-title"
@@ -361,7 +386,26 @@ export function FormCadastroApresentacao() {
                                 ))
                             )}
                         </select>
-                    )}
+                    )} */}
+                    <select
+      id="apresentador-select"
+      className="form-control input-title"
+      {...register("apresentador")}
+      disabled={loadingUserList}
+    >
+      <option value="">Selecione um apresentador</option>
+      {presenterOptionsForSelect.length === 0 && !loadingUserList ? (
+        <option value="" disabled>
+          Nenhum apresentador encontrado
+        </option>
+      ) : (
+        presenterOptionsForSelect.map((apresentador) => (
+          <option key={apresentador.id} value={apresentador.id}>
+            {apresentador.name}
+          </option>
+        ))
+      )}
+    </select>
                 </div>
             )}
 
