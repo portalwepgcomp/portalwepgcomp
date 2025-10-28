@@ -538,7 +538,9 @@ export const UserProvider = ({ children }: UserProps) => {
         icon: "error",
         title: "Erro ao editar usuário",
         text:
-          err.response?.data?.message.message[0] ||
+          Array.isArray(err.response?.data?.message?.message)
+              ? err.response.data.message.message[0]
+              : err.response?.data?.message?.message ||
           "Ocorreu um erro ao tentar editar o usuário. Tente novamente!",
         confirmButtonText: "Retornar",
       });
