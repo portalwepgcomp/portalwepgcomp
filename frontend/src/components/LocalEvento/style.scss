@@ -14,16 +14,19 @@
 
 }
 .containerContato{
-  width: 100%;
+  width: 50%;
   .formContatoWrapper{
     padding: 2rem !important;
   }
 }
 
-@media (max-width:768px) {
+@media (max-width:1280px) {
   .contato {
     width: 100%;
     flex-direction: column !important;
     padding-right: 0 !important;
+  }
+  .containerContato{
+    width: 100%;
   }
 }
