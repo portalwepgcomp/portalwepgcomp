@@ -193,7 +193,7 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
 
                             <div className="mb-3">
                                 <label htmlFor="email" className="form-label fw-bold">
-                                    E-mail institucional <span className="text-danger">*</span>
+                                    E-mail {user.profile === "Listener" ? '' : 'Institucional'} <span className="text-danger">*</span>
                                 </label>
                                 <input
                                     type="email"
