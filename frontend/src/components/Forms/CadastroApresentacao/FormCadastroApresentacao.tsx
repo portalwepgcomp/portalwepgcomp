@@ -115,7 +115,7 @@ export function FormCadastroApresentacao() {
         (usuario) => usuario.profile === "Presenter" && usuario.hasSubmission
     );
 
-    const presenterOptionsForSelect = useMemo(() => {
+/*     const presenterOptionsForSelect = useMemo(() => {
   const base = submission?.id ? apresentadoresComApresentacao : apresentadores;
   if (submission?.id && submission.mainAuthorId) {
     const exists = base.some((u) => u.id === submission.mainAuthorId);
@@ -126,9 +126,38 @@ export function FormCadastroApresentacao() {
     }
   }
   return base;
-}, [submission?.id, submission?.mainAuthorId, apresentadores, apresentadoresComApresentacao, userList]);
+}, [submission?.id, submission?.mainAuthorId, apresentadores, apresentadoresComApresentacao, userList]); */
 
+const presenterOptionsForSelect = useMemo(() => {
+  // todos os presenters disponíveis no userList
+  const allPresenters = userList.filter((u) => u.profile === "Presenter");
 
+  // ao editar, priorizamos aqueles que já têm apresentação
+  if (submission?.id) {
+    const base = apresentadoresComApresentacao.length
+      ? apresentadoresComApresentacao
+      : allPresenters;
+
+    if (submission.mainAuthorId) {
+      const exists = base.some((u) => u.id === submission.mainAuthorId);
+      if (!exists) {
+        const fromList = allPresenters.find((u) => u.id === submission.mainAuthorId);
+        const fallback = { id: submission.mainAuthorId, name: submission?.mainAuthor ?? "Apresentador" };
+        return [fromList ?? fallback, ...base];
+      }
+    }
+    return base;
+  }
+
+  // ao cadastrar (sem submission.id) mostramos todos os presenters
+  return allPresenters;
+}, [
+  submission?.id,
+  submission?.mainAuthorId,
+  submission?.mainAuthor,
+  apresentadoresComApresentacao,
+  userList,
+]);
 
     useEffect(() => {
         if (!professoresCarregou) {
