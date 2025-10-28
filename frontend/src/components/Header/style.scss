@@ -138,9 +138,16 @@ ul {
 }
 
 @media (max-width: 500px) {
+  .container-brand-edition{
+    width: 100%;
+  }
   #event-edition-select {
-    max-width: 6rem ;
+    width: 100% !important;
+    max-width: unset;
     font-size: 12px;
     text-wrap: wrap;
+  }
+  .container-fluid{
+    gap: .5rem;
   }
 }
