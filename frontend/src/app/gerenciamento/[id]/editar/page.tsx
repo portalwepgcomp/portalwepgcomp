@@ -22,9 +22,40 @@ const updateUserSchema = z.object({
     level: z.enum(['Superadmin', 'Admin', 'Default'], {
         message: "Selecione um nível de permissão válido.",
     }),
-    registrationNumberType: z.enum(['CPF', 'MATRICULA']).optional(),
-
-    registrationNumber: z.string().optional().nullable(),
+    registrationNumberType: z.enum(['CPF', 'MATRICULA']),
+    registrationNumber: z.string().min(1, "O número do documento é obrigatório."),
+}).superRefine((data, ctx) => {
+    if (data.profile === 'Listener') {
+        if (data.registrationNumberType !== 'CPF') {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['profile'],
+                message: 'Ouvintes devem ter um CPF.',
+            });
+        }
+        if (data.registrationNumber.length !== 11) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['registrationNumber'],
+                message: 'O CPF deve ter 11 dígitos.',
+            });
+        }
+    } else if (data.profile === 'Presenter' || data.profile === 'Professor') {
+        if (data.registrationNumberType !== 'MATRICULA') {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['profile'],
+                message: 'Apresentadores e Professores devem ter uma Matrícula.',
+            });
+        }
+        if (data.registrationNumber.length !== 13) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['registrationNumber'],
+                message: 'A Matrícula deve ter 13 dígitos.',
+            });
+        }
+    }
 });
 
 const EditarUsuario = ({ params }: { params: { id: string } }) => {
@@ -35,8 +66,10 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { id } = params;
     const { showAlert } = useSweetAlert();
-    const [docType, setDocType] = useState<'CPF' | 'MATRICULA' | null>('CPF');
-    const [documentNumber, setDocumentNumber] = useState('');
+    const [selectedProfile, setSelectedProfile] = useState<User['profile'] | null>(null);
+
+    const [cpf, setCpf] = useState('');
+    const [matricula, setMatricula] = useState('');
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -47,23 +80,17 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
                 .then((data: User | undefined) => {
                     if (data) {
                         setUser(data);
+                        setSelectedProfile(data.profile);
 
                         const type = data.registrationNumberType;
                         const number = data.registrationNumber || '';
 
-                        if (type) {
-                            setDocType(type);
-
-                            if (type === 'CPF') {
-                                setDocumentNumber(maskCPF(number));
-                            } else {
-                                const digitsOnly = number.replace(/\D/g, '');
-                                setDocumentNumber(digitsOnly);
-                            }
-                        } else {
-                            setDocType('CPF');
-                            setDocumentNumber('');
+                        if (type === 'CPF') {
+                            setCpf(maskCPF(number));
+                        } else if (type === 'MATRICULA') {
+                            setMatricula(number.replace(/\D/g, ''));
                         }
+
                     } else {
                         setUser(null);
                     }
@@ -80,7 +107,7 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
         };
 
         fetchUserData();
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -96,26 +123,20 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
             level: formData.get('permissao'),
         };
 
-        const docTypeFromForm = formData.get('registrationNumberType') as string;
-        const rawDocumentNumber = formData.get('registrationNumber') as string;
+        const profileFromForm = dataToValidate.profile as User['profile'];
 
-        let unmaskedDocumentNumber: string | null = null;
+        const rawDocumentNumber = profileFromForm === 'Listener' ? cpf : matricula;
 
-        if (rawDocumentNumber) {
+        const docTypeFromProfile = profileFromForm === 'Listener' ? 'CPF' : 'MATRICULA';
+        const unmaskedDocumentNumber = unmask(rawDocumentNumber || '');
 
-            const digits = unmask(rawDocumentNumber);
-            if (digits) {
-                unmaskedDocumentNumber = digits;
-            }
-        }
-
-        dataToValidate.registrationNumberType = docTypeFromForm;
+        dataToValidate.registrationNumberType = docTypeFromProfile;
         dataToValidate.registrationNumber = unmaskedDocumentNumber;
 
         const validationResult = updateUserSchema.safeParse(dataToValidate);
 
         if (!validationResult.success) {
-            const errors = validationResult.error.errors.map(e => `• ${e.path[0]}: ${e.message}`).join('\n');
+            const errors = validationResult.error.errors.map(e => `${e.message}`).join('\n');
             showAlert({
                 icon: 'error',
                 title: 'Dados Inválidos',
@@ -125,7 +146,7 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
             return;
         }
 
-        const success = await updateUser(user?.email as string, validationResult.data as UpdateUserRequest)
+        const success = await updateUser(user?.email as string, validationResult.data as unknown as UpdateUserRequest)
 
         setIsSubmitting(false);
 
@@ -137,16 +158,17 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
     const handleDocumentNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let { value } = e.target;
 
-        if (docType === 'MATRICULA') {
+        if (selectedProfile === 'Listener') {
+            setCpf(value);
+        } else {
             value = value.replace(/\D/g, '');
+            setMatricula(value);
         }
-
-        setDocumentNumber(value);
     };
 
-    const handleDocTypeChange = (newType: 'CPF' | 'MATRICULA') => {
-        setDocType(newType);
-        setDocumentNumber('');
+    const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newProfile = e.target.value as User['profile'];
+        setSelectedProfile(newProfile);
     };
 
 
@@ -154,7 +176,7 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
         return <p>Carregando...</p>;
     }
 
-    if (!user) {
+    if (!user || !selectedProfile) {
         return <p>Usuário não encontrado.</p>;
     }
 
@@ -193,7 +215,7 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
 
                             <div className="mb-3">
                                 <label htmlFor="email" className="form-label fw-bold">
-                                    E-mail {user.profile === "Listener" ? '' : 'Institucional'} <span className="text-danger">*</span>
+                                    E-mail {selectedProfile === "Listener" ? '' : 'Institucional'} <span className="text-danger">*</span>
                                 </label>
                                 <input
                                     type="email"
@@ -210,21 +232,27 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
                                 </label>
                                 <div className="form-check">
                                     <input className="form-check-input" type="radio" name="perfil" id="perfilApresentador"
-                                           value="Presenter" defaultChecked={user.profile === 'Presenter'}/>
+                                           value="Presenter"
+                                           checked={selectedProfile === 'Presenter'}
+                                           onChange={handleProfileChange}/>
                                     <label className="form-check-label" htmlFor="perfilApresentador">
                                         Apresentador (PGCOMP)
                                     </label>
                                 </div>
                                 <div className="form-check">
                                     <input className="form-check-input" type="radio" name="perfil" id="perfilProfessor"
-                                           value="Professor" defaultChecked={user.profile === 'Professor'}/>
+                                           value="Professor"
+                                           checked={selectedProfile === 'Professor'}
+                                           onChange={handleProfileChange}/>
                                     <label className="form-check-label" htmlFor="perfilProfessor">
                                         Professor (PGCOMP)
                                     </label>
                                 </div>
                                 <div className="form-check">
                                     <input className="form-check-input" type="radio" name="perfil" id="perfilOuvinte"
-                                           value="Listener" defaultChecked={user.profile === 'Listener'}/>
+                                           value="Listener"
+                                           checked={selectedProfile === 'Listener'}
+                                           onChange={handleProfileChange}/>
                                     <label className="form-check-label" htmlFor="perfilOuvinte">
                                         Ouvinte
                                     </label>
@@ -232,53 +260,21 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label d-block fw-bold">Tipo de Documento</label>
-                                <div className="form-check form-check-inline">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="registrationNumberType"
-                                        id="tipoCPF"
-                                        value="CPF"
-                                        checked={docType === 'CPF'}
-                                        onChange={() => handleDocTypeChange('CPF')}
-                                    />
-                                    <label className="form-check-label" htmlFor="tipoCPF">
-                                        CPF
-                                    </label>
-                                </div>
-                                <div className="form-check form-check-inline">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="registrationNumberType"
-                                        id="tipoMatricula"
-                                        value="MATRICULA"
-                                        checked={docType === 'MATRICULA'}
-                                        onChange={() => handleDocTypeChange('MATRICULA')}
-                                    />
-                                    <label className="form-check-label" htmlFor="tipoMatricula">
-                                        Matrícula
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div className="mb-3">
                                 <label htmlFor="documentoNumero" className="form-label fw-bold">
-                                    {docType === 'CPF' ? 'CPF' : 'Número de Matrícula'}
+                                    {selectedProfile === 'Listener' ? 'CPF' : 'Número de Matrícula'} <span className="text-danger">*</span>
                                 </label>
 
                                 <InputMask
-                                    mask={docType === 'CPF' ? '999.999.999-99' : undefined}
+                                    mask={selectedProfile === 'Listener' ? '999.999.999-99' : undefined}
                                     maskChar={null}
                                     type="text"
                                     className="form-control"
                                     id="documentoNumero"
                                     name="registrationNumber"
-                                    value={documentNumber}
+                                    value={selectedProfile === 'Listener' ? cpf : matricula}
                                     onChange={handleDocumentNumberChange}
-                                    placeholder={docType === 'CPF' ? '000.000.000-00' : 'Digite a Matrícula (apenas dígitos)'}
-                                    maxLength={docType === 'MATRICULA' ? 13 : undefined}
+                                    placeholder={selectedProfile === 'Listener' ? '000.000.000-00' : 'Digite a Matrícula (13 dígitos)'}
+                                    maxLength={selectedProfile === 'Listener' ? undefined : 13}
                                 />
                             </div>
 
@@ -298,8 +294,10 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
                                 </select>
                             </div>
 
-                            <div className="d-flex justify-content-end mt-4" style={{gap: "10px"}}>
-                                <button type="button" onClick={() => { router.push('/gerenciamento') }} className="btn btn-outline-secondary" disabled={isSubmitting}>
+                            <div className="d-flex justify-content-end mt-4" style={{ gap: "10px" }}>
+                                <button type="button" onClick={() => {
+                                    router.push('/gerenciamento')
+                                }} className="btn btn-outline-secondary" disabled={isSubmitting}>
                                     Cancelar
                                 </button>
                                 <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
