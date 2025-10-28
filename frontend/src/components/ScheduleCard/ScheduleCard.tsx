@@ -40,10 +40,10 @@ export default function ScheduleCard({
       className="card w-100"
       style={{
         border:
-          type != "PresentationSession" ? "0.063rem solid #F17F0C" : undefined,
+          type != "PresentationSession" ? "0.063rem solid #8aabd1" : undefined,
         cursor: type == "GeneralSession" ? "default" : "pointer",
         backgroundColor:
-          over && type != "GeneralSession" ? "#F17F0C" : cardColor,
+          over && type != "GeneralSession" ? "#8aabd1" : cardColor,
       }}
       onMouseOver={() => setOver(true)}
       onMouseOut={() => setOver(false)}
@@ -52,9 +52,9 @@ export default function ScheduleCard({
       <div className="card-body d-flex flex-row align-items-center gap-2">
         <div>
           {author ? (
-            <h6 className="fw-semibold m-0 second-author">
-              <strong>{author}</strong>
-            </h6>
+            <h4 className="fw-semibold m-0 second-author">
+              {author}
+            </h4>
           ) : (
             ""
           )}

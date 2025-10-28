@@ -159,17 +159,34 @@ export default function Header() {
             )}
           </div>
 
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
+          <section className="wrapper-menus-mobile">
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <i className="bi bi-house"></i>
+            </button>
+            <li className="nav-item-mobile">
+              {signed ? (
+                <div className="welcome-user">
+                  {perfil()}
+                </div>
+              ) : (
+                <Link
+                  className="nav-link active text-black"
+                  aria-current="page"
+                  href="/login"
+                >
+                  Login
+                </Link>
+              )}
+            </li>
+          </section>
 
           <div
             className="collapse navbar-collapse justify-content-end"
@@ -230,22 +247,23 @@ export default function Header() {
                   </Link>
                 </li>
               )}
+            <li className="nav-item-menu">
+              {signed ? (
+                <div className="welcome-user">
+                  Olá, {user?.name.split(" ")[0]}!{perfil()}
+                </div>
+              ) : (
+                <Link
+                  className="nav-link active text-black"
+                  aria-current="page"
+                  href="/login"
+                >
+                  Login
+                </Link>
+              )}
+            </li>
 
-              <li className="nav-item">
-                {signed ? (
-                  <div className="welcome-user">
-                    Olá, {user?.name.split(" ")[0]}!{perfil()}
-                  </div>
-                ) : (
-                  <Link
-                    className="nav-link active text-black"
-                    aria-current="page"
-                    href="/login"
-                  >
-                    Login
-                  </Link>
-                )}
-              </li>
+
             </ul>
           </div>
         </div>

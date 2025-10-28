@@ -30,6 +30,8 @@ interface Panelist {
 }
 
 interface Sessao extends SessaoParams {
+  push(sessao: Sessao): unknown;
+  flatMap(arg0: (sess: any, sessIndex: any) => any): React.ReactNode;
   id: string;
   availablePositionsWithInBlock: AvailablePositionsWithInBlock[];
   panelists: Panelist[];
