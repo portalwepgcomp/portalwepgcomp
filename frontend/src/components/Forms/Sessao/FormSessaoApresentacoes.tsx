@@ -149,6 +149,15 @@ export default function FormSessaoApresentacoes({
     return option.title;
   };
 
+  // Função customizada de filtro para buscar tanto no título quanto no nome do apresentador
+  const filterOption = (option: any, inputValue: string) => {
+    const searchText = inputValue.toLowerCase();
+    const title = option.data.title?.toLowerCase() || '';
+    const presenterName = option.data.presenterName?.toLowerCase() || '';
+    
+    return title.includes(searchText) || presenterName.includes(searchText);
+  };
+
   const avaliadoresOptions = formatOptions(userList, "name");
 
   const combinedTimeFilter = (time: Date) => {
@@ -307,6 +316,7 @@ export default function FormSessaoApresentacoes({
               placeholder={formApresentacoesFields.apresentacoes.placeholder}
               options={apresentacoesOptions}
               formatOptionLabel={formatOptionLabel}
+              filterOption={filterOption}
             />
           )}
         />
