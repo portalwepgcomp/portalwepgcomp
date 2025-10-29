@@ -9,10 +9,12 @@ import FormSessaoApresentacoes from "@/components/Forms/Sessao/FormSessaoApresen
 import FormSessaoGeral from "@/components/Forms/Sessao/FormSessaoGeral";
 import { useSession } from "@/hooks/useSession";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
+import { useEdicao } from "@/hooks/useEdicao";
 
 export default function ModalSessao() {
   const { tipo, titulo } = ModalSessaoMock;
   const { sessao, listRooms, sessoesList } = useSession();
+  const { Edicao } = useEdicao();
 
   const disabledIntervals = useMemo(() => {
     if (!sessoesList) return [];
@@ -41,10 +43,10 @@ export default function ModalSessao() {
   }, [sessao?.type]);
 
   useEffect(() => {
-    const eventEditionId = getEventEditionIdStorage();
-
-    listRooms(eventEditionId ?? "");
-  }, []);
+    if (Edicao?.id) {
+      listRooms(Edicao.id);
+    }
+  }, [Edicao?.id]);
 
   return (
     <ModalComponent

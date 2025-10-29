@@ -88,6 +88,7 @@ export const EdicaoProvider = ({ children }: EdicaoProps) => {
     try {
       const response = await edicaoApi.getEdicaoById(idEdicao);
       setEdicao(response);
+      setEventEditionIdStorage(response.id);
     } catch {
     } finally {
       setLoadingEdicao(false);
@@ -140,6 +141,7 @@ export const EdicaoProvider = ({ children }: EdicaoProps) => {
     try {
       const response = await edicaoApi.updateEdicaoById(idEdicao, body);
       setEdicao(response);
+      setEventEditionIdStorage(response.id);
       showAlert({
         icon: "success",
         title: "Edição atualizada com sucesso!",

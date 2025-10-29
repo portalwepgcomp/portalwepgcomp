@@ -6,9 +6,11 @@ import { useSession } from "@/hooks/useSession";
 import { useEffect, useState } from 'react';
 import DraggableList, { DraggedMovement } from '@/components/DraggableList/DraggableList';
 import { getEventEditionIdStorage } from '@/context/AuthProvider/util';
+import { useEdicao } from '@/hooks/useEdicao';
 
 export default function ModalSessaoOrdenarApresentacoes() {
   const { swapPresentationsOnSession, sessao } = useSession();
+  const { Edicao } = useEdicao();
   const [listaOrdenada, setListaOrdenada] = useState<any[]>([]);
 
   useEffect(() => {
@@ -22,17 +24,20 @@ export default function ModalSessaoOrdenarApresentacoes() {
   const getPresentationId = (id): string => sessao?.presentations?.find(p => p.submissionId == id)?.id || "";
 
   const handleOnChangeOrder = async (data: any[], draggedMovement: DraggedMovement[]) => {
-    const eventEditionId = getEventEditionIdStorage();
- 
+    if (!sessao?.id || !Edicao?.id) return;
+
     const swapPresentationBodies = draggedMovement
       .map(movement => ({
         presentation1Id: getPresentationId(movement.fromId),
         presentation2Id: getPresentationId(movement.toId)
-      } as SwapPresentationsOnSession));
+      } as SwapPresentationsOnSession))
+      .filter(x => x.presentation1Id && x.presentation2Id);
+
+    if (swapPresentationBodies.length === 0) return;
 
     await swapPresentationsOnSession(
-      sessao?.id || "",
-      eventEditionId ?? "",
+      sessao.id,
+      Edicao.id,
       swapPresentationBodies
     );
 

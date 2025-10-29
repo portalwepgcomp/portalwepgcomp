@@ -138,8 +138,7 @@ export default function FormSessaoAuxiliar({
   const handleFormSessaoAuxiliar = (data: FormSessaoAuxiliarSchema) => {
     const { titulo, nome, sala, inicio, final } = data;
 
-    const eventEditionId = getEventEditionIdStorage();
-
+    if (!Edicao?.id) return;
     if (!titulo || !sala || !inicio || !final) {
       throw new Error("Campos obrigatórios em branco.");
     }
@@ -148,7 +147,7 @@ export default function FormSessaoAuxiliar({
 
     const body = {
       type: "General",
-      eventEditionId: eventEditionId ?? "",
+      eventEditionId: Edicao.id,
       title: titulo,
       speakerName: nome,
       roomId: sala,
@@ -157,7 +156,7 @@ export default function FormSessaoAuxiliar({
     } as SessaoParams;
 
     if (sessao?.id) {
-      updateSession(sessao?.id, eventEditionId ?? "", body).then((status) => {
+      updateSession(sessao.id, Edicao.id, body).then((status) => {
         if (status) {
           reset();
           setSessao(null);
@@ -166,7 +165,7 @@ export default function FormSessaoAuxiliar({
       return;
     }
 
-    createSession(eventEditionId ?? "", body).then((status) => {
+    createSession(Edicao.id, body).then((status) => {
       if (status) {
         reset();
         setSessao(null);
