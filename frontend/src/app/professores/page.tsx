@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import "./style.scss";
 import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";        
 import { FormCadastroProfessor } from "@/components/Forms/CadastroProfessor/FormCadastroProfessor";
+import Banner from "@/components/UI/Banner";
 
 export default function Professores() {
     const formRef = useRef<HTMLFormElement>(null);
@@ -14,6 +15,7 @@ export default function Professores() {
     }
   return (
     <ProtectedLayout>
+        <Banner title="Professores" />
         <div className="professores">
             <div className="wrapper-professores">
                 <div className="header-professores">
