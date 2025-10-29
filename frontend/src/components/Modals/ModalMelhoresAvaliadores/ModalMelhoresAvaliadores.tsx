@@ -9,20 +9,21 @@ export default function ModalMelhoresAvaliadores() {
       onConfirm={() => {
         const form = document.querySelector("form");
         form?.dispatchEvent(
-          new Event("submit", { cancelable: true, bubbles: true })
+          new Event("submit", { cancelable: true, bubbles: true }),
         );
       }}
-      id='escolherAvaliadorModal'
-      idCloseModal='escolherAvaliadorModalClose'
+      formId="avaliadores-form"
+      id="escolherAvaliadorModal"
+      idCloseModal="escolherAvaliadorModalClose"
       loading={false}
-      labelConfirmButton='Salvar'
-      colorButtonConfirm='success'
+      labelConfirmButton="Salvar"
+      colorButtonConfirm="success"
     >
-      <div className='body-modal'>
-        <div className=' d-flex justify-content-center fw-bold ms-5 fs-1'>
+      <div className="body-modal">
+        <div className=" d-flex justify-content-center fw-bold ms-5 fs-1">
           Escolha os melhores avaliadores
         </div>
-        <div className=' d-flex justify-content-center fs-6 ms-5'>
+        <div className=" d-flex justify-content-center fs-6 ms-5">
           <FormMelhorAvaliador />
         </div>
       </div>

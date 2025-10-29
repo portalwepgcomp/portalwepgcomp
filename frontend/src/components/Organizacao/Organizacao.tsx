@@ -77,50 +77,25 @@ export default function Organizacao(/*{props} : {props: OrganizacaoProps}*/) {
     }
 
     return (
-        <section
-            style={{
-                width: "100%",
-                margin: "0 auto",
-                backgroundColor: "#F17F0C",
-            }}>
-            <div
-                style={{
-                    width: "90%",
-                    margin: "0 auto",
-                    color: "black",
-                    padding: "30px 0px",
-                }}>
-                <h1
-                    style={{
-                        fontSize: "50px",
-                        fontWeight: "700",
-                        lineHeight: "80px",
-                        textAlign: "center",
-                        color: "black",
-                    }}>
-                    Organização
-                </h1>
-                <div
-                    style={{
-                        fontSize: "20px",
-                        fontWeight: "400",
-                        lineHeight: "30px",
-                        textAlign: "left",
-                    }}>
-                    <p>
-                        <span style={{ fontWeight: "700", color: "white" }}>
-                            Coordenação geral:
-                        </span>{" "}
-                        {coordenador}
-                    </p>
-                    <p>
-                        <span style={{ fontWeight: "700", color: "white" }}>
-                            Comissão organizadora:
-                        </span>{" "}
-                        {formatTeam(groupedMembers.comissao)}
-                    </p>
-                </div>
-            </div>
-        </section>
+<section className="organizacao-section">
+  <div className="organizacao-container">
+    <h1 className="organizacao-titulo">Organização</h1>
+
+    <div className="organizacao-conteudo">
+      <div className="organizacao-bloco">
+        <h3 className="organizacao-label">Coordenação geral</h3>
+        <p className="organizacao-texto">{coordenador}</p>
+      </div>
+
+      <div className="organizacao-bloco">
+        <h3 className="organizacao-label">Comissão organizadora</h3>
+        <p className="organizacao-texto">
+          {formatTeam(groupedMembers.comissao)}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
     );
 }

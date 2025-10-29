@@ -123,11 +123,40 @@ export default function FormSessaoApresentacoes({
   const salasOptions = formatOptions(roomsList, "name");
 
   const apresentacoesOptions = submissionList?.map((v) => {
+    const presenterName = v?.mainAuthor?.name || "Apresentador não informado";
+    const title = v?.title || "Título não informado";
     return {
       value: v.id,
-      label: v?.title || "",
+      label: title,
+      title: title,
+      presenterName: presenterName,
     };
   });
+
+  const formatOptionLabel = (option: any, { context }: any) => {
+    // No menu dropdown, mostra título + apresentador
+    if (context === 'menu') {
+      return (
+        <div>
+          <span style={{ fontWeight: 500 }}>{option.title}</span>
+          <span style={{ fontSize: '0.85em', color: '#6c757d', marginLeft: '8px' }}>
+            ({option.presenterName})
+          </span>
+        </div>
+      );
+    }
+    // No preview (valor selecionado), mostra apenas o título
+    return option.title;
+  };
+
+  // Função customizada de filtro para buscar tanto no título quanto no nome do apresentador
+  const filterOption = (option: any, inputValue: string) => {
+    const searchText = inputValue.toLowerCase();
+    const title = option.data.title?.toLowerCase() || '';
+    const presenterName = option.data.presenterName?.toLowerCase() || '';
+    
+    return title.includes(searchText) || presenterName.includes(searchText);
+  };
 
   const avaliadoresOptions = formatOptions(userList, "name");
 
@@ -205,9 +234,13 @@ export default function FormSessaoApresentacoes({
       setValue(
         "apresentacoes",
         sessao?.presentations?.map((v) => {
+          const presenterName = v.submission?.mainAuthor?.name || "Apresentador não informado";
+          const title = v.submission?.title || "Título não informado";
           return {
             value: v.submission?.id ?? "",
-            label: v.submission?.title ?? "",
+            label: title,
+            title: title,
+            presenterName: presenterName,
           };
         }),
       );
@@ -281,6 +314,8 @@ export default function FormSessaoApresentacoes({
               isClearable
               placeholder={formApresentacoesFields.apresentacoes.placeholder}
               options={apresentacoesOptions}
+              formatOptionLabel={formatOptionLabel}
+              filterOption={filterOption}
             />
           )}
         />

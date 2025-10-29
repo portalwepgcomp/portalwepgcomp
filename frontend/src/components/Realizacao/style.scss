@@ -1,70 +1,94 @@
 .realizacao {
+  width: 100%;
+  background: #fafafa;
+  border-top: 2px solid #f17f0c;
+  padding: 3rem 0 1.5rem;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  min-height: 240px;
-  gap: 20%;
-   width: 90%;
-  margin: 0 auto;
-  padding: 30px 0;
+  gap: 2rem;
 
-  .realizacao-lista {
+  .realizacao-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 4rem;
+    width: 90%;
+  }
+
+  .realizacao-grupo {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 30px;
-  }
-  .realizacao-titulo {
-    color: black;
-    font-weight: 700;
-    font-size: 24px;
-  }
-  .realizacao-parceiros{
-    display: flex;
-    gap: 1rem;
-  }
-  .realizacao-apoio-lista {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .realizacao-apoio-titulo {
-    color: black;
-    font-weight: 700;
-    font-size: 24px;
-  }
-  .realizacao-apoio-lista-itens {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
     align-items: center;
-    gap: 50px;
+    gap: 1.5rem;
   }
-  
 
-}
+  .realizacao-titulo {
+    position: relative;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #054b75;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
 
-@media (max-width:480px) {
-  .realizacao {
-    flex-direction: column;
-    align-items: flex-start;
-    height: auto;
-    gap: 20px;  
+  .realizacao-titulo::after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 3px;
+    margin: 0.5rem auto 0;
+    background-color: #f17f0c;
+    border-radius: 4px;
   }
-  .realizacao-lista {
-    gap: 10px;
+
+  .realizacao-parceiros {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
   }
-  .realizacao-apoio-lista-itens {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+
+  .realizacao-logo {
+    transition: transform 0.3s ease, filter 0.3s ease;
+    filter: grayscale(30%);
   }
-  .realizacao-parceiros{
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: start;
+
+  .realizacao-logo:hover {
+    transform: scale(1.05);
+    filter: grayscale(0%);
+  }
+
+  .realizacao-footer {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #777;
+    margin-top: 1rem;
+    line-height: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1rem;
+
+    .realizacao-container {
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .realizacao-titulo {
+      font-size: 1.3rem;
+    }
+
+    .realizacao-parceiros {
+      gap: 1.5rem;
+    }
+
+    .realizacao-footer {
+      font-size: 0.8rem;
+    }
   }
 }
