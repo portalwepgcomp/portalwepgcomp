@@ -184,7 +184,8 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
           ? (subprofileFormated[subperfil ?? "outro"] ?? null)
           : null,
     };
-    registerUser(body);
+
+    registerUser(body as RegisterUserParams);
   };
 
   const handleChangeSenha = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -399,7 +400,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
                 onChange={handleChangeSenha}
               />
               <div className="eye" onClick={() => setEye1(!eye1)}>
-                <PasswordEye color={eye1 == false ? "black" : "blue"} />
+                <PasswordEye color={!eye1 ? "black" : "blue"} />
               </div>
             </div>
             <p className="text-danger error-message">{errors.senha?.message}</p>
@@ -462,7 +463,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
                 {...register("confirmaSenha")}
               />
               <div className="eye" onClick={() => setEye2(!eye2)}>
-                <PasswordEye color={eye2 == false ? "black" : "blue"} />
+                <PasswordEye color={!eye2 ? "black" : "blue"} />
               </div>
             </div>
             <p className="text-danger error-message">

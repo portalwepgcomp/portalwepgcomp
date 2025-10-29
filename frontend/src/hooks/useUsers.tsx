@@ -55,7 +55,8 @@ interface UserProviderData {
   updateUser: (
     email: string,
     updateUserRequest: UpdateUserRequest,
-  ) => Promise<void>;
+  ) => Promise<boolean |void>;
+  findUserById: (userId: string) => Promise<User | undefined>;
 }
 
 export const UserContext = createContext<UserProviderData>(
@@ -77,6 +78,7 @@ export const UserProvider = ({ children }: UserProps) => {
   const [loadingSwitchActive, setLoadingSwitchActive] =
     useState<boolean>(false);
   const [loadingRoleAction, setLoadingRoleAction] = useState<boolean>(false);
+  const [loadingUser, setLoadingUser] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [userList, setUserList] = useState<User[]>([]);
   const [advisors, setAdvisors] = useState<User[]>([]);
@@ -405,7 +407,6 @@ export const UserProvider = ({ children }: UserProps) => {
       });
       getUsers({});
     } catch (err: any) {
-      console.error(err.response?.data?.message || err.message);
       showAlert({
         icon: "error",
         title: "Erro ao promover usuário",
@@ -531,19 +532,48 @@ export const UserProvider = ({ children }: UserProps) => {
         showConfirmButton: false,
       });
       getUsers({});
+      return true;
     } catch (err: any) {
       showAlert({
         icon: "error",
         title: "Erro ao editar usuário",
         text:
-          err.response?.data?.message ||
+          Array.isArray(err.response?.data?.message?.message)
+              ? err.response.data.message.message[0]
+              : err.response?.data?.message?.message ||
           "Ocorreu um erro ao tentar editar o usuário. Tente novamente!",
         confirmButtonText: "Retornar",
       });
+      return false;
     } finally {
       setLoadingRoleAction(false);
     }
   };
+
+  const findUserById = async (id: string) => {
+    setLoadingUser(true);
+    return instance.get(`${baseUrl}/${id}`)
+        .then(({ data }) => {
+          setUser(data);
+          return data
+        })
+        .catch((err) => {
+          setUser(null);
+          showAlert({
+            icon: "error",
+            title: "Erro ao encontrar o usuário",
+            text:
+                err.response?.data?.message?.message ||
+                err.response?.data?.message ||
+                "Ocorreu um erro durante a busca.",
+            confirmButtonText: "Retornar",
+          });
+          return undefined;
+        })
+        .finally(() => {
+          setLoadingUser(false);
+        });
+  }
 
   return (
     <UserContext.Provider
@@ -576,6 +606,7 @@ export const UserProvider = ({ children }: UserProps) => {
         demoteUser,
         deleteUser,
         updateUser,
+        findUserById
       }}
     >
       {children}

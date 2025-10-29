@@ -7,10 +7,13 @@ import Image from "next/image";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import LoadingPage from "../LoadingPage";
 import ModalCadastroProfessor from "../Modals/ModalCadastroProfessor/ModalCadastroProfessor";
+import FilterSelect from "./FilterSelect";
 import "./enhanced-style.scss";
+import {useRouter} from "next/navigation";
 
 export default function Gerenciar() {
   const { user: currentUser } = useContext(AuthContext);
+  const router = useRouter();
   const { Edicao } = useEdicao();
 
   const {
@@ -37,6 +40,47 @@ export default function Gerenciar() {
   const [searchValue, setSearchValue] = useState<string>("");
   const [showInfoCards, setShowInfoCards] = useState<boolean>(false);
 
+  // Filter options configuration
+  const filterOptions = useMemo(
+    () => ({
+      status: [
+        { value: "", label: "Todos os status" },
+        { value: "ativo", label: "Apenas Ativos", countKey: "ativo" },
+        {
+          value: "ativo_pendente",
+          label: "Apenas Ativos Pendentes",
+          countKey: "ativo_pendente",
+        },
+        { value: "inativo", label: "Apenas Inativos", countKey: "inativo" },
+      ],
+      permission: [
+        { value: "", label: "Todas as permissões" },
+        {
+          value: "superadmin",
+          label: "Super Admin",
+          countKey: "superadmin",
+        },
+        { value: "admin", label: "Admin", countKey: "admin" },
+        { value: "normal", label: "Normal", countKey: "normal" },
+      ],
+      profile: [
+        { value: "", label: "Todos os cargos" },
+        {
+          value: "apresentador",
+          label: "Apresentador",
+          countKey: "apresentador",
+        },
+        {
+          value: "professor",
+          label: "Professor",
+          countKey: "professor",
+        },
+        { value: "ouvinte", label: "Ouvinte", countKey: "ouvinte" },
+      ],
+    }),
+    [],
+  );
+
   // Optimized user list with memoization for stability
   const filteredUsers = useMemo(() => {
     let filtered = userList || [];
@@ -53,11 +97,12 @@ export default function Gerenciar() {
         .toLowerCase();
     }
 
-    // Search filter
+    // Search filter (nome ou e-mail)
     if (searchValue.trim()) {
       const normalizedSearch = normalizaString(searchValue.trim());
       filtered = filtered.filter((user) =>
-        normalizaString(user?.name ?? "").includes(normalizedSearch),
+        normalizaString(user?.name ?? "").includes(normalizedSearch) ||
+        normalizaString(user?.email ?? "").includes(normalizedSearch),
       );
     }
 
@@ -330,7 +375,25 @@ export default function Gerenciar() {
         );
       }
 
-      // Admin promotion (Superadmin only) - All profiles can be promoted
+      if (isCurrentUserSuperadmin) {
+        actions.push(
+            <button
+                key="edit-user"
+                className="btn btn-info btn-sm"
+                onClick={() => {
+                  router.push('/gerenciamento/' + targetUser.id + '/editar')
+                }}
+                disabled={!Edicao?.isActive || loadingRoleAction}
+                title="Editar usuário"
+            >
+              <span className="d-none d-md-inline">
+                Editar usuário
+              </span>
+            </button>
+        );
+      }
+
+      // Admin promotion (Superadmin only)
       if (
         isCurrentUserSuperadmin &&
         !targetUser.isAdmin &&
@@ -459,6 +522,7 @@ export default function Gerenciar() {
       return actions;
     },
     [
+        router,
       currentUser,
       Edicao,
       loadingRoleAction,
@@ -501,7 +565,7 @@ export default function Gerenciar() {
           <input
             type="text"
             className="form-control"
-            placeholder="Pesquise pelo nome do usuário"
+            placeholder="Pesquise pelo nome ou e-mail do usuário"
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
           />
@@ -516,47 +580,30 @@ export default function Gerenciar() {
         </div>
 
         <div className="filter-dropdowns">
-          <div className="filter-dropdown">
-            <label className="filter-dropdown-label">Status</label>
-            <select
-              className="filter-dropdown-select"
-              onChange={(e) => updateFilter("status", e.target.value)}
-              value={filters.status}
-            >
-              <option value="">Todos os status</option>
-              <option value="ativo">Apenas Ativos</option>
-              <option value="ativo_pendente">Apenas Ativos Pendentes</option>
-              <option value="inativo">Apenas Inativos</option>
-            </select>
-          </div>
+          <FilterSelect
+            label="Status"
+            value={filters.status}
+            options={filterOptions.status}
+            userList={userList}
+            onChange={(value) => updateFilter("status", value)}
+          />
 
-          <div className="filter-dropdown">
-            <label className="filter-dropdown-label">Permissão</label>
-            <select
-              className="filter-dropdown-select"
-              onChange={(e) => updateFilter("permission", e.target.value)}
-              value={filters.permission}
-            >
-              <option value="">Todas as permissões</option>
-              <option value="superadmin">Super Admin</option>
-              <option value="admin">Admin</option>
-              <option value="normal">Normal</option>
-            </select>
-          </div>
+          <FilterSelect
+            label="Permissão"
+            value={filters.permission}
+            options={filterOptions.permission}
+            userList={userList}
+            onChange={(value) => updateFilter("permission", value)}
+          />
 
-          <div className="filter-dropdown">
-            <label className="filter-dropdown-label">Cargo</label>
-            <select
-              className="filter-dropdown-select"
-              onChange={(e) => updateFilter("profile", e.target.value)}
-              value={filters.profile}
-            >
-              <option value="">Todos os cargos</option>
-              <option value="apresentador">Apresentador</option>
-              <option value="professor">Professor</option>
-              <option value="ouvinte">Ouvinte</option>
-            </select>
-          </div>
+          <FilterSelect
+            label="Cargo"
+            value={filters.profile}
+            options={filterOptions.profile}
+            userList={userList}
+            onChange={(value) => updateFilter("profile", value)}
+          />
+
           <button
             className="btn btn-outline-secondary info-toggle-btn"
             onClick={() => setShowInfoCards(!showInfoCards)}
