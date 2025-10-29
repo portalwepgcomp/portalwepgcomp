@@ -97,11 +97,12 @@ export default function Gerenciar() {
         .toLowerCase();
     }
 
-    // Search filter
+    // Search filter (nome ou e-mail)
     if (searchValue.trim()) {
       const normalizedSearch = normalizaString(searchValue.trim());
       filtered = filtered.filter((user) =>
-        normalizaString(user?.name ?? "").includes(normalizedSearch),
+        normalizaString(user?.name ?? "").includes(normalizedSearch) ||
+        normalizaString(user?.email ?? "").includes(normalizedSearch),
       );
     }
 
@@ -564,7 +565,7 @@ export default function Gerenciar() {
           <input
             type="text"
             className="form-control"
-            placeholder="Pesquise pelo nome do usuário"
+            placeholder="Pesquise pelo nome ou e-mail do usuário"
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
           />
