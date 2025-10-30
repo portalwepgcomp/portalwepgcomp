@@ -4,6 +4,12 @@ import { BookmarkedPresentations } from "@/models/presentatio-bookmarks";
 import { presentationApi } from "@/services/presentation";
 import { createContext, ReactNode, useState } from "react";
 
+
+import axiosInstance from "@/utils/api";
+
+const baseUrl = "/presentation";
+const instance = axiosInstance;
+
 interface PresentationProps {
   children: ReactNode;
 }
@@ -31,6 +37,16 @@ export const PresentationProvider = ({ children }: PresentationProps) => {
     const [presentationBookmarks, setPresentationbookmarks] = useState<BookmarkedPresentations>({
       bookmarkedPresentations: [],
     });
+
+  const getPresentationById = async (id: string) => {
+const { data } = await instance.get(`${baseUrl}`, {
+            params: { id },
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+  }
 
     
 

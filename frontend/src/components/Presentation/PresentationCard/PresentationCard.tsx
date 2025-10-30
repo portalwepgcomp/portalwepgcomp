@@ -15,7 +15,7 @@ export default function PresentationCard({ presentation, showTime = true, type }
 
   const handleClick = () => {
     if (type === "GeneralSession") return;
-    router.push(`/apresentacao/${presentation.id}`);
+    router.push(`/apresentacoes/${presentation.id}`);
   };
 
   const formatTime = (timeString: string) => {
@@ -24,9 +24,7 @@ export default function PresentationCard({ presentation, showTime = true, type }
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
   }
-
-  console.log("PresentationCard render:", presentation);
-
+  
   return (
     <div
       className={`presentation-card clickable PresentationSession`}
