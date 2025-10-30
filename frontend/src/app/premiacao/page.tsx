@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
+import { useState } from "react";
 
 import Premiacoes from "@/components/Premiacao/Premiacoes";
 import Banner from "@/components/UI/Banner";
 
-import "./style.scss";
-import { PremiacaoProvider } from "@/hooks/usePremiacao";
 import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
+import { PremiacaoProvider } from "@/hooks/usePremiacao";
+import "./style.scss";
 
 export default function Premiacao() {
   const [activeCategory, setActiveCategory] = useState<

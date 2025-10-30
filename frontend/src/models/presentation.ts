@@ -29,4 +29,5 @@ interface UserAccount {
   isActive: boolean
   createdAt: string
   updatedAt: string
+  lattesUrl?: string
 }

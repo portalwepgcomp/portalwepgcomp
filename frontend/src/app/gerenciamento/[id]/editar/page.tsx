@@ -1,17 +1,17 @@
 "use client";
 
-import Banner from "@/components/UI/Banner";
 import InfoBox from "@/components/InfoBox/InfoBox";
-import { useEffect, useState } from "react";
-import { useUsers } from "@/hooks/useUsers";
+import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
 import { useSweetAlert } from "@/hooks/useAlert";
-import { z } from "zod";
+import { useUsers } from "@/hooks/useUsers";
 import { UpdateUserRequest } from "@/models/update-user";
 import { maskCPF, unmask } from "@/utils/masks";
 import { useRouter } from "next/navigation";
-import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
+import { useEffect, useState } from "react";
+import { z } from "zod";
 
 import InputMask from "react-input-mask";
+import Banner from "@/components/UI/Banner";
 
 const updateUserSchema = z.object({
     name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres."),

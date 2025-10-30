@@ -1,0 +1,79 @@
+.presentation-card {
+  background: #ffffff;
+  
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+
+  width: 100%;
+
+  &.clickable {
+    cursor: pointer;
+
+    &:hover {
+      background: #f0f7fc;
+      border-color: #0065a3;
+      transform: translateX(4px);
+    }
+  }
+}
+
+.presentation-card-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.presentation-time {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0065a3;
+  min-width: 50px;
+  text-align: center;
+}
+
+.presentation-info {
+  flex: 1;
+}
+
+.presentation-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
+}
+
+.presentation-author {
+  font-size: 16px;
+  color: #4a4a4a;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.presentation-indicator {
+  font-size: 20px;
+  color: #0065a3;
+  font-weight: bold;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.presentation-card.clickable:hover .presentation-indicator {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .presentation-author {
+    font-size: 16px;
+  }
+
+  .presentation-title {
+    font-size: 14px;
+  }
+
+  .presentation-time {
+    font-size: 12px;
+    min-width: 45px;
+  }
+}

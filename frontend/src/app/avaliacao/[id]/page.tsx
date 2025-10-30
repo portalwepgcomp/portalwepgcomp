@@ -1,19 +1,18 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
 import Image from "next/image";
+import { useContext, useEffect, useState } from "react";
 
 import Rating from "@/components/Rating/Rating";
-import Banner from "@/components/UI/Banner";
 
-import "./style.scss";
-import { useEvaluation } from "@/hooks/useEvaluation";
-import { AuthContext } from "@/context/AuthProvider/authProvider";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
-import { usePresentation } from "@/hooks/usePresentation";
 import LoadingPage from "@/components/LoadingPage";
 import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
+import { AuthContext } from "@/context/AuthProvider/authProvider";
+import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 import { useEdicao } from "@/hooks/useEdicao";
+import { useEvaluation } from "@/hooks/useEvaluation";
+import { usePresentation } from "@/hooks/usePresentation";
+import "./style.scss";
 
 export default function Avaliacao({ params }) {
   const [saveEvaluation, setSaveEvaluation] = useState<

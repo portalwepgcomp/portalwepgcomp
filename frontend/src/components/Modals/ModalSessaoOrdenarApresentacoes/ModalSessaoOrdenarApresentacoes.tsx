@@ -1,11 +1,11 @@
 "use client";
 
-import "./style.scss";
+import DraggableList, { DraggedMovement } from '@/components/DraggableList/DraggableList';
 import ModalComponent from "@/components/UI/ModalComponent/ModalComponent";
+import { getEventEditionIdStorage } from '@/context/AuthProvider/util';
 import { useSession } from "@/hooks/useSession";
 import { useEffect, useState } from 'react';
-import DraggableList, { DraggedMovement } from '@/components/DraggableList/DraggableList';
-import { getEventEditionIdStorage } from '@/context/AuthProvider/util';
+import "./style.scss";
 
 export default function ModalSessaoOrdenarApresentacoes() {
   const { swapPresentationsOnSession, sessao } = useSession();

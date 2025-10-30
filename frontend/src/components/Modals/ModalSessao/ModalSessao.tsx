@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import "./style.scss";
-import { ModalSessaoMock } from "@/mocks/ModalSessoes";
-import { SessaoTipoEnum } from "@/enums/session";
-import ModalComponent from "@/components/UI/ModalComponent/ModalComponent";
 import FormSessaoApresentacoes from "@/components/Forms/Sessao/FormSessaoApresentacoes";
 import FormSessaoGeral from "@/components/Forms/Sessao/FormSessaoGeral";
-import { useSession } from "@/hooks/useSession";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
+import { SessaoTipoEnum } from "@/enums/session";
+import { useSession } from "@/hooks/useSession";
+import { ModalSessaoMock } from "@/mocks/ModalSessoes";
+import { useEffect, useMemo, useState } from "react";
+import ModalComponent from "@/components/UI/Modal/Modal";
+import "./style.scss";
 
 export default function ModalSessao() {
   const { tipo, titulo } = ModalSessaoMock;

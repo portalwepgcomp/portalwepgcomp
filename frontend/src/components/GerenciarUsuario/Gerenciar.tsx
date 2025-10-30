@@ -548,16 +548,6 @@ export default function Gerenciar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Remove getUsers dependency to prevent infinite loops
 
-  // Remove the debounced effect that was causing unnecessary renders
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     // Only trigger API call if needed for server-side filtering
-  //     // For now, we're doing client-side filtering for better UX
-  //   }, 300);
-
-  //   return () => clearTimeout(timer);
-  // }, [filters]);
-
   return (
     <div className="gerenciador">
       <div className="filtros">

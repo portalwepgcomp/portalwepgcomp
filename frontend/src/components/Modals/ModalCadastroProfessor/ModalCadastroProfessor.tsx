@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef } from "react";
-import ModalComponent from "@/components/UI/ModalComponent/ModalComponent";
 import { FormCadastroProfessor } from "@/components/Forms/CadastroProfessor/FormCadastroProfessor";
+import ModalComponent from "@/components/UI/ModalComponent/ModalComponent";
 import { useUsers } from "@/hooks/useUsers";
+import { useRef } from "react";
 import "./style.scss";
 
 interface ModalCadastroProfessorProps {

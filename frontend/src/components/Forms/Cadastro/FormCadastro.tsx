@@ -7,9 +7,9 @@ import { z } from "zod";
 import { useUsers } from "@/hooks/useUsers";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import PasswordEye from "@/components/UI/PasswordEye";
-import "./style.scss";
 import Loading from "@/components/LoadingPage";
+import PasswordEye from "./PasswordEye";
+import "./style.scss";
 
 const formCadastroSchema = z
   .object({
