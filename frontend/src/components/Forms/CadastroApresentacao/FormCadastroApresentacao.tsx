@@ -374,9 +374,9 @@ export function FormCadastroApresentacao() {
                                 </option>
                             ) : (
                                 opcoesApresentadoresSelect.map((apresentador) => (
-                                <option key={apresentador.id} value={apresentador.id}>
-                                    {apresentador.name}
-                                </option>
+                                    <option key={apresentador.id} value={apresentador.id}>
+                                        {String((apresentador as any).name)}
+                                    </option>
                                 ))
                             )}
                     </select>
