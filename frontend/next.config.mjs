@@ -4,6 +4,9 @@ const nextConfig = {
     dirs: ['src', '__tests__'], 
   },
   output: "standalone",
+  images: {
+    domains: ['proext.ufba.br'],
+  },
 };
 
 

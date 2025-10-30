@@ -1,6 +1,32 @@
-@media (max-width:480px) {
+.contatoWrapper{
+  width: 100%;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #5c7a9c;
+}
+
+.contato{
+  width: 80%;
+  display: flex;
+    gap: 2rem;
+
+}
+.containerContato{
+  width: 50%;
+  .formContatoWrapper{
+    padding: 2rem !important;
+  }
+}
+
+@media (max-width:1280px) {
   .contato {
+    width: 100%;
     flex-direction: column !important;
     padding-right: 0 !important;
+  }
+  .containerContato{
+    width: 100%;
   }
 }
