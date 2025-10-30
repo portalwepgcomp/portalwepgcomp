@@ -10,15 +10,16 @@ import { z } from "zod";
 
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
-import { SubmissionContext } from "@/hooks/useSubmission";
-import { UserContext } from "@/hooks/useUsers";
 import { useSweetAlert } from "@/hooks/useAlert";
+import { SubmissionContext } from "@/hooks/useSubmission";
 import { useSubmissionFile } from "@/hooks/useSubmissionFile";
+import { UserContext } from "@/hooks/useUsers";
 
 import { useEdicao } from "@/hooks/useEdicao";
 import "./style.scss";
 
 import IndicadorDeCarregamento from "@/components/IndicadorDeCarregamento/IndicadorDeCarregamento";
+import { formatLink } from "@/utils/formatLink";
 import InputMask from "react-input-mask";
 
 const esquemaCadastro = z.object({
@@ -44,6 +45,13 @@ const esquemaCadastro = z.object({
         .refine((val) => val && val.trim().length > 0, {
             message: "O envio do slide em PDF é obrigatório",
         }),
+    linkApresentacao: z.string().optional().refine((val) => {
+        if (!val || val.trim() === "") return true;
+        const urlWithProtocol = val.startsWith("www.") ? `http://${val}` : val;
+        return z.string().url().safeParse(urlWithProtocol).success;
+    }, {
+        message: "Link inválido",
+    }),
 });
 
 type CadastroFormulario = z.infer<typeof esquemaCadastro>;
@@ -89,6 +97,7 @@ export function FormCadastroApresentacao() {
             setValue("slide", submission?.pdfFile);
             setNomeArquivo(submission?.pdfFile);
             setValue("celular", submission?.phoneNumber);
+            setValue("linkApresentacao", submission?.linkHostedFile || "");
         } else {
             setValue("id", "");
             setValue("titulo", "");
@@ -99,6 +108,7 @@ export function FormCadastroApresentacao() {
             setValue("data", "");
             setValue("slide", "");
             setValue("celular", "");
+            setValue("linkApresentacao", "");
 
             setArquivo(null);
             setNomeArquivo(null);
@@ -153,6 +163,7 @@ export function FormCadastroApresentacao() {
             dateSuggestion: data.data ? new Date(data.data) : undefined,
             pdfFile: arquivoPdf,
             phoneNumber: data.celular,
+            linkHostedFile: formatLink(data.linkApresentacao || ""),
         };
     };
 
@@ -324,7 +335,7 @@ export function FormCadastroApresentacao() {
                             disabled={loadingUserList}>
                             <option value="">Selecione um apresentador</option>
                             {apresentadoresComApresentacao.length === 0 &&
-                            !loadingUserList ? (
+                                !loadingUserList ? (
                                 <option value="" disabled>
                                     Nenhum apresentador encontrado
                                 </option>
@@ -431,6 +442,21 @@ export function FormCadastroApresentacao() {
 
             <div className="col-12 mb-1">
                 <label className="form-label form-title">
+                    Link da apresentação <span className="txt-min">(Google Drive, Dropbox, Github, etc...)</span>
+                </label>
+                <input
+                    type="text"
+                    className="form-control input-title"
+                    placeholder="Link da apresentação no Drive/Dropbox/etc..."
+                    {...register("linkApresentacao")}
+                />
+            </div>
+            <p className="text-danger error-message">
+                {errors.linkApresentacao?.message}
+            </p>
+
+            <div className="col-12 mb-1">
+                <label className="form-label form-title">
                     Slide da apresentação <span className="txt-min">(PDF)</span>
                     <span className="text-danger ms-1">*</span>
                 </label>
@@ -442,27 +468,28 @@ export function FormCadastroApresentacao() {
                 />
                 {submission && submission.id
                     ? nomeArquivo && (
-                          <p className="file-name">
-                              Arquivo selecionado:{" "}
-                              <a
-                                  href={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${nomeArquivo}`}
-                                  download
-                                  target="_blank">
-                                  {nomeArquivo}
-                              </a>
-                          </p>
-                      )
+                        <p className="file-name">
+                            Arquivo selecionado:{" "}
+                            <a
+                                href={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${nomeArquivo}`}
+                                download
+                                target="_blank">
+                                {nomeArquivo}
+                            </a>
+                        </p>
+                    )
                     : nomeArquivo && (
-                          <p className="file-name">
-                              Arquivo selecionado: {nomeArquivo}
-                          </p>
-                      )}
+                        <p className="file-name">
+                            Arquivo selecionado: {nomeArquivo}
+                        </p>
+                    )}
                 <p className="text-danger error-message">
                     {errors.slide?.message}
                 </p>
             </div>
 
-            <div className="col-12 mb-1">
+            <div className="col-12 mb-1
+">
                 <label className="form-label form-title">
                     Celular{" "}
                     <span className="txt-min">(preferência WhatsApp)</span>
