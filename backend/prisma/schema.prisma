@@ -15,6 +15,7 @@ model UserAccount {
   registrationNumber      String?                 @unique @map("registration_number") @db.VarChar(20)
   photoFilePath           String?                 @map("photo_file_path") @db.VarChar(255)
   profile                 Profile                 @default(Presenter) @map("profile")
+  subprofile              Subprofile?
   level                   UserLevel               @default(Default) @map("level")
   isActive                Boolean                 @default(true) @map("is_active")
   createdAt               DateTime                @default(now()) @map("created_at")
@@ -26,6 +27,7 @@ model UserAccount {
   isSuperadmin            Boolean                 @default(false) @map("is_superadmin")
   isTeacherActive         Boolean                 @default(false) @map("is_teacher_active")
   isPresenterActive       Boolean                 @default(false) @map("is_presenter_active")
+
   panelistAwards          AwardedPanelist[]
   certificates            Certificate[]
   committeeMemberships    CommitteeMember[]
@@ -140,6 +142,7 @@ model Submission {
   proposedPresentationBlockId String?          @map("proposed_presentation_block_id")
   proposedPositionWithinBlock Int?             @map("proposed_position_within_block")
   coAdvisor                   String?          @map("co_advisor") @db.VarChar(255)
+  linkHostedFile              String?          @map("link_hosted_file") @db.VarChar(255)
   status                      SubmissionStatus @map("status")
   createdAt                   DateTime         @default(now()) @map("created_at")
   updatedAt                   DateTime         @updatedAt @map("updated_at")
@@ -170,6 +173,7 @@ model AwardedPanelist {
   userId         String       @map("user_id")
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
+  votes          Int          @default(0) @map("votes")
   eventEdition   EventEdition @relation(fields: [eventEditionId], references: [id], onDelete: Cascade)
   user           UserAccount  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -266,6 +270,15 @@ enum UserLevel {
   Default
 
   @@map("user_level")
+}
+
+enum Subprofile {
+  Doctorate
+  Master
+  Bachelor
+  Other
+
+  @@map("sub_profile")
 }
 
 enum CommitteeLevel {

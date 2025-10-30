@@ -8,8 +8,6 @@ import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { useEdicao } from "@/hooks/useEdicao";
 import { useSubmission } from "@/hooks/useSubmission";
-
-import PresentationCard from "@/components/Presentation/PresentationCard/PresentationCard";
 import { ApresentacoesMock } from "@/mocks/Apresentacoes";
 import Listagem, { mapCardList } from "@/templates/Listagem/Listagem";
 

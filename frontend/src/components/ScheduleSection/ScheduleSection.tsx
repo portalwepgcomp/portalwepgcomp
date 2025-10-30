@@ -24,6 +24,7 @@ export default function ScheduleSection() {
     useSession();
   const { Edicao } = useEdicao();
   const { selectEdition } = useActiveEdition();
+  const { ensureActiveEdition } = useActiveEdition();
 
   const [dates, setDates] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
@@ -35,6 +36,28 @@ export default function ScheduleSection() {
   useEffect(() => {
     moment.locale("pt-br");
   }, []);
+
+  useEffect(() => {
+    if (!Edicao?.id) {
+      ensureActiveEdition?.();
+    }
+  }, [Edicao?.id, ensureActiveEdition]);
+
+    useEffect(() => {
+    const eventEditionId = getEventEditionIdStorage();
+    console.log({eventEditionId, Edicao, selectEdition});
+    if (Edicao?.id && Edicao?.startDate && Edicao?.endDate) {
+      listSessions(Edicao?.id);
+      const generatedDates = generateDatesBetween(
+        Edicao.startDate,
+        Edicao.endDate,
+      );
+      setDates(generatedDates);
+      setSelectedDate(generatedDates[0]);
+    }
+
+    if (Edicao?.id) listRooms(Edicao?.id);
+  }, [Edicao?.id, selectEdition]);
 
   function generateDatesBetween(startDate: string, endDate: string): string[] {
     const datesArray: string[] = [];

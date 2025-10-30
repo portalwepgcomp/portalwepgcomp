@@ -31,6 +31,7 @@ interface Submission extends SubmissionParams {
     abstract?: string;
     type?: string;
     status?: string;
+    linkHostedFile?: string;
 }
 
 

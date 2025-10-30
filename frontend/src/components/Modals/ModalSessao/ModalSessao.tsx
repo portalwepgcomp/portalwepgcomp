@@ -2,17 +2,18 @@
 
 import FormSessaoApresentacoes from "@/components/Forms/Sessao/FormSessaoApresentacoes";
 import FormSessaoGeral from "@/components/Forms/Sessao/FormSessaoGeral";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 import { SessaoTipoEnum } from "@/enums/session";
+import { useEdicao } from "@/hooks/useEdicao";
 import { useSession } from "@/hooks/useSession";
 import { ModalSessaoMock } from "@/mocks/ModalSessoes";
 import { useEffect, useMemo, useState } from "react";
-import ModalComponent from "@/components/UI/Modal/Modal";
 import "./style.scss";
+import ModalComponent from "@/components/UI/ModalComponent/ModalComponent";
 
 export default function ModalSessao() {
   const { tipo, titulo } = ModalSessaoMock;
   const { sessao, listRooms, sessoesList } = useSession();
+  const { Edicao } = useEdicao();
 
   const disabledIntervals = useMemo(() => {
     if (!sessoesList) return [];
@@ -41,10 +42,10 @@ export default function ModalSessao() {
   }, [sessao?.type]);
 
   useEffect(() => {
-    const eventEditionId = getEventEditionIdStorage();
-
-    listRooms(eventEditionId ?? "");
-  }, []);
+    if (Edicao?.id) {
+      listRooms(Edicao.id);
+    }
+  }, [Edicao?.id]);
 
   return (
     <ModalComponent

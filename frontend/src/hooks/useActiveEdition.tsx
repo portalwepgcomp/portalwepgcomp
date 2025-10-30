@@ -8,6 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { edicaoApi } from "@/services/edicao";
 
 interface ActiveEditionProps {
   children: ReactNode;
@@ -26,6 +27,7 @@ interface ActiveEditionProviderData {
   >;
   loadingActiveEdition: boolean;
   setLoadingActiveEdition: Dispatch<SetStateAction<boolean>>;
+  ensureActiveEdition: () => Promise<{ year: string; isActive: boolean } | null>;
 }
 
 export const ActiveEditionContext = createContext<ActiveEditionProviderData>(
@@ -54,6 +56,37 @@ export const ActiveEditionProvider = ({ children }: ActiveEditionProps) => {
     }
   }, [selectEdition]);
 
+  const ensureActiveEdition = async () => {
+    try {
+      if (selectEdition.year) return selectEdition;
+
+      setLoadingActiveEdition(true);
+
+      const saved = localStorage.getItem("activeEdition");
+      if (saved) {
+        const parsed = JSON.parse(saved) as { year: string; isActive: boolean };
+        if (parsed?.year) {
+          setSelectEdition(parsed);
+          return parsed;
+        }
+      }
+      
+      const active = await edicaoApi.getEdicaoAtiva();
+      if (active?.year) {
+        const meta = { year: active.year, isActive: !!active.isActive };
+        setSelectEdition(meta);
+        localStorage.setItem("activeEdition", JSON.stringify(meta));
+        return meta;
+      }
+
+      return null;
+    } catch {
+      return null;
+    } finally {
+      setLoadingActiveEdition(false);
+    }
+  };
+
   return (
     <ActiveEditionContext.Provider
       value={{
@@ -61,6 +94,7 @@ export const ActiveEditionProvider = ({ children }: ActiveEditionProps) => {
         setSelectEdition,
         loadingActiveEdition,
         setLoadingActiveEdition,
+        ensureActiveEdition,
       }}
     >
       {children}
