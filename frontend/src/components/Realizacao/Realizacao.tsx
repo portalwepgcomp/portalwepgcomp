@@ -23,7 +23,9 @@ export default function Realizacao() {
   const realizacaoLogos: Logo[] = useMemo(
     () => [
       { src: "/assets/images/ic_logo_padrao.png", alt: "Computação UFFBA Logo", width: 150, height: 150, priority: true },
-      { src: "/assets/images/brasao_ufba.jpg", alt: "UFBA Logo", width: 100, height: 130, priority: true },
+      { src: "/assets/images/brasao-ufba.svg", alt: "UFBA Logo", width: 100, height: 130, priority: true },
+      { src: "/assets/images/logo-capes-fundo-claro.jpg", alt: "Capes Logo", width: 100, height: 130, priority: true },
+      { src: "/assets/images/logo-proext.png", alt: "Proext Logo", width: 100, height: 130, priority: true },
     ],
     [],
   );
@@ -66,6 +68,7 @@ export default function Realizacao() {
             priority={logo.priority}
             className="realizacao-logo"
             sizes="(max-width: 768px) 100px, 150px"
+            style={{ height: "auto"}}
           />
         ))}
       </div>
