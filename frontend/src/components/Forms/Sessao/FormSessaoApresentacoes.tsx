@@ -190,15 +190,14 @@ export default function FormSessaoApresentacoes({
       avaliadores,
     } = data;
 
-    const eventEditionId = getEventEditionIdStorage();
-
+    if (!Edicao?.id) return;
     if (!titulo || !sala || !inicio) {
       throw new Error("Campos obrigatórios em branco.");
     }
 
     const body = {
       type: "Presentation",
-      eventEditionId: eventEditionId ?? "",
+      eventEditionId: Edicao.id,
       title: titulo,
       submissions: apresentacoes?.length
         ? apresentacoes?.map((v) => v.value)
@@ -212,7 +211,7 @@ export default function FormSessaoApresentacoes({
     } as SessaoParams;
 
     if (sessao?.id) {
-      updateSession(sessao?.id, eventEditionId ?? "", body).then((status) => {
+      updateSession(sessao.id, Edicao.id, body).then((status) => {
         if (status) {
           reset();
           setSessao(null);
@@ -221,7 +220,7 @@ export default function FormSessaoApresentacoes({
       return;
     }
 
-    createSession(eventEditionId ?? "", body).then((status) => {
+    createSession(Edicao.id, body).then((status) => {
       if (status) {
         reset();
         setSessao(null);

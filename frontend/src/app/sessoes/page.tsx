@@ -41,10 +41,11 @@ export default function Sessoes() {
   const eventEditionId = Edicao?.id;
 
   useEffect(() => {
-    listSessions(eventEditionId ?? "");
+    if (!eventEditionId) return;
+    listSessions(eventEditionId);
     getUsers({ profiles: "Professor" });
     getSubmissions({
-      eventEditionId: eventEditionId ?? "",
+      eventEditionId: eventEditionId,
       withouPresentation: true,
     });
   }, [eventEditionId]);
