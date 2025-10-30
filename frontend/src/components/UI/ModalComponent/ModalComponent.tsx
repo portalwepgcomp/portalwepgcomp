@@ -38,6 +38,9 @@ export default function ModalComponent({
       backdrop.parentNode?.removeChild(backdrop);
           document.body.style.overflow = '';
     }
+    else {
+      document.body.style.overflow = 'hidden';
+    }
   },[onClose])
   return (
     <div
