@@ -69,6 +69,10 @@ export const SessionProvider = ({ children }: SessionProps) => {
   const { showToast } = useSweetToast();
 
   const listSessions = async (eventEditionId: string) => {
+    if (!eventEditionId) {
+      setSessoesList([]);
+      return;
+    }
     setLoadingSessoesList(true);
     sessionApi
       .listSessions(eventEditionId)
@@ -102,6 +106,10 @@ export const SessionProvider = ({ children }: SessionProps) => {
   };
 
   const listRooms = async (eventEditionId: string) => {
+    if (!eventEditionId) {
+      setRoomsList([]);
+      return;
+    }
     setLoadingRoomsList(true);
     try {
       const response = await sessionApi.listRooms(eventEditionId);
@@ -116,7 +124,6 @@ export const SessionProvider = ({ children }: SessionProps) => {
     } finally {
       setLoadingRoomsList(false);
     }
-
   };
 
   const getSessionById = async (idSession: string) => {

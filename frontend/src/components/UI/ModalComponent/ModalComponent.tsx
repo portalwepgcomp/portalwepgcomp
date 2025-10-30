@@ -7,6 +7,7 @@ import "./style.scss";
 
 interface ModalComponentProps {
   id: string;
+  formId?: string;
   loading: boolean;
   children: ReactNode[] | ReactNode;
   labelConfirmButton?: string;
@@ -21,6 +22,7 @@ interface ModalComponentProps {
 
 export default function ModalComponent({
   id,
+  formId,
   loading,
   labelConfirmButton,
   colorButtonConfirm,
@@ -32,13 +34,13 @@ export default function ModalComponent({
   onClose,
   children,
 }: Readonly<ModalComponentProps>) {
-    useEffect(() => {
-    const backdrop = document.querySelector('.modal-backdrop');
+  useEffect(() => {
+    const backdrop = document.querySelector(".modal-backdrop");
     if (backdrop) {
       backdrop.parentNode?.removeChild(backdrop);
-          document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
-  },[onClose])
+  }, [onClose]);
   return (
     <div
       className={`modal fade ${
@@ -70,9 +72,9 @@ export default function ModalComponent({
               {onConfirm && labelConfirmButton && (
                 <div className={`modal-footer content-modal-component`}>
                   <button
-                    type="button"
+                    type={formId ? "submit" : "button"}
+                    form={formId}
                     className="btn btn-primary button-modal-component"
-                    onClick={() => onConfirm()}
                     disabled={disabledConfirmButton}
                     style={{ backgroundColor: colorButtonConfirm }}
                   >

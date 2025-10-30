@@ -162,6 +162,7 @@ export default function Listagem({
                       onClickItem(card?.id);
                     }
                   }}
+                  linkHostedFile={card.linkHostedFile}
                 />
               ) : (
                 <PresentationCard

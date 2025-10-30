@@ -86,58 +86,75 @@ export function FormContato() {
 
   return (
     <form
-      className="justify-content-center form-contato"
+      className="form-contato p-4 rounded-4 shadow-lg formContatoWrapper"
+      style={{
+      border: "1px solid #fff",
+      margin: "0 auto",
+      }}
       onSubmit={handleSubmit(handleFormContato)}
     >
-      <div className="row mb-3">
-        <div className="col-12 col-sm-6">
-          <label className="form-label fs-5 text-white fw-semibold">
-            Nome:
-          </label>
-          <input
-            type="nome"
-            className="form-control input-title bg-transparent border-1 text-white shadow-none"
-            placeholder="Insira seu nome"
-            {...register("name")}
-          />
-          <p className="text-warning error-message">{errors.name?.message}</p>
-        </div>
-
-        <div className="col-12 col-sm-6">
-          <label className="form-label fs-5 text-white fw-semibold">
-            E-mail:
-          </label>
-          <input
-            type="email"
-            className="form-control input-title bg-transparent border-1 text-white shadow-none"
-            placeholder="Insira seu e-mail"
-            {...register("email")}
-          />
-          <p className="text-warning error-message">{errors.email?.message}</p>
-        </div>
-      </div>
-
-      <div>
-        <label className="form-label fs-5 text-white fw-semibold">
-          Mensagem:
+      <div className="row mb-4">
+      <div className="col-12 col-sm-6 mb-3 mb-sm-0">
+        <label className="form-label fs-5 text-white fw-semibold mb-2">
+        Nome:
         </label>
-        <textarea
-          className="form-control input-title bg-transparent border-1 border-white text-white shadow-none"
-          placeholder="Digite sua mensagem"
-          rows={5}
-          {...register("text")}
+        <input
+        type="text"
+        className="form-control input-title bg-transparent border-2 border-white text-white shadow-sm"
+        placeholder="Insira seu nome"
+        {...register("name")}
+        style={{ fontSize: "1.1rem" }}
         />
-        <p className="text-warning error-message">{errors.text?.message}</p>
+        <p className="text-warning error-message mt-1">{errors.name?.message}</p>
       </div>
 
-      <div className="d-flex justify-content-center mt-4 mb-4 bg-white border border-white rounded-3">
-        <button
-          type="submit"
-          className="btn fw-bold"
-          disabled={!Edicao?.isActive}
-        >
-          Enviar
-        </button>
+      <div className="col-12 col-sm-6">
+        <label className="form-label fs-5 text-white fw-semibold mb-2">
+        E-mail:
+        </label>
+        <input
+        type="email"
+        className="form-control input-title bg-transparent border-2 border-white text-white shadow-sm"
+        placeholder="Insira seu e-mail"
+        {...register("email")}
+        style={{ fontSize: "1.1rem" }}
+        />
+        <p className="text-warning error-message mt-1">{errors.email?.message}</p>
+      </div>
+      </div>
+
+      <div className="mb-4">
+      <label className="form-label fs-5 text-white fw-semibold mb-2">
+        Mensagem:
+      </label>
+      <textarea
+        className="form-control input-title bg-transparent border-2 border-white text-white shadow-sm"
+        placeholder="Digite sua mensagem"
+        rows={5}
+        
+        {...register("text")}
+        style={{ fontSize: "1.1rem", resize: "none" }}
+      />
+      <p className="text-warning error-message mt-1">{errors.text?.message}</p>
+      </div>
+
+      <div className="d-flex justify-content-center mt-4">
+      <button
+        type="submit"
+        className="btn fw-bold px-5 py-2"
+        style={{
+        background: Edicao?.isActive ? "#fff" : "#bbb",
+        color: "#1e1e1e",
+        border: "2px solid #fff",
+        fontSize: "1.1rem",
+        borderRadius: "2rem",
+        boxShadow: Edicao?.isActive ? "0 2px 8px rgba(255,255,255,0.2)" : "none",
+        transition: "background 0.2s, color 0.2s",
+        }}
+        disabled={!Edicao?.isActive}
+      >
+        Enviar
+      </button>
       </div>
     </form>
   );

@@ -1,8 +1,17 @@
 "use client"
 import axiosInstance from '@/utils/api';
+import { api } from "@/context/AuthProvider/util";
 
 const baseUrl = "/event";
 const instance = axiosInstance;
+
+export interface ISessaoAtivaResposta {
+  id?: string;
+  year: string;
+  isActive: boolean;
+  startDate?: string;
+  endDate?: string;
+}
 
 export const edicaoApi = {
     listEdicao: async () => {
@@ -51,6 +60,11 @@ export const edicaoApi = {
 
         const { data } = await instance.delete(`${baseUrl}/${idEdicao}`);
 
+        return data;
+    },
+
+    async getEdicaoAtiva(): Promise<ISessaoAtivaResposta> {
+        const { data } = await api.get("/event-editions/active");
         return data;
     },
 }

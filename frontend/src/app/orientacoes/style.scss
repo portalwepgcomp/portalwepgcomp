@@ -1,68 +1,89 @@
-.button{
-    display: flex;
-    flex-Direction: row;
-    justify-Content: center;
-    align-Items: center;
-    margin-Bottom: 25px;
-    gap: 20px;
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.buttonWrapper{
-    display: flex;
-    flex-Direction: row;
-    justify-Content: center;
-    align-Items: center;
-    flex-direction: column;
+.buttonWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 
-    .orientationTitle{
-        font-size: 1.25rem;
-        font-Weight: bold;
-    }
-
-
+  .orientationTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #222;
+  }
 }
 
-.buttonFalse{
-    border: solid;
-    border-Color: #FFA90F;
-    background-color: white;
-    color: #FFA90F;
-    width: 190px;
-    border-Radius: 25px;
-    border-Width: 3px;
-    cursor: pointer;
-    display: flex;
-    align-Items: center;
-    justify-Content: center;
-    font-Weight: bold;
-    font-Size: 24px;
+.buttonBase {
+  width: 190px;
+  padding: 10px 0;
+  border-radius: 8px;
+  border: 2px solid #ffa90f;
+  font-weight: 600;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-.buttonTrue{
-    border: solid;
-    border-Color: #FFA90F;
-    background-Color: #FFA90F;
-    color: white;
-    width: 190px;
-    border-Radius: 25px;
-    border-Width: 3px;
-    cursor: pointer;
-    display: flex;
-    align-Items: center;
-    justify-Content: center;
-    font-Weight: bold;
-    font-Size: 24px;
+.buttonFalse {
+  @extend .buttonBase;
+  background-color: #fff;
+  color: #ffa90f;
+
+  &:hover {
+    background-color: #fff6e5;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(255, 169, 15, 0.25);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(255, 169, 15, 0.2);
+  }
+}
+
+.buttonTrue {
+  @extend .buttonBase;
+  background-color: #ffa90f;
+  color: #fff;
+
+  &:hover {
+    background-color: #ffb733;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(255, 169, 15, 0.25);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(255, 169, 15, 0.2);
+  }
 }
 
 @media (max-width: 768px) {
-    .button {
-        padding: 0 10px;
-    }
+  .button {
+    gap: 15px;
+  }
+
+  .buttonBase {
+    width: 160px;
+    font-size: 18px;
+  }
 }
 
 @media (max-width: 660px) {
-    .button{
-        display: flex;
-        flex-Direction: column;
-    }
+  .button {
+    flex-direction: column;
+  }
 }
