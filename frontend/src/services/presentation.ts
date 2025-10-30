@@ -48,4 +48,22 @@ export const presentationApi = {
 
         return data;
     },
+
+    calculateAllScores: async (eventEditionId: string) => {
+        const { data } = await instance.post(`${baseUrl}/calculate-all-scores/${eventEditionId}`);
+
+        return data;
+    },
+
+    resetEvaluatorsScores: async (eventEditionId: string) => {
+        const { data } = await instance.post(`${baseUrl}/reset-evaluators-scores/${eventEditionId}`);
+
+        return data;
+    },
+
+    resetPublicScores: async (eventEditionId: string) => {
+        const { data } = await instance.post(`${baseUrl}/reset-public-scores/${eventEditionId}`);
+
+        return data;
+    },
 }
