@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -209,6 +209,10 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
   const [eye1, setEye1] = useState(false);
   const [eye2, setEye2] = useState(false);
 
+  useEffect(() => {
+    setValue("matricula", "");
+  }, [perfil, setValue]);
+
   return (
     <>
       {!loadingCreateUser ? (
@@ -358,11 +362,13 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
               {...register("matricula")}
               onChange={handleMudancaMatricula}
               maxLength={
-                perfil === "ouvinte" &&
-                ["outro"].includes(watch("subperfil") ?? "")
-                  ? 14
-                  : undefined
-              } // 14 caracteres para CPF com máscara
+                perfil === "professor"
+                  ? 19
+                  : perfil === "ouvinte" &&
+                      ["outro"].includes(watch("subperfil") ?? "")
+                    ? 14
+                    : undefined
+              }
             />
             <p className="text-danger error-message">
               {errors.matricula?.message}
