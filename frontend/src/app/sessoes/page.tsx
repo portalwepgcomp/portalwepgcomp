@@ -60,22 +60,28 @@ export default function Sessoes() {
           return !v?.title || searchMatch;
         }) ?? [];
       setSessionsListValues(
-        newSessionsList.map((s) => {
-          const start = new Date(s.startTime);
-          const end = new Date(start.getTime() + (s.duration ?? 0) * 60000);
+        newSessionsList
+          .toSorted(
+            (a, b) =>
+              new Date(a.startTime).getTime() -
+              new Date(b.startTime).getTime(),
+          )
+          .map((s) => {
+            const start = new Date(s.startTime);
+            const end = new Date(start.getTime() + (s.duration ?? 0) * 60000);
 
-          const formattedDate = formatDate(start.toISOString());
-          const endTimeStr = end.toLocaleTimeString("pt-BR", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          });
+            const formattedDate = formatDate(start.toISOString());
+            const endTimeStr = end.toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            });
 
-          return {
-            ...s,
-            formatedStartTime: `${formattedDate} - Fim: ${endTimeStr}h`,
-          };
-        }),
+            return {
+              ...s,
+              formatedStartTime: `${formattedDate} - Fim: ${endTimeStr}h`,
+            };
+          }),
       );
     }
   }, [sessoesList, searchValue]);
