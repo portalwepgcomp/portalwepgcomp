@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UUID } from "crypto";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -53,6 +53,8 @@ const esquemaCadastro = z.object({
         message: "Link inválido",
     }),
 });
+
+
 
 type CadastroFormulario = z.infer<typeof esquemaCadastro>;
 
@@ -115,6 +117,46 @@ export function FormCadastroApresentacao() {
         }
     }, [submission, setValue]);
 
+    const apresentadores = userList.filter(
+        (usuario) => usuario.profile === "Presenter" && !usuario.hasSubmission
+    );
+
+    const apresentadoresComApresentacao = userList.filter(
+        (usuario) => usuario.profile === "Presenter" && usuario.hasSubmission
+    );
+
+
+    const opcoesApresentadoresSelect = useMemo(() => {
+
+        const todosApresentadores = userList.filter((u) => u.profile === "Presenter");
+
+
+        if (submission?.id) {
+            const base = apresentadoresComApresentacao.length
+            ? apresentadoresComApresentacao
+            : todosApresentadores;
+
+            if (submission.mainAuthorId) {
+                const existe = base.some((u) => u.id === submission.mainAuthorId);
+                if (!existe) {
+                    const filtroLista = todosApresentadores.find((u) => u.id === submission.mainAuthorId);
+                    const fallback = { id: submission.mainAuthorId, name: submission?.mainAuthor ?? "Apresentador" };
+                    return [filtroLista ?? fallback, ...base];
+                }
+            }
+        return base;
+  }
+
+  return apresentadores;
+}, [
+  submission?.id,
+  submission?.mainAuthorId,
+  submission?.mainAuthor,
+  apresentadores,
+  apresentadoresComApresentacao,
+  userList,
+]);
+
     useEffect(() => {
         if (!professoresCarregou) {
             getAdvisors();
@@ -127,14 +169,6 @@ export function FormCadastroApresentacao() {
             getUsers({ profiles: "Presenter" });
         }
     }, [user?.level, userList.length, getUsers]);
-
-    const apresentadores = userList.filter(
-        (usuario) => usuario.profile === "Presenter" && !usuario.hasSubmission
-    );
-
-    const apresentadoresComApresentacao = userList.filter(
-        (usuario) => usuario.profile === "Presenter" && usuario.hasSubmission
-    );
 
     const aoMudarArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
         const arquivoSelecionado = e.target.files?.[0];
@@ -327,52 +361,25 @@ export function FormCadastroApresentacao() {
                         Selecionar apresentador
                         <span className="text-danger ms-1">*</span>
                     </label>
-                    {submission?.id ? (
-                        <select
-                            id="apresentador-select"
-                            className="form-control input-title"
-                            {...register("apresentador")}
-                            disabled={loadingUserList}>
+                    <select
+                        id="apresentador-select"
+                        className="form-control input-title"
+                        {...register("apresentador")}
+                        disabled={loadingUserList}
+                    >
                             <option value="">Selecione um apresentador</option>
-                            {apresentadoresComApresentacao.length === 0 &&
-                                !loadingUserList ? (
+                            {opcoesApresentadoresSelect.length === 0 && !loadingUserList ? (
                                 <option value="" disabled>
-                                    Nenhum apresentador encontrado
+                                Nenhum apresentador encontrado
                                 </option>
                             ) : (
-                                apresentadoresComApresentacao.map(
-                                    (apresentador) => (
-                                        <option
-                                            key={apresentador.id}
-                                            value={apresentador.id}>
-                                            {apresentador.name}
-                                        </option>
-                                    )
-                                )
-                            )}
-                        </select>
-                    ) : (
-                        <select
-                            id="apresentador-select"
-                            className="form-control input-title"
-                            {...register("apresentador")}
-                            disabled={loadingUserList}>
-                            <option value="">Selecione um apresentador</option>
-                            {apresentadores.length === 0 && !loadingUserList ? (
-                                <option value="" disabled>
-                                    Nenhum apresentador encontrado
+                                opcoesApresentadoresSelect.map((apresentador) => (
+                                <option key={apresentador.id} value={apresentador.id}>
+                                    {apresentador.name}
                                 </option>
-                            ) : (
-                                apresentadores.map((apresentador) => (
-                                    <option
-                                        key={apresentador.id}
-                                        value={apresentador.id}>
-                                        {apresentador.name}
-                                    </option>
                                 ))
                             )}
-                        </select>
-                    )}
+                    </select>
                 </div>
             )}
 
