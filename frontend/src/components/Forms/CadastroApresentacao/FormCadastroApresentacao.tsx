@@ -45,16 +45,12 @@ const esquemaCadastro = z.object({
         .refine((val) => val && val.trim().length > 0, {
             message: "O envio do slide em PDF é obrigatório",
         }),
-    linkApresentacao: z.string().optional().refine((val) => {
-        if (!val || val.trim() === "") return true;
-        const urlWithProtocol = val.startsWith("www.") ? `http://${val}` : val;
-        return z.string().url().safeParse(urlWithProtocol).success;
-    }, {
-        message: "Link inválido",
-    }),
+    linkApresentacao: z
+        .string()
+        .trim()
+        .optional(),
+
 });
-
-
 
 type CadastroFormulario = z.infer<typeof esquemaCadastro>;
 
@@ -117,45 +113,35 @@ export function FormCadastroApresentacao() {
         }
     }, [submission, setValue]);
 
-    const apresentadores = userList.filter(
-        (usuario) => usuario.profile === "Presenter" && !usuario.hasSubmission
-    );
-
-    const apresentadoresComApresentacao = userList.filter(
-        (usuario) => usuario.profile === "Presenter" && usuario.hasSubmission
-    );
-
-
     const opcoesApresentadoresSelect = useMemo(() => {
-
         const todosApresentadores = userList.filter((u) => u.profile === "Presenter");
+        const apresentadoresSemSubmissao = userList.filter(
+            (usuario) => usuario.profile === "Presenter" && !usuario.hasSubmission
+        );
 
 
-        if (submission?.id) {
-            const base = apresentadoresComApresentacao.length
-            ? apresentadoresComApresentacao
-            : todosApresentadores;
+        if (submission?.id && submission.mainAuthorId) {
+            const apresentadorAtual = todosApresentadores.find(
+                (u) => u.id === submission.mainAuthorId
+            );
 
-            if (submission.mainAuthorId) {
-                const existe = base.some((u) => u.id === submission.mainAuthorId);
-                if (!existe) {
-                    const filtroLista = todosApresentadores.find((u) => u.id === submission.mainAuthorId);
-                    const fallback = { id: submission.mainAuthorId, name: submission?.mainAuthor ?? "Apresentador" };
-                    return [filtroLista ?? fallback, ...base];
-                }
+            if (apresentadorAtual) {
+                const outrosDisponiveis = apresentadoresSemSubmissao.filter(
+                    a => a.id !== apresentadorAtual.id
+                );
+
+                return [apresentadorAtual, ...outrosDisponiveis];
             }
-        return base;
-  }
 
-  return apresentadores;
-}, [
-  submission?.id,
-  submission?.mainAuthorId,
-  submission?.mainAuthor,
-  apresentadores,
-  apresentadoresComApresentacao,
-  userList,
-]);
+            return apresentadoresSemSubmissao;
+        }
+
+        return apresentadoresSemSubmissao;
+    }, [
+        userList,
+        submission?.id,
+        submission?.mainAuthorId,
+    ]);
 
     useEffect(() => {
         if (!professoresCarregou) {
@@ -169,6 +155,7 @@ export function FormCadastroApresentacao() {
             getUsers({ profiles: "Presenter" });
         }
     }, [user?.level, userList.length, getUsers]);
+
 
     const aoMudarArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
         const arquivoSelecionado = e.target.files?.[0];
@@ -367,18 +354,18 @@ export function FormCadastroApresentacao() {
                         {...register("apresentador")}
                         disabled={loadingUserList}
                     >
-                            <option value="">Selecione um apresentador</option>
-                            {opcoesApresentadoresSelect.length === 0 && !loadingUserList ? (
-                                <option value="" disabled>
+                        <option value="">Selecione um apresentador</option>
+                        {opcoesApresentadoresSelect.length === 0 && !loadingUserList ? (
+                            <option value="" disabled>
                                 Nenhum apresentador encontrado
-                                </option>
-                            ) : (
-                                opcoesApresentadoresSelect.map((apresentador) => (
+                            </option>
+                        ) : (
+                            opcoesApresentadoresSelect.map((apresentador) => (
                                 <option key={apresentador.id} value={apresentador.id}>
                                     {String((apresentador as any).name)}
                                 </option>
-                                ))
-                            )}
+                            ))
+                        )}
                     </select>
                 </div>
             )}
