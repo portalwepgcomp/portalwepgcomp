@@ -21,11 +21,13 @@ interface IContextLogin {
   singIn: (body: UserLogin) => Promise<void>;
   logout: () => void;
   isValidatingToken: boolean;
+  isLoggingOut: boolean;
 }
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState<null | UserProfile>(null);
   const [isValidatingToken, setIsValidatingToken] = useState<boolean>(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { showAlert } = useSweetAlert();
   const router = useRouter();
 
@@ -111,9 +113,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   function logout() {
+    setIsLoggingOut(true);
     localStorage.clear();
+    router.push("/home");
     setUser(null);
-    return router.push("/home");
   }
 
   return (
@@ -124,6 +127,7 @@ export const AuthProvider = ({ children }) => {
         singIn,
         logout,
         isValidatingToken,
+        isLoggingOut
       }}
     >
       {children}

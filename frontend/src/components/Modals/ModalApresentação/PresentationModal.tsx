@@ -6,8 +6,8 @@ import { useContext, useEffect, useState } from "react";
 
 import Star from "@/components/UI/Star";
 import { AuthContext } from "@/context/AuthProvider/authProvider";
-import { usePresentation } from "@/hooks/usePresentation";
 import { useEdicao } from "@/hooks/useEdicao";
+import { usePresentation } from "@/hooks/usePresentation";
 
 import "./style.scss";
 

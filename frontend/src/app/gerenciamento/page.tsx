@@ -1,7 +1,7 @@
 "use client";
 
-import Banner from "@/components/UI/Banner";
 import Gerenciar from "@/components/GerenciarUsuario/Gerenciar";
+import Banner from "@/components/UI/Banner";
 
 export default function Gerenciamento() {
   return (

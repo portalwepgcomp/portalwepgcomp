@@ -1,7 +1,7 @@
 "use client";
 
-import ModalComponent from "@/components/UI/ModalComponent/ModalComponent";
 import { FormEdicao } from "@/components/Forms/CadastroEdicao/FormEdicao";
+import ModalComponent from "@/components/UI/ModalComponent/ModalComponent";
 import "./style.scss";
 
 interface ModalEditarEdicaoProps {

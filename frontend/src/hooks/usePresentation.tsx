@@ -4,19 +4,27 @@ import { BookmarkedPresentations } from "@/models/presentatio-bookmarks";
 import { presentationApi } from "@/services/presentation";
 import { createContext, ReactNode, useState } from "react";
 
+
+import axiosInstance from "@/utils/api";
+
+const baseUrl = "/presentation";
+const instance = axiosInstance;
+
 interface PresentationProps {
   children: ReactNode;
 }
 
 interface PresentationProviderData {
-    presentationList: Presentation[];
-    presentationBookmark: PresentationBookmark;
-    presentationBookmarks: BookmarkedPresentations;
-    getPresentationAll: (eventEditionId: string) => void;
-    getPresentationBookmark: (presentationBookmark: PresentationBookmarkRegister) => Promise<any>;
-    getPresentationBookmarks: () => Promise<PresentationBookmark>;
-    postPresentationBookmark: (presentationBookmark: PresentationBookmarkRegister) => void;
-    deletePresentationBookmark: (presentationBookmark: PresentationBookmarkRegister) => void;
+  presentationList: Presentation[];
+  presentationBookmark: PresentationBookmark;
+  presentationBookmarks: BookmarkedPresentations;
+  getPresentationAll: (eventEditionId: string) => void;
+  getPresentationBookmark: (presentationBookmark: PresentationBookmarkRegister) => Promise<any>;
+  getPresentationBookmarks: () => Promise<PresentationBookmark>;
+  postPresentationBookmark: (presentationBookmark: PresentationBookmarkRegister) => void;
+  deletePresentationBookmark: (presentationBookmark: PresentationBookmarkRegister) => void;
+  getPresentationById: (id: string) => Promise<Presentation>;
+
 }
 
 export const PresentationContext = createContext<PresentationProviderData>(
@@ -26,13 +34,21 @@ export const PresentationContext = createContext<PresentationProviderData>(
 export const usePresentation = () => useContext(PresentationContext);
 
 export const PresentationProvider = ({ children }: PresentationProps) => {
-    const [presentationList, setpresentationList] = useState<Presentation[]>([]);
-    const [presentationBookmark, setpresentationBookmark] = useState<PresentationBookmark>({ bookmarked: false });
-    const [presentationBookmarks, setPresentationbookmarks] = useState<BookmarkedPresentations>({
-      bookmarkedPresentations: [],
+  const [presentationList, setpresentationList] = useState<Presentation[]>([]);
+  const [presentationBookmark, setpresentationBookmark] = useState<PresentationBookmark>({ bookmarked: false });
+  const [presentationBookmarks, setPresentationbookmarks] = useState<BookmarkedPresentations>({
+    bookmarkedPresentations: [],
+  });
+
+  const getPresentationById = async (id: string): Promise<Presentation> => {
+    const { data } = await instance.get(`${baseUrl}/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
-    
+    return data;
+  }
 
   const getPresentationAll = async (eventEditionId: string) => {
     presentationApi
@@ -43,7 +59,7 @@ export const PresentationProvider = ({ children }: PresentationProps) => {
       .catch(() => {
         setpresentationList([]);
       })
-      .finally(() => {});
+      .finally(() => { });
   };
 
   const getPresentationBookmark = async (
@@ -59,25 +75,25 @@ export const PresentationProvider = ({ children }: PresentationProps) => {
         setpresentationBookmark({ bookmarked: false });
         return { bookmarked: false };
       })
-      .finally(() => {});
+      .finally(() => { });
   };
 
-    const getPresentationBookmarks = async () => {
-      try {
-        const response = await presentationApi.getPresentationBookmarks();
-        
-        setPresentationbookmarks(response);
-        return response;
-      } catch {
-        setpresentationBookmark({ bookmarked: false });
-        return { bookmarked: false };
-      }
-    }
+  const getPresentationBookmarks = async () => {
+    try {
+      const response = await presentationApi.getPresentationBookmarks();
 
-    const postPresentationBookmark = async (presentationBookmark: PresentationBookmarkRegister) => {
-        presentationApi.postPresentationBookmark(presentationBookmark)
-            .finally(() => {});
+      setPresentationbookmarks(response);
+      return response;
+    } catch {
+      setpresentationBookmark({ bookmarked: false });
+      return { bookmarked: false };
     }
+  }
+
+  const postPresentationBookmark = async (presentationBookmark: PresentationBookmarkRegister) => {
+    presentationApi.postPresentationBookmark(presentationBookmark)
+      .finally(() => { });
+  }
 
   const deletePresentationBookmark = async (presentationBookmark: PresentationBookmarkRegister) => {
     await presentationApi.deletePresentationBookmark(presentationBookmark)
@@ -85,20 +101,21 @@ export const PresentationProvider = ({ children }: PresentationProps) => {
     await getPresentationBookmarks();
   };
 
-    return(
-        <PresentationContext.Provider
-            value={{
-                presentationList,
-                presentationBookmark,
-                presentationBookmarks,
-                getPresentationAll,
-                postPresentationBookmark,
-                deletePresentationBookmark,
-                getPresentationBookmark,
-                getPresentationBookmarks
-            }}
-        >
-            {children}
-        </PresentationContext.Provider>
-    )
+  return (
+    <PresentationContext.Provider
+      value={{
+        presentationList,
+        presentationBookmark,
+        presentationBookmarks,
+        getPresentationAll,
+        postPresentationBookmark,
+        deletePresentationBookmark,
+        getPresentationBookmark,
+        getPresentationBookmarks,
+        getPresentationById
+      }}
+    >
+      {children}
+    </PresentationContext.Provider>
+  )
 }
