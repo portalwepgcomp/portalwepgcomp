@@ -99,7 +99,6 @@ export default function Apresentacoes() {
           onClickItem={handleSelect}
           onClear={() => setSubmission(null)}
           isAddButtonDisabled={isAddButtonDisabled}
-          counterLabel={{singular: "apresentação cadastrada", plural: "apresentações cadastradas"}}
         />
         <ModalEditarCadastro />
       </div>
