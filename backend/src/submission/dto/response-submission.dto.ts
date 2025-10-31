@@ -3,22 +3,20 @@ import {
   Submission,
   SubmissionStatus,
   UserAccount,
+  PresentationBlockType,
+  Presentation,
 } from '@prisma/client';
-
-import { PresentationBlockType } from '@prisma/client';
 
 export class ResponseBlockInfo {
   id: string;
   title: string;
   roomId: string | null;
-  startTime: Date;
   type: PresentationBlockType;
 
   constructor(block: any) {
     this.id = block.id;
     this.title = block.title;
     this.roomId = block.roomId;
-    this.startTime = block.startTime;
     this.type = block.type;
   }
 }
@@ -56,6 +54,10 @@ export class ResponseSubmissionDto {
   constructor(
     submission: Submission & { mainAuthor?: UserAccount } & {
       advisor?: UserAccount;
+    } & {
+      Presentation?: (Presentation & {
+        presentationBlock?: PresentationBlockType;
+      })[];
     },
     proposedStartTime?: Date,
   ) {
@@ -88,14 +90,14 @@ export class ResponseSubmissionDto {
     this.updatedAt = submission.updatedAt;
     this.linkHostedFile = submission.linkHostedFile;
 
-    const mainPresentation = (submission.Presentation && submission.Presentation.length > 0)
+    const mainPresentation =
+      submission.Presentation && submission.Presentation.length > 0
         ? submission.Presentation[0]
         : null;
 
     if (mainPresentation) {
       this.presentationId = mainPresentation.id;
       this.presentationStatus = mainPresentation.status;
-      this.presentationStartTime = mainPresentation.startTime;
       if (mainPresentation.presentationBlock) {
         this.block = new ResponseBlockInfo(mainPresentation.presentationBlock);
       } else {
