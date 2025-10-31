@@ -381,7 +381,7 @@ export default function Gerenciar() {
                 key="edit-user"
                 className="btn btn-info btn-sm"
                 onClick={() => {
-                  router.push('/gerenciamento/' + targetUser.id + '/editar')
+                  router.push('/gerenciamento/usuario/' + targetUser.id + '/editar')
                 }}
                 disabled={!Edicao?.isActive || loadingRoleAction}
                 title="Editar usuário"

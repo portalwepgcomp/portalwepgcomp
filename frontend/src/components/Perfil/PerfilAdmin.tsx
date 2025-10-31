@@ -134,7 +134,7 @@ export default function PerfilAdmin({
                 </li>
                 {role === "Superadmin" && (
                     <li>
-                        <Link className="dropdown-item" href="/gerenciamento">
+                        <Link className="dropdown-item" href="/gerenciamento/usuario">
                             Usuários
                         </Link>
                     </li>

@@ -1,0 +1,26 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/mixins.scss';
+
+.form-group {
+  margin-bottom: $spacing-lg;
+  
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $color-foreground;
+    margin-bottom: $spacing-sm;
+    letter-spacing: 0.01em;
+  }
+}
+
+.input {
+  @include input-base;
+}
+
+.textarea {
+  @include input-base;
+  resize: none;
+  min-height: 200px;
+  font-family: inherit;
+}
