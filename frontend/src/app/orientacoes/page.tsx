@@ -4,13 +4,11 @@ import OrientacoesAudiencia from "@/components/Orientacoes/OrientacoesAudiencia"
 import OrientacoesAutores from "@/components/Orientacoes/OrientacoesAutores";
 import OrientacoesAvaliadores from "@/components/Orientacoes/OrientacoesAvaliadores";
 import Banner from "@/components/UI/Banner";
-import Image from "next/image";
+import { AuthContext } from "@/context/AuthProvider/authProvider";
+import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
+import { useOrientacao } from "@/hooks/useOrientacao";
 import { useContext, useEffect, useState } from "react";
 import "./style.scss";
-import { useOrientacao } from "@/hooks/useOrientacao";
-import { AuthContext } from "@/context/AuthProvider/authProvider";
-import HtmlEditorComponent from "@/components/HtmlEditorComponent/HtmlEditorComponent";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 
 export default function Orientacoes() {
     const [setion, setSetion] = useState<number>(0);

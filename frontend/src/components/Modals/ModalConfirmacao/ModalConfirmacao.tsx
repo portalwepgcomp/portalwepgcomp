@@ -1,7 +1,7 @@
 "use client";
 
-import "./style.scss";
 import ModalComponent from "@/components/UI/ModalComponent/ModalComponent";
+import "./style.scss";
 
 interface ModalConfirmacaoProps {
   id: string;
