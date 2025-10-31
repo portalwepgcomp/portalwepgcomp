@@ -1,2 +1,0 @@
- !     User bruno.lucas does not have permissions to run logs:report
- !     Access denied
