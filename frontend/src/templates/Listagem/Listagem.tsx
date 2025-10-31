@@ -187,7 +187,7 @@ export default function Listagem({
                             }
                           }}
                           linkHostedFile={card.linkHostedFile}
-                          section={card?.block?.title}
+                          session={card?.block?.title}
                       />
                   ) : (
                       <PresentationCard
