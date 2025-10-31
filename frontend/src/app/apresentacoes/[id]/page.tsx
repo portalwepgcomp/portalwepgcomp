@@ -1,256 +1,358 @@
 "use client";
 
-import { useSubmission } from "@/hooks/useSubmission";
+import Banner from "@/components/UI/Banner";
+import { useSweetAlert } from "@/hooks/useAlert";
+import { usePresentation } from "@/hooks/usePresentation";
 import moment from "moment";
 import "moment/locale/pt-br";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import "./style.scss";
-import { usePresentation } from "@/hooks/usePresentation";
+import { formatDate, formatOnlyTime, getInitials } from "./utils";
 
 export default function ApresentacaoDetalhes() {
-  const params = useParams();
-  const router = useRouter();
-  const presentationId = params.id as string;
-  const { getPresentations } = usePresentation();
+    const params = useParams();
+    const router = useRouter();
+    const presentationId = params.id as string;
+    const {
+        getPresentationById,
+        postPresentationBookmark,
+        getPresentationBookmark,
+        deletePresentationBookmark
+    } = usePresentation();
 
-  const [presentation, setPresentation] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  
-  // Previne múltiplas chamadas
-  const isFetching = useRef(false);
-  const hasFetched = useRef(false);
+    const { showAlert } = useSweetAlert();
+    const [presentation, setPresentation] = useState<Presentation | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+    const [presentationBookmark, setPresentationBookmark] = useState<PresentationBookmark>();
 
-  useEffect(() => {
-    moment.locale("pt-br");
-  }, []);
+    const isFetching = useRef(false);
+    const hasFetched = useRef(false);
 
-  useEffect(() => {
-    // Previne chamadas duplicadas e só executa se o ID mudou
-    if (!presentationId || isFetching.current || hasFetched.current) {
-      return;
-    }
+    useEffect(() => {
+        moment.locale("pt-br");
+    }, []);
 
-    const controller = new AbortController();
-    
-    async function fetchPresentation() {
-      isFetching.current = true;
-      
-      try {
-        // Busca a submissão usando seu hook
-        const data = await getSubmissionById(presentationId);
-        
-        if (!controller.signal.aborted) {
-          setPresentation(data);
-          setLoading(false);
-          setError(false);
-          hasFetched.current = true;
+    useEffect(() => {
+        if (!presentationId || isFetching.current || hasFetched.current) {
+            return;
         }
-        
-      } catch (err) {
-        if (!controller.signal.aborted) {
-          console.error("Erro ao carregar apresentação:", err);
-          setError(true);
-          setLoading(false);
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          isFetching.current = false;
-        }
-      }
-    }
 
-    fetchPresentation();
+        const controller = new AbortController();
 
-    // Cleanup: cancela requisição se componente desmontar
-    return () => {
-      controller.abort();
-      isFetching.current = false;
+        async function fetchPresentation() {
+            isFetching.current = true;
+
+            try {
+                const bookmark = await getPresentationBookmark({ presentationId });
+                if (!controller.signal.aborted) {
+                    setPresentationBookmark(bookmark);
+                }
+
+                const data = await getPresentationById(presentationId);
+                console.log(data)
+                if (!controller.signal.aborted) {
+                    setPresentation(data);
+                    setLoading(false);
+                    setError(false);
+                    hasFetched.current = true;
+                }
+
+            } catch (err) {
+                if (!controller.signal.aborted) {
+                    showAlert({
+                        icon: "error",
+                        title: `Erro ao carregar apresentação: ${err}`,
+                        text: "Ocorreu um erro ao carregar os detalhes da apresentação. Tente novamente mais tarde!",
+                        confirmButtonText: "Retornar",
+                    });
+                    setError(true);
+                    setLoading(false);
+                }
+            } finally {
+                if (!controller.signal.aborted) {
+                    isFetching.current = false;
+                }
+            }
+        }
+
+        fetchPresentation();
+
+        return () => {
+            controller.abort();
+            isFetching.current = false;
+        };
+    }, [presentationId]);
+
+    const handleBack = () => {
+        router.back();
     };
-  }, [presentationId, getSubmissionById]);
 
-  const handleBack = () => {
-    router.back();
-  };
+    const handleFavorite = async () => {
+        const wasBookmarked = presentationBookmark?.bookmarked ?? false;
 
-  const formatDateTime = (dateString: string) => {
-    return moment(dateString).format("DD [de] MMMM [de] YYYY [às] HH:mm");
-  };
+        setPresentationBookmark({
+            bookmarked: !wasBookmarked
+        });
 
-  const formatTime = (dateString: string) => {
-    return moment(dateString).format("HH:mm");
-  };
+        try {
+            if (wasBookmarked) {
+                await deletePresentationBookmark({ presentationId });
+            } else {
+                await postPresentationBookmark({ presentationId });
+            }
+        } catch (err) {
+            setPresentationBookmark({
+                bookmarked: wasBookmarked
+            });
 
-  if (loading) {
+            showAlert({
+                icon: "error",
+                title: "Erro ao favoritar",
+                text: "Não foi possível atualizar o favorito. Tente novamente.",
+            });
+        }
+    };
+
+    const handleAddToCalendar = () => {
+        if (!presentation?.presentationTime) {
+            showAlert({
+                icon: "error",
+                title: "Erro",
+                text: "Data da apresentação não disponível.",
+            });
+            return;
+        }
+
+        try {
+            const startDate = moment(presentation.presentationTime);
+            const endDate = moment(presentation.presentationTime).add(1, 'hour');
+
+            const startTime = startDate.format('YYYYMMDDTHHmmss');
+            const endTime = endDate.format('YYYYMMDDTHHmmss');
+
+            const eventDetails = {
+                text: presentation.submission?.title || 'Apresentação',
+                dates: `${startTime}/${endTime}`,
+                details: presentation.submission?.abstract || '',
+                location: 'Auditório A do IGEO',
+                ctz: 'America/Sao_Paulo',
+            };
+
+            const params = new URLSearchParams();
+            params.append('action', 'TEMPLATE');
+            params.append('text', eventDetails.text);
+            params.append('dates', eventDetails.dates);
+            params.append('details', eventDetails.details);
+            params.append('location', eventDetails.location);
+            params.append('ctz', eventDetails.ctz);
+
+            const calendarUrl = `https://calendar.google.com/calendar/render?${params.toString()}`;
+
+            window.open(calendarUrl, '_blank', 'noopener,noreferrer');
+
+        } catch (err) {
+            showAlert({
+                icon: "error",
+                title: "Erro ao criar evento",
+                text: "Não foi possível criar o evento no calendário. Tente novamente.",
+            });
+            console.error('Erro ao criar evento no calendário:', err);
+        }
+    };
+
+    const handleDownloadPdf = async () => {
+        const pdfFile = presentation?.submission?.pdfFile;
+
+        if (!pdfFile) {
+            showAlert({
+                icon: "warning",
+                title: "Arquivo não disponível",
+                text: "Esta apresentação não possui arquivo PDF cadastrado.",
+            });
+            return;
+        }
+
+        try {
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${pdfFile}`;
+
+            // Faz a requisição para verificar se o arquivo existe
+            const response = await fetch(url, { method: 'HEAD' });
+
+            if (!response.ok) {
+                showAlert({
+                    icon: "warning",
+                    title: "Arquivo não encontrado",
+                    text: "O arquivo PDF desta apresentação não está mais disponível no servidor.",
+                });
+                return;
+            }
+
+            // Se o arquivo existe, abre em nova aba para download
+            window.open(url, '_blank', 'noopener,noreferrer');
+
+        } catch (err) {
+            console.error('Erro ao verificar arquivo:', err);
+            showAlert({
+                icon: "error",
+                title: "Erro ao baixar",
+                text: "Não foi possível verificar a disponibilidade do arquivo. Tente novamente mais tarde.",
+            });
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="apresentacao-loading">
+                <div className="loading-spinner"></div>
+                <p>Carregando detalhes da apresentação...</p>
+            </div>
+        );
+    }
+
+    if (error || !presentation) {
+        return (
+            <div className="apresentacao-error">
+                <h2>Apresentação não encontrada</h2>
+                <p>Não foi possível carregar os detalhes desta apresentação.</p>
+                <button onClick={handleBack} className="btn-back">
+                    Voltar para a programação
+                </button>
+            </div>
+        );
+    }
+
     return (
-      <div className="apresentacao-loading">
-        <div className="loading-spinner"></div>
-        <p>Carregando detalhes da apresentação...</p>
-      </div>
+        <>
+        <Banner title="Detalhes da Apresentação" />
+            <div className="presentation-detail-page">
+                <button className="back-button" onClick={() => router.back()}>
+                    ← Voltar para programação
+                </button>
+
+                <div className="detail-header">
+                    <h1 className="detail-title">{presentation.submission?.title}</h1>
+                </div>
+
+                <div className="detail-content">
+                    <div className="presenter-card">
+                        <div className="presenter-avatar">
+                            {presentation.submission?.mainAuthor?.photoFilePath ? (
+                                <img src={presentation.submission.mainAuthor.photoFilePath} alt={presentation.submission.mainAuthor.name} />
+                            ) : (
+                                <div className="avatar-initials">{getInitials(presentation.submission?.mainAuthor?.name || '')}</div>
+                            )}
+                        </div>
+                        <div className="presenter-info">
+                            <h2 className="presenter-name">{presentation.submission?.mainAuthor?.name}</h2>
+                            <p className="presenter-email">
+                                <span className="icon">✉</span> {presentation.submission?.mainAuthor?.email}
+                            </p>
+                            {presentation.submission?.advisor && (
+                                <p className="presenter-advisor">
+                                    Orientador: {presentation.submission.advisor.name}
+                                </p>
+                            )}
+                            {presentation.submission?.mainAuthor?.lattesUrl && (
+                                <a
+                                    href={presentation.submission.mainAuthor.lattesUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="lattes-link"
+                                >
+                                    <span className="icon">🔗</span> Currículo Lattes
+                                </a>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="details-section">
+                        <h3 className="section-title">Detalhes da Apresentação</h3>
+                        <div className="details-grid">
+                            <div className="detail-item">
+                                <span className="detail-icon">📅</span>
+                                <div className="detail-text">
+                                    <strong>Data</strong>
+                                    <p>{formatDate(presentation.presentationTime || "")}</p>
+                                </div>
+                            </div>
+                            <div className="detail-item">
+                                <span className="detail-icon">🕐</span>
+                                <div className="detail-text">
+                                    <strong>Horário</strong>
+                                    <p>{formatOnlyTime(presentation.presentationTime || "")}</p>
+                                </div>
+                            </div>
+                            <div className="detail-item">
+                                <span className="detail-icon">📍</span>
+                                <div className="detail-text">
+                                    <strong>Local</strong>
+                                    <p>Auditório A do IGEO</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="abstract-section">
+                        <h3 className="section-title">Resumo</h3>
+                        <p className="abstract-text">{presentation.submission?.abstract}</p>
+                    </div>
+
+                    <div className="actions-section">
+                        <h3 className="section-title">Ações</h3>
+                        <div className="action-buttons">
+                            <button
+                                className="action-button primary"
+                                onClick={handleAddToCalendar}
+                            >
+                                <span className="button-icon">📅</span>
+                                Adicionar ao Google Agenda
+                            </button>
+
+                            <button
+                                className="action-button secondary"
+                                onClick={handleDownloadPdf}
+                                disabled={!presentation.submission?.pdfFile}
+                                style={!presentation.submission?.pdfFile ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                            >
+                                <span className="button-icon">⬇</span>
+                                Baixar Apresentação
+                            </button>
+
+                            {presentation.submission?.linkHostedFile && (
+                                <a
+                                    href={presentation.submission?.linkHostedFile}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="action-button secondary"
+                                >
+                                    <span className="button-icon">🔗</span>
+                                    Acessar Apresentação
+                                </a>
+                            )}
+
+                            <button
+                                className="action-button secondary"
+                                onClick={handleFavorite}
+                            >
+                                <span
+                                    className="button-icon"
+                                    style={{ color: presentationBookmark?.bookmarked ? 'red' : 'inherit' }}
+                                >
+                                    {presentationBookmark?.bookmarked ? '❤️' : '🤍'}
+                                </span>
+                                {presentationBookmark?.bookmarked ? 'Desfavoritar' : 'Favoritar'}
+                            </button>
+
+                            <button className="action-button evaluate" onClick={() => router.push('/avaliacao/' + presentation.id)}>
+                                <span className="button-icon">⭐</span>
+                                Avaliar Apresentação
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
     );
-  }
-
-  if (error || !presentation) {
-    return (
-      <div className="apresentacao-error">
-        <h2>Apresentação não encontrada</h2>
-        <p>Não foi possível carregar os detalhes desta apresentação.</p>
-        <button onClick={handleBack} className="btn-back">
-          Voltar para a programação
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="apresentacao-detalhes">
-      <div className="apresentacao-header">
-        <button onClick={handleBack} className="btn-back">
-          <span className="back-arrow">←</span> 
-          <span>Voltar para a programação</span>
-        </button>
-      </div>
-
-      <div className="apresentacao-content">
-        <div className="apresentacao-main">
-          <h1 className="apresentacao-titulo">
-            {presentation.submission?.title || presentation.title}
-          </h1>
-
-          <div className="apresentacao-meta">
-            {presentation.startTime && (
-              <div className="meta-item">
-                <strong>📅 Data e Horário</strong>
-                <span>{formatDateTime(presentation.startTime)}</span>
-              </div>
-            )}
-
-            {presentation.room && (
-              <div className="meta-item">
-                <strong>📍 Local</strong>
-                <span>{presentation.room.name}</span>
-              </div>
-            )}
-
-            {presentation.submission?.mainAuthor && (
-              <div className="meta-item">
-                <strong>👤 Autor Principal</strong>
-                <span>{presentation.submission.mainAuthor.name}</span>
-                {presentation.submission.mainAuthor.email && (
-                  <span className="email">{presentation.submission.mainAuthor.email}</span>
-                )}
-              </div>
-            )}
-
-            {presentation.submission?.coAuthors && 
-             presentation.submission.coAuthors.length > 0 && (
-              <div className="meta-item">
-                <strong>👥 Co-autores</strong>
-                <ul>
-                  {presentation.submission.coAuthors.map((author: any, idx: number) => (
-                    <li key={idx}>{author.name}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {presentation.submission?.abstract && (
-            <div className="apresentacao-section">
-              <h2>Resumo</h2>
-              <p className="apresentacao-abstract">
-                {presentation.submission.abstract}
-              </p>
-            </div>
-          )}
-
-          {presentation.submission?.keywords && 
-           presentation.submission.keywords.length > 0 && (
-            <div className="apresentacao-section">
-              <h2>Palavras-chave</h2>
-              <div className="apresentacao-keywords">
-                {presentation.submission.keywords.map((keyword: string, idx: number) => (
-                  <span key={idx} className="keyword-tag">
-                    {keyword}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {presentation.submission?.methodology && (
-            <div className="apresentacao-section">
-              <h2>Metodologia</h2>
-              <p className="apresentacao-text">
-                {presentation.submission.methodology}
-              </p>
-            </div>
-          )}
-
-          {presentation.submission?.results && (
-            <div className="apresentacao-section">
-              <h2>Resultados</h2>
-              <p className="apresentacao-text">
-                {presentation.submission.results}
-              </p>
-            </div>
-          )}
-
-          {presentation.submission?.conclusions && (
-            <div className="apresentacao-section">
-              <h2>Conclusões</h2>
-              <p className="apresentacao-text">
-                {presentation.submission.conclusions}
-              </p>
-            </div>
-          )}
-        </div>
-
-        <aside className="apresentacao-sidebar">
-          <div className="sidebar-card">
-            <h3>Informações da Sessão</h3>
-            
-            {presentation.startTime && (
-              <div className="sidebar-item">
-                <span className="sidebar-label">Horário</span>
-                <span className="sidebar-value">{formatTime(presentation.startTime)}</span>
-              </div>
-            )}
-
-            {presentation.duration && (
-              <div className="sidebar-item">
-                <span className="sidebar-label">Duração</span>
-                <span className="sidebar-value">{presentation.duration} minutos</span>
-              </div>
-            )}
-
-            {presentation.room && (
-              <div className="sidebar-item">
-                <span className="sidebar-label">Sala</span>
-                <span className="sidebar-value">{presentation.room.name}</span>
-              </div>
-            )}
-
-            {presentation.session && (
-              <div className="sidebar-item">
-                <span className="sidebar-label">Sessão</span>
-                <span className="sidebar-value">{presentation.session.title}</span>
-              </div>
-            )}
-          </div>
-
-          <div className="sidebar-card sidebar-actions">
-            <h3>Ações</h3>
-            <button className="btn-action btn-calendar">
-              📅 Adicionar ao calendário
-            </button>
-            <button className="btn-action btn-share">
-              🔗 Compartilhar
-            </button>
-          </div>
-        </aside>
-      </div>
-    </div>
-  );
 }

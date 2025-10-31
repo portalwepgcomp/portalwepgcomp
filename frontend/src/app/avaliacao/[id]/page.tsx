@@ -13,6 +13,7 @@ import { useEdicao } from "@/hooks/useEdicao";
 import { useEvaluation } from "@/hooks/useEvaluation";
 import { usePresentation } from "@/hooks/usePresentation";
 import "./style.scss";
+import Banner from "@/components/UI/Banner";
 
 export default function Avaliacao({ params }) {
   const [saveEvaluation, setSaveEvaluation] = useState<
