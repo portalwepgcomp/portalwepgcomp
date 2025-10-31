@@ -1,77 +1,74 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import { useState } from "react";
+import Image from "next/image"
+import { useState } from "react"
 
-import Premiacoes from "@/components/Premiacao/Premiacoes";
-import Banner from "@/components/UI/Banner";
+import Premiacoes from "@/components/Premiacao/Premiacoes"
+import Banner from "@/components/UI/Banner"
 
-import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
-import { presentationApi } from "@/services/presentation";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
-import { useSweetAlert } from "@/hooks/useAlert";
-import { PremiacaoProvider } from "@/hooks/usePremiacao";
+import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout"
+import { getEventEditionIdStorage } from "@/context/AuthProvider/util"
+import { useSweetAlert } from "@/hooks/useAlert"
+import { PremiacaoProvider } from "@/hooks/usePremiacao"
+import { presentationApi } from "@/services/presentation"
+import "./style.scss"
 
 export default function Premiacao() {
-  const [activeCategory, setActiveCategory] = useState<
-    "banca" | "avaliadores" | "publico"
-  >("banca");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
-  const { showAlert } = useSweetAlert();
+  const [activeCategory, setActiveCategory] = useState<"banca" | "avaliadores" | "publico">("banca")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [isCalculating, setIsCalculating] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
+  const { showAlert } = useSweetAlert()
 
-  const handleChangeCategory = (
-    categoria: "banca" | "avaliadores" | "publico"
-  ) => {
-    setActiveCategory(categoria);
-  };
+  const handleChangeCategory = (categoria: "banca" | "avaliadores" | "publico") => {
+    setActiveCategory(categoria)
+  }
 
   const handleRecalculateScores = async () => {
-    const eventEditionId = getEventEditionIdStorage();
+    const eventEditionId = getEventEditionIdStorage()
     if (!eventEditionId) {
       showAlert({
         icon: "error",
         title: "Erro",
         text: "Evento não encontrado",
-      });
-      return;
+      })
+      return
     }
 
-    setIsCalculating(true);
+    setIsCalculating(true)
     try {
-      await presentationApi.calculateAllScores(eventEditionId);
+      await presentationApi.calculateAllScores(eventEditionId)
       showAlert({
         icon: "success",
         title: "Sucesso!",
         text: "Scores recalculados com sucesso",
         timer: 2000,
-      });
+      })
       // Recarregar a página para atualizar os dados
-      window.location.reload();
+      window.location.reload()
     } catch (error: any) {
       showAlert({
         icon: "error",
         title: "Erro ao recalcular scores",
         text: error.response?.data?.message || "Ocorreu um erro inesperado",
-      });
+      })
     } finally {
-      setIsCalculating(false);
+      setIsCalculating(false)
     }
-  };
+  }
 
-  const handleResetScores = async (type: "evaluators" | "public") => {
-    const eventEditionId = getEventEditionIdStorage();
+  const handleResetScores = async (type: "evaluators" | "public" | "committee") => {
+    const eventEditionId = getEventEditionIdStorage()
     if (!eventEditionId) {
       showAlert({
         icon: "error",
         title: "Erro",
         text: "Evento não encontrado",
-      });
-      return;
+      })
+      return
     }
 
-    const typeLabel = type === "evaluators" ? "da Banca" : "do Público";
+    const typeLabel = type === "evaluators" ? "da Banca" : type === "committee" ? "dos Avaliadores" : "do Público"
 
     const result = await showAlert({
       icon: "warning",
@@ -81,18 +78,20 @@ export default function Premiacao() {
       confirmButtonText: "Resetar",
       cancelButtonText: "Cancelar",
       confirmButtonColor: "#d33",
-    });
+    })
 
     if (!result.isConfirmed) {
-      return;
+      return
     }
 
-    setIsResetting(true);
+    setIsResetting(true)
     try {
       if (type === "evaluators") {
-        await presentationApi.resetEvaluatorsScores(eventEditionId);
+        await presentationApi.resetEvaluatorsScores(eventEditionId)
+      } else if (type === "committee") {
+        await presentationApi.resetCommitteeScores(eventEditionId)
       } else {
-        await presentationApi.resetPublicScores(eventEditionId);
+        await presentationApi.resetPublicScores(eventEditionId)
       }
 
       showAlert({
@@ -100,18 +99,18 @@ export default function Premiacao() {
         title: "Sucesso!",
         text: `Scores ${typeLabel} resetados com sucesso`,
         timer: 2000,
-      });
-      window.location.reload();
+      })
+      window.location.reload()
     } catch (error: any) {
       showAlert({
         icon: "error",
         title: "Erro ao resetar scores",
         text: error.response?.data?.message || "Ocorreu um erro inesperado",
-      });
+      })
     } finally {
-      setIsResetting(false);
+      setIsResetting(false)
     }
-  };
+  }
 
   return (
     <ProtectedLayout>
@@ -133,12 +132,7 @@ export default function Premiacao() {
                   type="button"
                   id="button-addon2"
                 >
-                  <Image
-                    src="/assets/images/search.svg"
-                    alt="Search icon"
-                    width={24}
-                    height={24}
-                  />
+                  <Image src="/assets/images/search.svg" alt="Search icon" width={24} height={24} />
                 </button>
               </div>
 
@@ -187,6 +181,15 @@ export default function Premiacao() {
                   <li>
                     <button
                       className="dropdown-item"
+                      onClick={() => handleResetScores("committee")}
+                      disabled={isResetting}
+                    >
+                      Resetar Avaliadores
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="dropdown-item"
                       onClick={() => handleResetScores("public")}
                       disabled={isResetting}
                     >
@@ -227,5 +230,5 @@ export default function Premiacao() {
         </div>
       </PremiacaoProvider>
     </ProtectedLayout>
-  );
+  )
 }
