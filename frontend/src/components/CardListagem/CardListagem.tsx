@@ -25,7 +25,6 @@ interface CardListagem {
   onClickItemDrag?: () => void | undefined;
   fileUrl?: string;
   linkHostedFile?: string;
-  session?: string
 }
 
 export default function CardListagem({
@@ -43,7 +42,6 @@ export default function CardListagem({
   onClickItemDrag,
   fileUrl,
   linkHostedFile,
-  session
 }: Readonly<CardListagem>) {
   const { showAlert } = useSweetAlert();
   const { Edicao } = useEdicao();
@@ -75,19 +73,10 @@ export default function CardListagem({
   return (
     <div className="card-listagem">
       <div className="card-listagem-text">
-        <h5 className="card-listagem-title">
-          {title}
-          {session && (
-              <span className="badge bg-light text-dark fw-semibold ms-2">
-                {session}
-              </span>
-          )}
-        </h5>
+        <h5 className="card-listagem-title">{title}</h5>
         {mainAuthor !== "Sem nome" && (
           <div className="card-listagem-authors">
-            <h6 className="card-listagem-main-author">
-              Apresentador(a): {mainAuthor}
-            </h6>
+            <h6 className="card-listagem-main-author">Apresentador(a): {mainAuthor}</h6>
             {advisor && <p className="card-listagem-advisor">Orientador(a): {advisor}</p>}
           </div>
         )}

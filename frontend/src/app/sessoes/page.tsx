@@ -117,7 +117,6 @@ export default function Sessoes() {
               onEdit={(value) => getSessionOnList(value)}
               onClear={() => setSessao(null)}
               onDelete={(id: string) => deleteSession(id, Edicao?.id ?? "")}
-              counterLabel={{singular: "sessão cadastrada", plural: "sessões cadastradas"}}
             />
             <ModalSessao />
             <ModalSessaoOrdenarApresentacoes />

@@ -11,11 +11,6 @@ import { useEdicao } from "@/hooks/useEdicao";
 import { useEffect, useState } from "react";
 import "./style.scss";
 
-interface CounterLabel {
-  singular: string;
-  plural: string;
-}
-
 export function mapCardList(
   list: any[],
   title = "title",
@@ -50,7 +45,6 @@ interface ListagemProps {
   onEdit?: (id: string) => void;
   onClear?: () => void;
   fullInfo?: boolean;
-  counterLabel?: CounterLabel;
 }
 
 export default function Listagem({
@@ -72,7 +66,6 @@ export default function Listagem({
   onEdit,
   onClear,
   fullInfo,
-  counterLabel,
 }: Readonly<ListagemProps>) {
   const pathname = usePathname();
   const { Edicao } = useEdicao();
@@ -82,168 +75,150 @@ export default function Listagem({
     setIsMounted(true);
   }, []);
 
-  const count = cardsList.length;
-  let counterLabelText = "";
-  if (count === 1) {
-    counterLabelText = counterLabel?.singular ?? "item cadastrado";
-  } else {
-    counterLabelText = counterLabel?.plural ?? "itens cadastrados";
-  }
-
   return (
     <div className="listagem-template">
       <Banner title={title} />
       <div className="listagem-template-content">
         <div className="listagem-template-user-area">
           {labelAddButton && !!Edicao?.isActive ? (
-              <button
-                  type="button"
-                  data-bs-toggle={idModal ? "modal" : undefined}
-                  data-bs-target={idModal ? `#${idModal}` : undefined}
-                  onClick={idModal ? onClear : onAddButtonClick}
-                  disabled={isAddButtonDisabled}
-              >
-                {labelAddButton}
-                <Image
-                    src="/assets/images/add.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                />
-              </button>
+            <button
+              type="button"
+              data-bs-toggle={idModal ? "modal" : undefined}
+              data-bs-target={idModal ? `#${idModal}` : undefined}
+              onClick={idModal ? onClear : onAddButtonClick}
+              disabled={isAddButtonDisabled}
+            >
+              {labelAddButton}
+              <Image
+                src="/assets/images/add.svg"
+                alt=""
+                width={24}
+                height={24}
+              />
+            </button>
           ) : (
-              ""
+            ""
           )}
           {onChangeSearchValue && (
-              <div
-                  className="input-group listagem-template-content-input"
-                  style={{
-                    visibility: isMyPresentation ? "hidden" : "visible",
-                    minWidth: "350px",
-                  }}
+            <div
+              className="input-group listagem-template-content-input"
+              style={{
+                visibility: isMyPresentation ? "hidden" : "visible",
+                minWidth: "350px",
+              }}
+            >
+              <input
+                placeholder={searchPlaceholder}
+                type="text"
+                className="form-control"
+                aria-label="campo de busca"
+                aria-describedby="botao-busca"
+                value={searchValue}
+                onChange={(e) => onChangeSearchValue(e.target.value)}
+              />
+              <button
+                className="btn btn-outline-secondary"
+                type="button"
+                id="botao-busca"
               >
-                <input
-                    placeholder={searchPlaceholder}
-                    type="text"
-                    className="form-control"
-                    aria-label="campo de busca"
-                    aria-describedby="botao-busca"
-                    value={searchValue}
-                    onChange={(e) => onChangeSearchValue(e.target.value)}
+                <Image
+                  src="/assets/images/search.svg"
+                  alt=""
+                  width={24}
+                  height={24}
                 />
-                <button
-                    className="btn btn-outline-secondary"
-                    type="button"
-                    id="botao-busca"
-                >
-                  <Image
-                      src="/assets/images/search.svg"
-                      alt=""
-                      width={24}
-                      height={24}
-                  />
-                </button>
-              </div>
+              </button>
+            </div>
           )}
         </div>
-
-        <div className="text-body-secondary mb-3">
-          {count === 1 ? 'Há' : 'São'}{' '}
-          <span className="fw-bold " style={{color: "#0094d4"}}>
-            {count}
-          </span>{" "}
-          {counterLabelText}
-        </div>
-
         <div className="listagem-template-cards">
           {!!cardsList.length &&
-              !isFavorites &&
-              cardsList?.map((card, i) =>
-                  !fullInfo ? (
-                      <CardListagem
-                          key={card.id ?? card.name ?? i}
-                          title={card?.title || "Sem Título"}
-                          subtitle={card.subtitle ? card.subtitle : ""}
-                          mainAuthor={card.mainAuthor?.name ? card.mainAuthor.name : "Sem nome"}
-                          advisor={card.advisor?.name ? card.advisor.name : "Sem nome"}
-                          generalButtonLabel={generalButtonLabel}
-                          idGeneralModal={
-                            card?.type == "Presentation" && !!card?.presentations?.length
-                                ? idGeneralModal
-                                : ""
-                          }
-                          idModalEdit={
-                            pathname?.includes("edicoes")
-                                ? "editarEdicaoModal"
-                                : idModal
-                          }
-                          onClickItem={() => onEdit && onEdit(card?.id ?? "")}
-                          onEdit={() => onEdit && onEdit(card?.id ?? "")}
-                          onDelete={() => onDelete && onDelete(card?.id ?? "")}
-                          fileUrl={card.pdfFile || card.fileUrl}
-                          onClickItemDrag={() => {
-                            if (onEdit && onClickItem) {
-                              onClickItem(card?.id);
-                            }
-                          }}
-                          linkHostedFile={card.linkHostedFile}
-                          session={card?.block?.title}
-                      />
-                  ) : (
-                      <PresentationCard
-                          key={card.id ?? card.name ?? i}
-                          id={card.id}
-                          title={card.title}
-                          subtitle={card.subtitle}
-                          name={card.name}
-                          pdfFile={card.pdfFile}
-                          presentationData={card.startTime}
-                          email={card.email}
-                          advisorName={card.advisorName}
-                          onDelete={() => onDelete && onDelete(card.id ?? "")}
-                      />
-                  )
-              )}
+            !isFavorites &&
+            cardsList?.map((card, i) =>
+              !fullInfo ? (
+                <CardListagem
+                  key={card.id ?? card.name ?? i}
+                  title={card?.title || "Sem Título"}
+                  subtitle={card.subtitle ? card.subtitle : ""}
+                  mainAuthor={card.mainAuthor?.name ? card.mainAuthor.name : "Sem nome"}
+                  advisor={card.advisor?.name ? card.advisor.name : "Sem nome"}
+                  generalButtonLabel={generalButtonLabel}
+                  idGeneralModal={
+                    card?.type == "Presentation" && !!card?.presentations?.length
+                      ? idGeneralModal
+                      : ""
+                  }
+                  idModalEdit={
+                    pathname?.includes("edicoes")
+                      ? "editarEdicaoModal"
+                      : idModal
+                  }
+                  onClickItem={() => onEdit && onEdit(card?.id ?? "")}
+                  onEdit={() => onEdit && onEdit(card?.id ?? "")}
+                  onDelete={() => onDelete && onDelete(card?.id ?? "")}
+                  fileUrl={card.pdfFile || card.fileUrl}
+                  onClickItemDrag={() => {
+                    if (onEdit && onClickItem) {
+                      onClickItem(card?.id);
+                    }
+                  }}
+                  linkHostedFile={card.linkHostedFile}
+                />
+              ) : (
+                <PresentationCard
+                  key={card.id ?? card.name ?? i}
+                  id={card.id}
+                  title={card.title}
+                  subtitle={card.subtitle}
+                  name={card.name}
+                  pdfFile={card.pdfFile}
+                  presentationData={card.startTime}
+                  email={card.email}
+                  advisorName={card.advisorName}
+                  onDelete={() => onDelete && onDelete(card.id ?? "")}
+                />
+              )
+            )}
           {!!cardsList.length &&
-              isFavorites &&
-              cardsList?.map((card, i) =>
-                  !fullInfo ? (
-                      <CardListagem
-                          key={card.id ?? card.name ?? i}
-                          title={card.title}
-                          mainAuthor={card.mainAuthor?.name ?? "Sem nome"}
-                          subtitle={card.subtitle}
-                          advisor={card.advisor?.name ?? "Sem nome"}
-                          showFavorite
-                          onClickItem={() => onClickItem && onClickItem(card)}
-                          fileUrl={card.pdfFile || card.fileUrl}
-                      />
-                  ) : (
-                      <PresentationCard
-                          key={card.id ?? card.name ?? i}
-                          id={card.id}
-                          title={card.title}
-                          subtitle={card.subtitle}
-                          name={card.name}
-                          pdfFile={card.pdfFile}
-                          email={card.email}
-                          advisorName={card.advisorName}
-                          onDelete={() => onDelete && onDelete(card.id ?? "")}
-                      />
-                  )
-              )}
+            isFavorites &&
+            cardsList?.map((card, i) =>
+              !fullInfo ? (
+                <CardListagem
+                  key={card.id ?? card.name ?? i}
+                  title={card.title}
+                  mainAuthor={card.mainAuthor?.name ?? "Sem nome"}
+                  subtitle={card.subtitle}
+                  advisor={card.advisor?.name ?? "Sem nome"}
+                  showFavorite
+                  onClickItem={() => onClickItem && onClickItem(card)}
+                  fileUrl={card.pdfFile || card.fileUrl}
+                />
+              ) : (
+                <PresentationCard
+                  key={card.id ?? card.name ?? i}
+                  id={card.id}
+                  title={card.title}
+                  subtitle={card.subtitle}
+                  name={card.name}
+                  pdfFile={card.pdfFile}
+                  email={card.email}
+                  advisorName={card.advisorName}
+                  onDelete={() => onDelete && onDelete(card.id ?? "")}
+                />
+              )
+            )}
           {cardsList.length == 0 && isMounted && (
-              <div className="d-flex align-items-center justify-content-center p-3 mt-4 me-5">
-                <h4 className="empty-list mb-0">
-                  <Image
-                      src="/assets/images/empty_box.svg"
-                      alt="Lista vazia"
-                      width={90}
-                      height={90}
-                  />
-                  Essa lista ainda está vazia
-                </h4>
-              </div>
+            <div className="d-flex align-items-center justify-content-center p-3 mt-4 me-5">
+              <h4 className="empty-list mb-0">
+                <Image
+                  src="/assets/images/empty_box.svg"
+                  alt="Lista vazia"
+                  width={90}
+                  height={90}
+                />
+                Essa lista ainda está vazia
+              </h4>
+            </div>
           )}
         </div>
       </div>
