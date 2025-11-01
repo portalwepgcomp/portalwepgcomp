@@ -41,4 +41,3 @@ export class ResponseUserDto {
     this.hasSubmission = hasSubmission;
   }
 }
-
