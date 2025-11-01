@@ -35,7 +35,81 @@ export default function Premiacao({ categoria, premiacoes, avaliadores, searchVa
                     `}
         </h5>
         <div className="d-flex flex-column gap-3">
-         <div className="d-flex align-items-center justify-content-between border border-3 border-solid custom-border p-3"><div className="d-flex align-items-center gap-3 flex-grow-1"><div className="ranking-position"><h3 className="mb-0 fw-bold text-primary">1º</h3></div><div className="text-black flex-grow-1"><h6 className="text-black fw-semibold ">The dispersion of Test Smells in Flutter projects and the feeling of their insertions</h6><h6 className="text-black mb-0">Tássio Guerreiro Antunes Virgínio</h6></div></div><div className="text-end"><h4 className="mb-0 text-black fw-bold">3.48</h4></div></div>
+          {premiacoes.length === 0 && categoria !== "avaliadores" ? (
+            <div className="d-flex align-items-center justify-content-center p-3">
+              <h4 className="empty-list mb-0">
+                <Image src="/assets/images/empty_box.svg" alt="Lista vazia" width={90} height={90} />
+                Essa lista ainda está vazia
+              </h4>
+            </div>
+          ) : categoria === "avaliadores" &&
+            premiacoesValuesAvaliadores !== undefined &&
+            premiacoesValuesAvaliadores.length === 0 ? (
+            <div className="d-flex align-items-center justify-content-center p-3">
+              <h4 className="empty-list mb-0">
+                <Image src="/assets/images/empty_box.svg" alt="Lista vazia" width={90} height={90} />
+                Essa lista ainda está vazia
+              </h4>
+            </div>
+          ) : premiacoes.length === 0 && categoria === "avaliadores" && premiacoesValuesAvaliadores !== undefined ? (
+            premiacoesValuesAvaliadores.map((item, index) => (
+              <div
+                key={index}
+                className="d-flex align-items-center justify-content-between border border-3 border-solid custom-border p-3"
+              >
+                <div className="d-flex">
+                  <div className="text-black fw-bold fs-3 me-3" style={{ minWidth: "30px" }}>
+                    {index + 1}º
+                  </div>
+                  <div className="text-black">
+                    <h6 className={`text-black fw-semibold ${!item.name ? "mb-0" : ""}`}>{item.name}</h6>
+                    {item.email && <h6 className="text-black mb-0">{item.email}</h6>}
+                  </div>
+                </div>
+                <div className="d-flex flex-column text-center">
+                  <p className="m-0">Votos</p>
+                  <p className="mb-0 text-black fw-bold">{categoria === "avaliadores" && item.votes}</p>
+                </div>
+              </div>
+            ))
+          ) : premiacoesValues !== undefined ? (
+            premiacoesValues.map((item, index) => (
+              <div
+                key={index}
+                className="d-flex align-items-center justify-content-between border border-3 border-solid custom-border p-3"
+              >
+                <div className="d-flex align-items-center gap-3 flex-grow-1">
+                  <div className="ranking-position">
+                    <h3 className="mb-0 fw-bold text-primary">{index + 1}º</h3>
+                  </div>
+                  <div className="text-black flex-grow-1">
+                    <h6 className={`text-black fw-semibold ${!item.submission.mainAuthor.name ? "mb-0" : ""}`}>
+                      {item.submission.title}
+                    </h6>
+                    {item.submission.mainAuthor.name && (
+                      <h6 className="text-black mb-0">{item.submission.mainAuthor.name}</h6>
+                    )}
+                  </div>
+                </div>
+                <div className="text-end">
+                  <h4 className="mb-0 text-black fw-bold">
+                    {categoria === "banca"
+                      ? item.evaluatorsAverageScore?.toFixed(2)
+                      : categoria === "publico"
+                      ? item.publicAverageScore?.toFixed(2)
+                      : ""}
+                  </h4>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="d-flex align-items-center justify-content-center p-3 mt-4 me-5">
+              <h4 className="empty-list mb-0">
+                <Image src="/assets/images/empty_box.svg" alt="Lista vazia" width={90} height={90} />
+                Essa lista ainda está vazia
+              </h4>
+            </div>
+          )}
         </div>
       </div>
     </div>
