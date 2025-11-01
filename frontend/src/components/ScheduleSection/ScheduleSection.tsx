@@ -45,7 +45,6 @@ export default function ScheduleSection() {
 
     useEffect(() => {
     const eventEditionId = getEventEditionIdStorage();
-    console.log({eventEditionId, Edicao, selectEdition});
     if (Edicao?.id && Edicao?.startDate && Edicao?.endDate) {
       listSessions(Edicao?.id);
       const generatedDates = generateDatesBetween(
@@ -80,19 +79,6 @@ export default function ScheduleSection() {
     openModal.current?.click();
   }
 
-  useEffect(() => {
-    const eventEditionId = getEventEditionIdStorage();
-    if (eventEditionId && Edicao?.startDate && Edicao?.endDate) {
-      listSessions(eventEditionId);
-      const generatedDates = generateDatesBetween(
-        Edicao.startDate,
-        Edicao.endDate,
-      );
-      setDates(generatedDates);
-      setSelectedDate(generatedDates[0]);
-    }
-    if (Edicao?.id) listRooms(Edicao?.id);
-  }, [Edicao?.id, selectEdition]);
 
   return (
     <div id="Programacao">
