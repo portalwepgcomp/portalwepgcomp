@@ -14,6 +14,7 @@ export const ProtectedLayout = ({
   const { showAlert } = useSweetAlert();
 
   useEffect(() => {
+    // Aguarda a validação inicial do token terminar
     if (isValidatingToken || isLoggingOut) {
       return;
     }
@@ -30,7 +31,7 @@ export const ProtectedLayout = ({
     }
   }, [user, isValidatingToken, router, isLoggingOut, showAlert]);
 
-
+  // Não renderiza nada enquanto valida ou se não houver usuário
   if (isValidatingToken || !user || isLoggingOut) {
     return null;
   }
