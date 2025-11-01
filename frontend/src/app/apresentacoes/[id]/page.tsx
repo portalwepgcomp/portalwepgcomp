@@ -239,7 +239,7 @@ export default function ApresentacaoDetalhes() {
                                 onClick={handleAddToCalendar}
                             >
                                 <span className="button-icon">📅</span>
-                                Adicionar ao Google Agenda
+                                Agendar
                             </button>
 
                             <button
@@ -249,7 +249,7 @@ export default function ApresentacaoDetalhes() {
                                 style={!presentation.submission?.pdfFile ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                             >
                                 <span className="button-icon">⬇</span>
-                                Baixar Apresentação
+                                Baixar
                             </button>
 
                             {presentation.submission?.linkHostedFile && (
@@ -260,7 +260,7 @@ export default function ApresentacaoDetalhes() {
                                     className="action-button secondary"
                                 >
                                     <span className="button-icon">🔗</span>
-                                    Acessar Apresentação
+                                    Acessar
                                 </a>
                             )}
 
@@ -279,7 +279,7 @@ export default function ApresentacaoDetalhes() {
 
                             <button className="action-button evaluate" onClick={() => router.push('/avaliacao/' + presentation.id)}>
                                 <span className="button-icon">⭐</span>
-                                Avaliar Apresentação
+                                Avaliar
                             </button>
                         </div>
                     </div>
