@@ -12,7 +12,13 @@ export function setUserLocalStorage(user: UserProfile) {
 }
 
 export function setEventEditionIdStorage(eventEditionId: string) {
-  localStorage.setItem("@Session:eventEditionId", eventEditionId);
+  try {
+    const COOKIE_NAME = "session_eventEditionId";
+    const maxAge = 60 * 60 * 24 * 30;
+    const value = encodeURIComponent(eventEditionId);
+    document.cookie = `${COOKIE_NAME}=${value}; Path=/; Max-Age=${maxAge}; SameSite=Lax`;
+  } catch {
+  }
 }
 
 export function getTokenLocalStorage() {
@@ -34,12 +40,19 @@ export function getUserLocalStorage() {
 }
 
 export function getEventEditionIdStorage() {
-  const eventEditionId = localStorage.getItem("@Session:eventEditionId");
-
-  if (eventEditionId) {
-    return eventEditionId;
+  try {
+    if (typeof document === "undefined") return null;
+    const COOKIE_NAME = "session_eventEditionId=";
+    const parts = document.cookie.split("; ");
+    for (const part of parts) {
+      if (part.startsWith(COOKIE_NAME)) {
+        return decodeURIComponent(part.substring(COOKIE_NAME.length));
+      }
+    }
+    return null;
+  } catch {
+    return null;
   }
-  return null;
 }
 
 export function logout() {
