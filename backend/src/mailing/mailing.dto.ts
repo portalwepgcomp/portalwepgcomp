@@ -25,3 +25,39 @@ export class ContactRequestDto {
 export class ContactResponseDto {
   message: string;
 }
+
+// src/emails/dto/send-group-email.dto.ts
+import { IsString, IsNotEmpty, IsObject, ValidateNested, IsOptional, IsArray } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class EmailFiltersDto {
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  profiles?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  roles?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  subprofiles?: string[];
+}
+
+export class SendGroupEmailDto {
+  @IsString()
+  @IsNotEmpty({ message: 'O assunto é obrigatório' })
+  subject: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'A mensagem é obrigatória' })
+  message: string;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => EmailFiltersDto)
+  filters: EmailFiltersDto;
+}

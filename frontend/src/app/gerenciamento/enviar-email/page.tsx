@@ -129,7 +129,6 @@ const SendEmail = () => {
     try {
       const groupConfig = GROUPS[selectedGroup];
       
-      // Enviar para o backend apenas os filtros do grupo
       const emailData = {
         subject,
         message,
@@ -140,22 +139,17 @@ const SendEmail = () => {
         },
       };
 
-      // TODO: Substituir pela sua chamada real de API
       // await emailApi.sendEmail(emailData);
       
       console.log("Enviando email:", emailData);
       console.log("Para:", recipientCount, "destinatários");
-
-      // Simulação de delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
 
       showAlert({
         icon: "success",
         title: "E-mail Enviado!",
         text: `E-mail enviado com sucesso para ${recipientCount} destinatário(s).`,
       });
-
-      // Limpar formulário
+      
       setSelectedGroup("");
       setSubject("");
       setMessage("");
@@ -210,7 +204,7 @@ const SendEmail = () => {
 
             <div>
               <div className="form-group">
-                <label>Grupo de Destinatários</label>
+                <label>Destinatários</label>
                 <Select 
                   value={selectedGroup} 
                   onValueChange={(value) => setSelectedGroup(value as GroupType)}

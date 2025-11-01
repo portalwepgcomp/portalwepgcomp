@@ -11,19 +11,12 @@ const Index = () => {
 
   return (
     <div className="index-page">
-      {/* Header */}
       <header className="index-page__header">
-        <h1 className="index-page__title">Portal WePGCOMP</h1>
         <p className="index-page__subtitle">Painel Administrativo</p>
-        <p className="index-page__description">
-          Sistema de gerenciamento e comunicação com usuários
-        </p>
       </header>
 
-      {/* Main Content */}
       <main className="index-page__main">
         <div className="index-page__grid">
-          {/* Email Card */}
           <div className="feature-card feature-card--active">
             <div className="feature-card__icon">
               <Mail />
@@ -40,7 +33,6 @@ const Index = () => {
             </button>
           </div>
 
-          {/* Users Card */}
           <div className="feature-card feature-card--disabled">
             <div className="feature-card__icon">
               <Users />
@@ -52,7 +44,6 @@ const Index = () => {
             <div className="feature-card__badge">Em breve</div>
           </div>
 
-          {/* Permissions Card */}
           <div className="feature-card feature-card--disabled">
             <div className="feature-card__icon">
               <GraduationCap  />

@@ -115,6 +115,13 @@ export default function PerfilAdmin({
                         Favoritos
                     </Link>
                 </li>
+                {role === "Superadmin" && (
+                    <li>
+                        <Link className="dropdown-item" href="/gerenciamento">
+                            Gerenciamento
+                        </Link>
+                    </li>
+                )}
                 <li>
                     <Link className="dropdown-item" href="/premiacao">
                         Premiação
