@@ -129,6 +129,7 @@ export default function MinhasApresentacoes() {
             onAddButtonClick={() => router.push("/cadastro-apresentacao")}
             onClear={() => setSubmission(null)}
             isMyPresentation={true}
+            counterLabel={{singular: "apresentação cadastrada", plural: "apresentações cadastradas"}}
           />
           <ModalEditarCadastro />
         </div>

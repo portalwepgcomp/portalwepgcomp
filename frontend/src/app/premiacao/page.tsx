@@ -118,7 +118,7 @@ export default function Premiacao() {
         <div className="d-flex flex-column before-banner premiacao">
           <div className="d-flex flex-column">
             <Banner title="Premiação" />
-            <div className="d-flex justify-content-center gap-4 buttons">
+            <div className="d-flex justify-content-center gap-4 buttons div-filtros">
               <div className="input-group">
                 <input
                   type="text"
@@ -149,10 +149,10 @@ export default function Premiacao() {
                   whiteSpace: "nowrap",
                 }}
               >
-                {isCalculating ? "Recalculando..." : "Recalcular Scores"}
+                {isCalculating ? "Recalculando..." : "Recalcular"}
               </button>
 
-              <div className="dropdown">
+
                 <button
                   className="btn btn-danger dropdown-toggle d-flex justify-content-center align-items-center fw-semibold"
                   type="button"
@@ -166,7 +166,7 @@ export default function Premiacao() {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  {isResetting ? "Resetando..." : "Resetar Scores"}
+                  {isResetting ? "Resetando..." : "Resetar"}
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="dropdownResetScores">
                   <li>
@@ -197,7 +197,7 @@ export default function Premiacao() {
                     </button>
                   </li>
                 </ul>
-              </div>
+
 
               <button
                 className={`btn d-flex justify-content-center align-items-center fw-semibold ${

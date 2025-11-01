@@ -49,9 +49,7 @@ export default function ApresentacaoDetalhes() {
                 if (!controller.signal.aborted) {
                     setPresentationBookmark(bookmark);
                 }
-
                 const data = await getPresentationById(presentationId);
-                console.log(data)
                 if (!controller.signal.aborted) {
                     setPresentation(data);
                     setLoading(false);
@@ -177,7 +175,6 @@ export default function ApresentacaoDetalhes() {
         try {
             const url = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${pdfFile}`;
 
-            // Faz a requisição para verificar se o arquivo existe
             const response = await fetch(url, { method: 'HEAD' });
 
             if (!response.ok) {
@@ -189,7 +186,6 @@ export default function ApresentacaoDetalhes() {
                 return;
             }
 
-            // Se o arquivo existe, abre em nova aba para download
             window.open(url, '_blank', 'noopener,noreferrer');
 
         } catch (err) {
@@ -234,6 +230,59 @@ export default function ApresentacaoDetalhes() {
                 <div className="detail-header">
                     <h1 className="detail-title">{presentation.submission?.title}</h1>
                 </div>
+
+                 <div className="actions-section">
+                        <h3 className="section-title">Ações</h3>
+                        <div className="action-buttons">
+                            <button
+                                className="action-button primary"
+                                onClick={handleAddToCalendar}
+                            >
+                                <span className="button-icon">📅</span>
+                                Adicionar ao Google Agenda
+                            </button>
+
+                            <button
+                                className="action-button secondary"
+                                onClick={handleDownloadPdf}
+                                disabled={!presentation.submission?.pdfFile}
+                                style={!presentation.submission?.pdfFile ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                            >
+                                <span className="button-icon">⬇</span>
+                                Baixar Apresentação
+                            </button>
+
+                            {presentation.submission?.linkHostedFile && (
+                                <a
+                                    href={presentation.submission?.linkHostedFile}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="action-button secondary"
+                                >
+                                    <span className="button-icon">🔗</span>
+                                    Acessar Apresentação
+                                </a>
+                            )}
+
+                            <button
+                                className="action-button secondary"
+                                onClick={handleFavorite}
+                            >
+                                <span
+                                    className="button-icon"
+                                    style={{ color: presentationBookmark?.bookmarked ? 'red' : 'inherit' }}
+                                >
+                                    {presentationBookmark?.bookmarked ? '❤️' : '🤍'}
+                                </span>
+                                {presentationBookmark?.bookmarked ? 'Desfavoritar' : 'Favoritar'}
+                            </button>
+
+                            <button className="action-button evaluate" onClick={() => router.push('/avaliacao/' + presentation.id)}>
+                                <span className="button-icon">⭐</span>
+                                Avaliar Apresentação
+                            </button>
+                        </div>
+                    </div>
 
                 <div className="detail-content">
                     <div className="presenter-card">
@@ -299,58 +348,7 @@ export default function ApresentacaoDetalhes() {
                         <p className="abstract-text">{presentation.submission?.abstract}</p>
                     </div>
 
-                    <div className="actions-section">
-                        <h3 className="section-title">Ações</h3>
-                        <div className="action-buttons">
-                            <button
-                                className="action-button primary"
-                                onClick={handleAddToCalendar}
-                            >
-                                <span className="button-icon">📅</span>
-                                Adicionar ao Google Agenda
-                            </button>
-
-                            <button
-                                className="action-button secondary"
-                                onClick={handleDownloadPdf}
-                                disabled={!presentation.submission?.pdfFile}
-                                style={!presentation.submission?.pdfFile ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                            >
-                                <span className="button-icon">⬇</span>
-                                Baixar Apresentação
-                            </button>
-
-                            {presentation.submission?.linkHostedFile && (
-                                <a
-                                    href={presentation.submission?.linkHostedFile}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="action-button secondary"
-                                >
-                                    <span className="button-icon">🔗</span>
-                                    Acessar Apresentação
-                                </a>
-                            )}
-
-                            <button
-                                className="action-button secondary"
-                                onClick={handleFavorite}
-                            >
-                                <span
-                                    className="button-icon"
-                                    style={{ color: presentationBookmark?.bookmarked ? 'red' : 'inherit' }}
-                                >
-                                    {presentationBookmark?.bookmarked ? '❤️' : '🤍'}
-                                </span>
-                                {presentationBookmark?.bookmarked ? 'Desfavoritar' : 'Favoritar'}
-                            </button>
-
-                            <button className="action-button evaluate" onClick={() => router.push('/avaliacao/' + presentation.id)}>
-                                <span className="button-icon">⭐</span>
-                                Avaliar Apresentação
-                            </button>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
         </>

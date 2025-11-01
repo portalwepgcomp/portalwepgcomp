@@ -8,7 +8,6 @@ import Rating from "@/components/Rating/Rating";
 import LoadingPage from "@/components/LoadingPage";
 import { ProtectedLayout } from "@/components/ProtectedLayout/protectedLayout";
 import { AuthContext } from "@/context/AuthProvider/authProvider";
-import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 import { useEdicao } from "@/hooks/useEdicao";
 import { useEvaluation } from "@/hooks/useEvaluation";
 import { usePresentation } from "@/hooks/usePresentation";
@@ -45,12 +44,11 @@ export default function Avaliacao({ params }) {
   };
 
   useEffect(() => {
-    const eventEditionId = getEventEditionIdStorage();
-
-    getPresentationAll(eventEditionId ?? "");
-    getEvaluationCriteria(eventEditionId ?? "");
-    getEvaluationByUser(user?.id ?? "");
-  }, []);
+    if (!Edicao?.id || !user?.id) return;
+    getPresentationAll(Edicao.id);
+    getEvaluationCriteria(Edicao.id);
+    getEvaluationByUser(user.id);
+  }, [Edicao?.id, user?.id]);
 
   useEffect(() => {
     if (params?.id) {

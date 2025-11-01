@@ -18,6 +18,7 @@ import { useActiveEdition } from "@/hooks/useActiveEdition";
 import IndicadorDeCarregamento from "../IndicadorDeCarregamento/IndicadorDeCarregamento";
 import PresentationCard from "../Presentation/PresentationCard/PresentationCard";
 import "./style.scss";
+import { parse } from "path";
 
 export default function ScheduleSection() {
   const { listSessions, sessoesList, listRooms, roomsList, loadingRoomsList } =
@@ -45,7 +46,6 @@ export default function ScheduleSection() {
 
     useEffect(() => {
     const eventEditionId = getEventEditionIdStorage();
-    console.log({eventEditionId, Edicao, selectEdition});
     if (Edicao?.id && Edicao?.startDate && Edicao?.endDate) {
       listSessions(Edicao?.id);
       const generatedDates = generateDatesBetween(
@@ -80,20 +80,15 @@ export default function ScheduleSection() {
     openModal.current?.click();
   }
 
-  useEffect(() => {
-    const eventEditionId = getEventEditionIdStorage();
-    if (eventEditionId && Edicao?.startDate && Edicao?.endDate) {
-      listSessions(eventEditionId);
-      const generatedDates = generateDatesBetween(
-        Edicao.startDate,
-        Edicao.endDate,
-      );
-      setDates(generatedDates);
-      setSelectedDate(generatedDates[0]);
-    }
-    if (Edicao?.id) listRooms(Edicao?.id);
-  }, [Edicao?.id, selectEdition]);
 
+  function corrigeData(data: string): {dia: number, mes: number, ano: number} {
+    const arrayData = data.split("-");
+    const ano = arrayData[0];
+    const mes = parseInt(arrayData[1], 10) -1
+    const dia = arrayData[2];
+    const obj = {dia: parseInt(dia, 10), mes, ano: parseInt(ano, 10)};
+    return obj;
+  }
   return (
     <div id="Programacao">
         <div className="schedule-page">
@@ -109,10 +104,11 @@ export default function ScheduleSection() {
                 onClick={() => changeDate(date)}
               >
                 <span className="date-label">
-                  {new Date(date.split('/').reverse().join('-')).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: 'long'
-                  })}
+                  {new Date(corrigeData(date).ano, corrigeData(date).mes, corrigeData(date).dia).toLocaleDateString('pt-BR', {
+                      day: '2-digit',
+                      month: 'long'
+                    })
+                  }
                 </span>
               </button>
             ))}
