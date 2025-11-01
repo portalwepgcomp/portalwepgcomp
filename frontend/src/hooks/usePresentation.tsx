@@ -51,6 +51,10 @@ export const PresentationProvider = ({ children }: PresentationProps) => {
   }
 
   const getPresentationAll = async (eventEditionId: string) => {
+        if (!eventEditionId) {
+      setpresentationList([]);
+      return;
+    }
     presentationApi
       .getPresentations(eventEditionId)
       .then((response) => {

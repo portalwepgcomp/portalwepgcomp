@@ -30,8 +30,7 @@ export const edicaoApi = {
 
     getEdicaoByYear: async (year: string) => {
 
-        const { data } = await instance.get(`${baseUrl}/year/${year}`);
-
+        const { data } = await instance.get(`${baseUrl}/year/${year}`);        
         return data;
     },
 

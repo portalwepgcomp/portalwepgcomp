@@ -117,6 +117,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.clear();
     router.push("/home");
     setUser(null);
+    setIsLoggingOut(false);
   }
 
   return (

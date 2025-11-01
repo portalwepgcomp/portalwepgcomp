@@ -49,9 +49,7 @@ export default function ApresentacaoDetalhes() {
                 if (!controller.signal.aborted) {
                     setPresentationBookmark(bookmark);
                 }
-
                 const data = await getPresentationById(presentationId);
-                console.log(data)
                 if (!controller.signal.aborted) {
                     setPresentation(data);
                     setLoading(false);
