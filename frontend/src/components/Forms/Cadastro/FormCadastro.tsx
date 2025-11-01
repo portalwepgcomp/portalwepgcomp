@@ -28,6 +28,7 @@ const formCadastroSchema = z
       .nullable()
       .optional(),
     matricula: z.string().optional(),
+    linkLattes: z.string().optional(),
     email: z
       .string({ invalid_type_error: "Campo inválido!" })
       .min(1, "O email é obrigatório.")
@@ -151,7 +152,15 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
   };
 
   const handleFormCadastro = (data: FormCadastroSchema) => {
-    const { nome, email, senha, perfil, matricula = "", subperfil } = data; // default assegura string
+    const {
+      nome,
+      email,
+      senha,
+      perfil,
+      matricula = "",
+      subperfil,
+      linkLattes,
+    } = data; // default assegura string
 
     const profileFormated: Record<string, ProfileType> = {
       apresentador: "Presenter",
@@ -183,6 +192,7 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
         perfil === "ouvinte"
           ? (subprofileFormated[subperfil ?? "outro"] ?? null)
           : null,
+      ...(linkLattes && { linkLattes: linkLattes }),
     };
 
     registerUser(body as RegisterUserParams);
@@ -372,6 +382,21 @@ export function FormCadastro({ loadingCreateUser }: FormCadastroProps) {
             />
             <p className="text-danger error-message">
               {errors.matricula?.message}
+            </p>
+          </div>
+
+          <div className="col-12 mb-1">
+            <label className="form-label fw-bold fs-5">Link Lattes</label>
+            <input
+              type="string"
+              className="form-control input-title"
+              id="linkLattes"
+              placeholder="Insira seu link do perfil Lattes"
+              {...register("linkLattes")}
+              maxLength={50}
+            />
+            <p className="text-danger error-message">
+              {errors.linkLattes?.message}
             </p>
           </div>
 
