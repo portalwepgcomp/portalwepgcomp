@@ -4,12 +4,12 @@ import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { useEdicao } from "@/hooks/useEdicao";
 import { useUsers } from "@/hooks/useUsers";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import LoadingPage from "../LoadingPage";
 import ModalCadastroProfessor from "../Modals/ModalCadastroProfessor/ModalCadastroProfessor";
 import FilterSelect from "./FilterSelect";
 import "./enhanced-style.scss";
-import {useRouter} from "next/navigation";
 
 export default function Gerenciar() {
   const { user: currentUser } = useContext(AuthContext);
@@ -381,7 +381,7 @@ export default function Gerenciar() {
                 key="edit-user"
                 className="btn btn-info btn-sm"
                 onClick={() => {
-                  router.push('/gerenciamento/' + targetUser.id + '/editar')
+                  router.push('/gerenciamento/usuario/' + targetUser.id + '/editar')
                 }}
                 disabled={!Edicao?.isActive || loadingRoleAction}
                 title="Editar usuário"

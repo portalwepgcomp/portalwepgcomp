@@ -93,7 +93,7 @@ export function FormCadastroProfessor({ onSuccess, formRef, showButtons = true }
 
   const handleCancel = () => {
     reset();
-    router.push("/gerenciamento");
+    router.push("/gerenciamento/usuario");
   };
 
   return (

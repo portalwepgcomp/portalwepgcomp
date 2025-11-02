@@ -151,7 +151,7 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
         setIsSubmitting(false);
 
         if (success) {
-            router.push('/gerenciamento');
+            router.push('/gerenciamento/usuario');
         }
     };
 
@@ -296,7 +296,7 @@ const EditarUsuario = ({ params }: { params: { id: string } }) => {
 
                             <div className="d-flex justify-content-end mt-4" style={{ gap: "10px" }}>
                                 <button type="button" onClick={() => {
-                                    router.push('/gerenciamento')
+                                    router.push('/gerenciamento/usuario');
                                 }} className="btn btn-outline-secondary" disabled={isSubmitting}>
                                     Cancelar
                                 </button>
