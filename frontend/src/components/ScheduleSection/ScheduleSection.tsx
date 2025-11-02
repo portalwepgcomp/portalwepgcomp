@@ -45,7 +45,6 @@ export default function ScheduleSection() {
 
     useEffect(() => {
     const eventEditionId = getEventEditionIdStorage();
-    console.log({eventEditionId, Edicao, selectEdition});
     if (Edicao?.id && Edicao?.startDate && Edicao?.endDate) {
       listSessions(Edicao?.id);
       const generatedDates = generateDatesBetween(

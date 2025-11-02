@@ -21,7 +21,7 @@ export const emailApi = {
     sendGroupEmail: async (
         data: SendGroupEmailDto
     ): Promise<SendGroupEmailResponse> => {
-        const response = await axiosInstance.post("/emails/send-group", data, {
+        const response = await axiosInstance.post("/mailing/send-group", data, {
             headers: {
                 "Content-Type": "application/json",
             },

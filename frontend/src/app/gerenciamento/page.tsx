@@ -33,7 +33,7 @@ const Index = () => {
             </button>
           </div>
 
-          <div className="feature-card feature-card--disabled">
+          <div className="feature-card feature-card">
             <div className="feature-card__icon">
               <Users />
             </div>
@@ -41,10 +41,15 @@ const Index = () => {
             <p className="feature-card__description">
               Visualize e gerencie todos os usuários cadastrados
             </p>
-            <div className="feature-card__badge">Em breve</div>
+            <button 
+              className="button button--primary button--full-width"
+              onClick={() => router.push("/gerenciamento/usuario")}
+            >
+              Acessar
+            </button>
           </div>
 
-          <div className="feature-card feature-card--disabled">
+          <div className="feature-card feature-card">
             <div className="feature-card__icon">
               <GraduationCap  />
             </div>
@@ -52,7 +57,12 @@ const Index = () => {
             <p className="feature-card__description">
               Cadastre novos professores
             </p>
-            <div className="feature-card__badge">Em breve</div>
+            <button 
+              className="button button--primary button--full-width"
+              onClick={() => router.push("/gerenciamento/professores")}
+            >
+              Acessar
+            </button>
           </div>
         </div>
       </main>

@@ -16,7 +16,7 @@ import { MailingService } from './mailing.service';
 @Controller('mailing')
 @UseGuards(JwtAuthGuard, UserLevelGuard)
 export class MailingController {
-  constructor(private readonly mailingService: MailingService) {}
+  constructor(private readonly mailingService: MailingService) { }
 
   @Post('/contact')
   @Public()

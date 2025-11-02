@@ -127,25 +127,11 @@ export default function PerfilAdmin({
                         Premiação
                     </Link>
                 </li>
-                {role === "Superadmin" && (
-                  <li>
-                                <Link className="dropdown-item" href="/professores">
-                      Professores
-                    </Link>
-                  </li>
-                )}
                 <li>
                     <Link className="dropdown-item" href="/sessoes">
                         Sessões
                     </Link>
                 </li>
-                {role === "Superadmin" && (
-                    <li>
-                        <Link className="dropdown-item" href="/gerenciamento/usuario">
-                            Usuários
-                        </Link>
-                    </li>
-                )}
                 <li>
                     <Link
                         className="dropdown-item"

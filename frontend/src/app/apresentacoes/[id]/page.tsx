@@ -51,7 +51,6 @@ export default function ApresentacaoDetalhes() {
                 }
 
                 const data = await getPresentationById(presentationId);
-                console.log(data)
                 if (!controller.signal.aborted) {
                     setPresentation(data);
                     setLoading(false);

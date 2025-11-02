@@ -4,12 +4,12 @@ import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { useEdicao } from "@/hooks/useEdicao";
 import { useUsers } from "@/hooks/useUsers";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import LoadingPage from "../LoadingPage";
 import ModalCadastroProfessor from "../Modals/ModalCadastroProfessor/ModalCadastroProfessor";
 import FilterSelect from "./FilterSelect";
 import "./enhanced-style.scss";
-import {useRouter} from "next/navigation";
 
 export default function Gerenciar() {
   const { user: currentUser } = useContext(AuthContext);

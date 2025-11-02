@@ -1,16 +1,17 @@
 "use client";
 
 import { useSweetAlert } from "@/hooks/useAlert";
+import { useEmails } from "@/hooks/useEmail";
 import { useUsers } from "@/hooks/useUsers";
 import { ArrowLeft, Mail, Send, UserCircle, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "../../../components/Select/Select";
 import "../../../components/UI/styles/button.scss";
 import "../../../components/UI/styles/card.scss";
@@ -57,11 +58,13 @@ const SendEmail = () => {
   const router = useRouter();
   const { showAlert } = useSweetAlert();
   const { userList, getUsers, loadingUserList } = useUsers();
-  
+
   const [selectedGroup, setSelectedGroup] = useState<GroupType | "">("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
+
+  const { sendGroupEmail } = useEmails();
 
   // Buscar usuários quando o grupo mudar
   useEffect(() => {
@@ -70,7 +73,7 @@ const SendEmail = () => {
     }
 
     const groupConfig = GROUPS[selectedGroup];
-    
+
     if (selectedGroup === "all") {
       // Para "todos", buscar sem filtros
       getUsers({});
@@ -82,7 +85,7 @@ const SendEmail = () => {
         subprofiles: groupConfig.subprofiles?.[0],
       });
     }
-  }, [selectedGroup]); // ← CORREÇÃO: Removido getUsers das dependências
+  }, [selectedGroup]);
 
   const recipientCount = userList?.length || 0;
 
@@ -128,7 +131,7 @@ const SendEmail = () => {
 
     try {
       const groupConfig = GROUPS[selectedGroup];
-      
+
       const emailData = {
         subject,
         message,
@@ -139,20 +142,7 @@ const SendEmail = () => {
         },
       };
 
-      // await emailApi.sendEmail(emailData);
-      
-      console.log("Enviando email:", emailData);
-      console.log("Para:", recipientCount, "destinatários");
-
-      showAlert({
-        icon: "success",
-        title: "E-mail Enviado!",
-        text: `E-mail enviado com sucesso para ${recipientCount} destinatário(s).`,
-      });
-      
-      setSelectedGroup("");
-      setSubject("");
-      setMessage("");
+      await sendGroupEmail(emailData);
     } catch (err: any) {
       showAlert({
         icon: "error",
@@ -180,7 +170,7 @@ const SendEmail = () => {
           </div>
           <button className="button button--ghost" onClick={() => router.back()}>
             <ArrowLeft />
-            Voltar ao Início
+            Voltar
           </button>
         </div>
       </header>
@@ -205,8 +195,8 @@ const SendEmail = () => {
             <div>
               <div className="form-group">
                 <label>Destinatários</label>
-                <Select 
-                  value={selectedGroup} 
+                <Select
+                  value={selectedGroup}
                   onValueChange={(value) => setSelectedGroup(value as GroupType)}
                 >
                   <SelectTrigger>
@@ -244,7 +234,7 @@ const SendEmail = () => {
                 />
               </div>
 
-              <button 
+              <button
                 className="button button--primary button--full-width"
                 onClick={handleSendEmail}
                 disabled={!selectedGroup || !subject || !message || isSending || loadingUserList}

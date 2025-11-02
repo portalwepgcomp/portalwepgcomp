@@ -27,8 +27,8 @@ export class ContactResponseDto {
 }
 
 // src/emails/dto/send-group-email.dto.ts
-import { IsString, IsNotEmpty, IsObject, ValidateNested, IsOptional, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsArray, IsNotEmpty, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 class EmailFiltersDto {
   @IsOptional()
@@ -48,11 +48,11 @@ class EmailFiltersDto {
 }
 
 export class SendGroupEmailDto {
-  @IsString()
+  @IsString({message: 'O assunto deve ser uma string'})
   @IsNotEmpty({ message: 'O assunto é obrigatório' })
   subject: string;
 
-  @IsString()
+  @IsString({message: 'A mensagem deve ser uma string'})
   @IsNotEmpty({ message: 'A mensagem é obrigatória' })
   message: string;
 

@@ -1,5 +1,8 @@
-import { useCallback, useState } from "react";
-import { useSweetAlert } from "./useAlert";
+// contexts/EmailContext.tsx
+"use client";
+
+import { createContext, useCallback, useContext, useState, ReactNode } from "react";
+import { useSweetAlert } from "@/hooks/useAlert";
 import { emailApi } from "@/services/emailApi";
 
 interface SendGroupEmailParams {
@@ -19,7 +22,18 @@ interface SendGroupEmailResponse {
   message: string;
 }
 
-export const useEmails = () => {
+interface EmailContextData {
+  sendGroupEmail: (params: SendGroupEmailParams) => Promise<SendGroupEmailResponse | null>;
+  sendingEmail: boolean;
+}
+
+const EmailContext = createContext<EmailContextData>({} as EmailContextData);
+
+interface EmailProviderProps {
+  children: ReactNode;
+}
+
+export const EmailProvider = ({ children }: EmailProviderProps) => {
   const { showAlert } = useSweetAlert();
   const [sendingEmail, setSendingEmail] = useState(false);
 
@@ -33,13 +47,13 @@ export const useEmails = () => {
         showAlert({
           icon: "success",
           title: "E-mail Enviado!",
-          text: `E-mail enviado com sucesso para ${response.sentCount} destinatário(s).`,
+          text: response.message || `E-mail enviado com sucesso para ${response.sentCount} destinatário(s).`,
         });
 
         return response;
       } catch (err: any) {
         const errorMessage =
-          err.response?.data?.message ||
+          err.response?.data?.message.message ||
           err.message ||
           "Ocorreu um erro ao enviar o e-mail.";
 
@@ -57,8 +71,24 @@ export const useEmails = () => {
     [showAlert]
   );
 
-  return {
-    sendGroupEmail,
-    sendingEmail,
-  };
+  return (
+    <EmailContext.Provider
+      value={{
+        sendGroupEmail,
+        sendingEmail,
+      }}
+    >
+      {children}
+    </EmailContext.Provider>
+  );
+};
+
+export const useEmails = (): EmailContextData => {
+  const context = useContext(EmailContext);
+
+  if (!context) {
+    throw new Error("useEmails must be used within an EmailProvider");
+  }
+
+  return context;
 };
