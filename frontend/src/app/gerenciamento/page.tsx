@@ -1,18 +1,56 @@
 "use client";
 
-import Gerenciar from "@/components/GerenciarUsuario/Gerenciar";
-import Banner from "@/components/UI/Banner";
+import { GraduationCap, Mail, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
+import "../../components/UI/styles/button.scss";
+import "../../components/UI/styles/card.scss";
+import "./styles.scss";
 
-export default function Gerenciamento() {
+const Index = () => {
+  const router = useRouter();
+
   return (
-    <div
-      className="d-flex flex-column"
-      style={{
-        gap: "30px",
-      }}
-    >
-      <Banner title="Gerenciamento de Usuários" />
-      <Gerenciar />
+    <div className="index-page">
+      <header className="index-page__header">
+        <p className="index-page__subtitle">Painel Administrativo</p>
+      </header>
+
+      <main className="index-page__main">
+        <div className="index-page__grid">
+          <div className="feature-card feature-card--active">
+            <div className="feature-card__icon">
+              <Mail />
+            </div>
+            <h3 className="feature-card__title">Envio de E-mails</h3>
+            <p className="feature-card__description">
+              Envie mensagens para grupos específicos de usuários do sistema
+            </p>
+            <button 
+              className="button button--primary button--full-width"
+              onClick={() => router.push("/gerenciamento/enviar-email")}
+            >
+              Acessar
+            </button>
+          </div>
+          <div className="feature-card feature-card">
+            <div className="feature-card__icon">
+              <GraduationCap  />
+            </div>
+            <h3 className="feature-card__title">Professores</h3>
+            <p className="feature-card__description">
+              Cadastre novos professores
+            </p>
+            <button 
+              className="button button--primary button--full-width"
+              onClick={() => router.push("/gerenciamento/professores")}
+            >
+              Acessar
+            </button>
+          </div>
+        </div>
+      </main>
     </div>
   );
-}
+};
+
+export default Index;

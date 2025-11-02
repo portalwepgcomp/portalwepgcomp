@@ -194,9 +194,8 @@ export default function Header() {
           >
             <ul className="navbar-nav align-items-center fw-normal">
               <div
-                className={`nav-item ${
-                  selectedItem === "inicio" ? "fw-bold" : ""
-                }`}
+                className={`nav-item ${selectedItem === "inicio" ? "fw-bold" : ""
+                  }`}
                 onClick={() => handleItemClick("inicio")}
               >
                 <Link className="nav-link text-black" href="/home">
@@ -205,34 +204,15 @@ export default function Header() {
               </div>
 
               <div
-                className={`nav-item ${
-                  selectedItem === "programação do evento" ? "fw-bold" : ""
-                }`}
+                className={`nav-item ${selectedItem === "programação do evento" ? "fw-bold" : ""
+                  }`}
                 onClick={() => handleItemClick("programação do evento")}
               >
                 <Link
                   className="nav-link text-black tamanho-texto-programacao-evento"
-                  href="home#Programacao"
+                  href="/home#Programacao"
                 >
                   Programação
-                </Link>
-              </div>
-
-              <div
-              >
-                <Link className="nav-link text-black" href="/orientacoes">
-                  Orientações
-                </Link>
-              </div>
-
-              <div
-                className={`nav-item ${
-                  selectedItem === "contato" ? "fw-bold" : ""
-                }`}
-                onClick={() => handleItemClick("contato")}
-              >
-                <Link className="nav-link text-black" href="home#Contato">
-                  Contato
                 </Link>
               </div>
 
@@ -247,24 +227,41 @@ export default function Header() {
                   </Link>
                 </li>
               )}
-            <li className="nav-item-menu">
-              {signed ? (
-                <div className="welcome-user">
-                  Olá, {user?.name.split(" ")[0]}!{perfil()}
-                </div>
-              ) : (
-                <Link
-                  className="nav-link active text-black"
-                  aria-current="page"
-                  href="/login"
-                >
-                  Login
+
+              <div>
+                <Link className="nav-link text-black" href="/orientacoes">
+                  Orientações
                 </Link>
-              )}
-            </li>
+              </div>
+
+              <div
+                className={`nav-item ${selectedItem === "contato" ? "fw-bold" : ""
+                  }`}
+                onClick={() => handleItemClick("contato")}
+              >
+                <Link className="nav-link text-black" href="/home#Contato">
+                  Contato
+                </Link>
+              </div>
 
 
+              <li className="nav-item-menu">
+                {signed ? (
+                  <div className="welcome-user">
+                    Olá, {user?.name.split(" ")[0]}!{perfil()}
+                  </div>
+                ) : (
+                  <Link
+                    className="nav-link active text-black"
+                    aria-current="page"
+                    href="/login"
+                  >
+                    Login
+                  </Link>
+                )}
+              </li>
             </ul>
+
           </div>
         </div>
       </nav>

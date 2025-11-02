@@ -6,6 +6,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import type { Metadata } from "next";
 import "./globals.css";
+import "../styles/global.scss"
 import { AuthProvider } from "@/context/AuthProvider/authProvider";
 import { TokenValidationWrapper } from "@/components/TokenValidationWrapper";
 
