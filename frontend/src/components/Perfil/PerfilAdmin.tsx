@@ -122,6 +122,13 @@ export default function PerfilAdmin({
                         </Link>
                     </li>
                 )}
+                 {role === "Superadmin" && (
+                    <li>
+                        <Link className="dropdown-item" href="/usuarios">
+                            Usuários
+                        </Link>
+                    </li>
+                )}
                 <li>
                     <Link className="dropdown-item" href="/premiacao">
                         Premiação

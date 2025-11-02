@@ -32,23 +32,6 @@ const Index = () => {
               Acessar
             </button>
           </div>
-
-          <div className="feature-card feature-card">
-            <div className="feature-card__icon">
-              <Users />
-            </div>
-            <h3 className="feature-card__title">Gerenciar Usuários</h3>
-            <p className="feature-card__description">
-              Visualize e gerencie todos os usuários cadastrados
-            </p>
-            <button 
-              className="button button--primary button--full-width"
-              onClick={() => router.push("/gerenciamento/usuario")}
-            >
-              Acessar
-            </button>
-          </div>
-
           <div className="feature-card feature-card">
             <div className="feature-card__icon">
               <GraduationCap  />
