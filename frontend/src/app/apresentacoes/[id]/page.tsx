@@ -222,7 +222,7 @@ export default function ApresentacaoDetalhes() {
 
     return (
         <>
-        <Banner title="Detalhes da Apresentação" />
+            <Banner title="Detalhes da Apresentação" />
             <div className="presentation-detail-page">
                 <button className="back-button" onClick={() => router.back()}>
                     ← Voltar para programação
@@ -232,58 +232,65 @@ export default function ApresentacaoDetalhes() {
                     <h1 className="detail-title">{presentation.submission?.title}</h1>
                 </div>
 
-                 <div className="actions-section">
-                        <h3 className="section-title">Ações</h3>
-                        <div className="action-buttons">
-                            <button
-                                className="action-button primary"
-                                onClick={handleAddToCalendar}
-                            >
-                                <CalendarPlus />
-                                Agendar
-                            </button>
+                <div className="actions-section">
+                    <h3 className="section-title">Ações</h3>
+                    <div className="action-buttons">
 
-                            <button
+                        <button className="action-button evaluate" onClick={() => router.push('/avaliacao/' + presentation.id)}>
+                            <StarIcon />
+                            Avaliar
+                        </button>
+
+                        <button
+                            className="action-button secondary"
+                            onClick={handleDownloadPdf}
+                            disabled={!presentation.submission?.pdfFile}
+                            style={!presentation.submission?.pdfFile ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                        >
+                            <Download />
+                            Baixar
+                        </button>
+
+
+                        <button
+                            className="action-button secondary"
+                            onClick={handleFavorite}
+                        >
+                            <span
+                                className="button-icon"
+                                style={{ color: presentationBookmark?.bookmarked ? 'red' : 'inherit' }}
+                            >
+                                {presentationBookmark?.bookmarked ? '❤️' : '🤍'}
+                            </span>
+                            {presentationBookmark?.bookmarked ? 'Desfavoritar' : 'Favoritar'}
+                        </button>
+
+                        <button
+                            className="action-button primary"
+                            onClick={handleAddToCalendar}
+                        >
+                            <CalendarPlus />
+                            Agendar
+                        </button>
+
+
+
+                        {presentation.submission?.linkHostedFile && (
+                            <a
+                                href={presentation.submission?.linkHostedFile}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="action-button secondary"
-                                onClick={handleDownloadPdf}
-                                disabled={!presentation.submission?.pdfFile}
-                                style={!presentation.submission?.pdfFile ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                             >
-                                <Download />
-                                Baixar
-                            </button>
+                                <span className="button-icon">🔗</span>
+                                Acessar
+                            </a>
+                        )}
 
-                            {presentation.submission?.linkHostedFile && (
-                                <a
-                                    href={presentation.submission?.linkHostedFile}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="action-button secondary"
-                                >
-                                    <span className="button-icon">🔗</span>
-                                    Acessar
-                                </a>
-                            )}
 
-                            <button
-                                className="action-button secondary"
-                                onClick={handleFavorite}
-                            >
-                                <span
-                                    className="button-icon"
-                                    style={{ color: presentationBookmark?.bookmarked ? 'red' : 'inherit' }}
-                                >
-                                    {presentationBookmark?.bookmarked ? '❤️' : '🤍'}
-                                </span>
-                                {presentationBookmark?.bookmarked ? 'Desfavoritar' : 'Favoritar'}
-                            </button>
 
-                            <button className="action-button evaluate" onClick={() => router.push('/avaliacao/' + presentation.id)}>
-                                <StarIcon />
-                                Avaliar
-                            </button>
-                        </div>
                     </div>
+                </div>
 
                 <div className="detail-content">
                     <div className="presenter-card">
@@ -349,7 +356,7 @@ export default function ApresentacaoDetalhes() {
                         <p className="abstract-text">{presentation.submission?.abstract}</p>
                     </div>
 
-                   
+
                 </div>
             </div>
         </>
