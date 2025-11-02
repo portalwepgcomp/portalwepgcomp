@@ -10,7 +10,6 @@ import { useEffect, useRef, useState } from "react";
 import "./style.scss";
 import { formatDate, formatOnlyTime, getInitials } from "./utils";
 import { CalendarPlus, Download, StarIcon } from "lucide-react";
-import Star from "@/components/UI/Star";
 
 export default function ApresentacaoDetalhes() {
     const params = useParams();
