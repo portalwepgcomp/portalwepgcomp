@@ -3,6 +3,7 @@ export interface UpdateUserRequest {
   email?: string;
   registrationNumber?: string;
   registrationNumberType?: RegistrationNumberType;
+  linkLattes?: string;
   photoFilePath?: string;
   profile?: ProfileType;
   level?: RoleType;
@@ -13,10 +14,10 @@ export interface UpdateUserResponse {
   name: string;
   email: string;
   registrationNumber: string | null;
-  registrationNumberType: 'CPF' | 'MATRICULA' | null;
+  registrationNumberType: "CPF" | "MATRICULA" | null;
   photoFilePath: string | null;
-  profile: 'Presenter' | 'Professor' | 'Listener';
-  level: 'Superadmin' | 'Admin' | 'Default';
+  profile: "Presenter" | "Professor" | "Listener";
+  level: "Superadmin" | "Admin" | "Default";
   isActive: boolean;
   isVerified: boolean;
   isTeacherActive: boolean;

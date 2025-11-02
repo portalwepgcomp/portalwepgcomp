@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -359,6 +357,7 @@ export class UserService {
         password: true,
         registrationNumber: true,
         registrationNumberType: true,
+        linkLattes: true,
         photoFilePath: true,
         profile: true,
         level: true,
@@ -515,6 +514,29 @@ export class UserService {
     const processedData = this.processUpdateData(updateUserDto, existingUser);
 
     processedData.updatedBy = superadminEmail;
+
+    let photoPathToUpdate: string | null | undefined = undefined;
+
+    if ('linkLattes' in updateUserDto) {
+      const newLinkLattes = updateUserDto.linkLattes;
+
+      if (newLinkLattes) {
+        try {
+          photoPathToUpdate = await this.getLattesPhotoPath(newLinkLattes);
+        } catch (error) {
+          console.warn(
+            `Falha ao ATUALIZAR ID do Lattes para ${decodedEmail}: ${error.message}. Photo Path será removido.`,
+          );
+          photoPathToUpdate = null;
+        }
+      } else {
+        photoPathToUpdate = null;
+      }
+    }
+
+    if (photoPathToUpdate !== undefined) {
+      processedData.photoFilePath = photoPathToUpdate;
+    }
 
     const updatedUser = await this.updateUser(decodedEmail, processedData);
 

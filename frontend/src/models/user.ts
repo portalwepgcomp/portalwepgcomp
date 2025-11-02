@@ -18,16 +18,17 @@ interface SetPermissionParams {
 }
 
 interface RegisterUserParams {
-    name: string,
-    email: string,
-    password: string,
-    photoFilePath?: string,
-    profile: ProfileType,
-    areaExpertise?: string,
-    biography?: string,
-    registrationNumber?: string,
-    registrationNumberType?: 'CPF' | 'MATRICULA',
-    subprofile?: SubprofileType | null;
+  name: string;
+  email: string;
+  password: string;
+  linkLattes?: string;
+  photoFilePath?: string;
+  profile: ProfileType;
+  areaExpertise?: string;
+  biography?: string;
+  registrationNumber?: string;
+  registrationNumberType?: "CPF" | "MATRICULA";
+  subprofile?: SubprofileType | null;
 }
 
 interface User extends RegisterUserParams {
