@@ -130,7 +130,6 @@ export class UserService {
         name: createUserDto.name,
         email: createUserDto.email,
         password: hashedPassword,
-        profile: createUserDto.profile ?? Profile.Listener,
         subprofile: createUserDto.subprofile ?? null,
         level: shouldBeSuperAdmin ? UserLevel.Superadmin : UserLevel.Default,
         registrationNumber,
@@ -143,6 +142,8 @@ export class UserService {
         isPresenterActive:
           createUserDto.profile === Profile.Presenter ? false : true,
         photoFilePath: lattesPhotoPath,
+        profile: createUserDto.profile ?? Profile.Listener,
+        linkLattes: linkLattes,
       },
     });
 
