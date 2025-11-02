@@ -10,12 +10,12 @@ export const ProtectedLayout = ({
   children: React.ReactNode;
 }) => {
   const router = useRouter();
-  const { user, isValidatingToken } = useAuth();
+  const { user, isValidatingToken, isLoggingOut } = useAuth();
   const { showAlert } = useSweetAlert();
 
   useEffect(() => {
     // Aguarda a validação inicial do token terminar
-    if (isValidatingToken) {
+    if (isValidatingToken || isLoggingOut) {
       return;
     }
 
@@ -29,10 +29,10 @@ export const ProtectedLayout = ({
 
       router.push("/login");
     }
-  }, [user, isValidatingToken, router, showAlert]);
+  }, [user, isValidatingToken, router, isLoggingOut, showAlert]);
 
   // Não renderiza nada enquanto valida ou se não houver usuário
-  if (isValidatingToken || !user) {
+  if (isValidatingToken || !user || isLoggingOut) {
     return null;
   }
 
