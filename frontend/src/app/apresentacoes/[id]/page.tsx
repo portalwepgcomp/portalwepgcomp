@@ -9,6 +9,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import "./style.scss";
 import { formatDate, formatOnlyTime, getInitials } from "./utils";
+import { CalendarPlus, Download, StarIcon } from "lucide-react";
+import Star from "@/components/UI/Star";
 
 export default function ApresentacaoDetalhes() {
     const params = useParams();
@@ -238,7 +240,7 @@ export default function ApresentacaoDetalhes() {
                                 className="action-button primary"
                                 onClick={handleAddToCalendar}
                             >
-                                <span className="button-icon">📅</span>
+                                <CalendarPlus />
                                 Agendar
                             </button>
 
@@ -248,7 +250,7 @@ export default function ApresentacaoDetalhes() {
                                 disabled={!presentation.submission?.pdfFile}
                                 style={!presentation.submission?.pdfFile ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                             >
-                                <span className="button-icon">⬇</span>
+                                <Download />
                                 Baixar
                             </button>
 
@@ -278,7 +280,7 @@ export default function ApresentacaoDetalhes() {
                             </button>
 
                             <button className="action-button evaluate" onClick={() => router.push('/avaliacao/' + presentation.id)}>
-                                <span className="button-icon">⭐</span>
+                                <StarIcon />
                                 Avaliar
                             </button>
                         </div>
