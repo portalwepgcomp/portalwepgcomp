@@ -176,9 +176,9 @@ export class SubmissionService {
       },
       orderBy: orderByProposedPresentation
         ? [
-            { proposedPresentationBlockId: { sort: 'asc', nulls: 'last' } },
-            { proposedPositionWithinBlock: { sort: 'asc', nulls: 'last' } },
-          ]
+          { proposedPresentationBlockId: { sort: 'asc', nulls: 'last' } },
+          { proposedPositionWithinBlock: { sort: 'asc', nulls: 'last' } },
+        ]
         : undefined,
       include: {
         mainAuthor: true,

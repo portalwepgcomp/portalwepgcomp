@@ -10,6 +10,7 @@ import LoadingPage from "../LoadingPage";
 import ModalCadastroProfessor from "../Modals/ModalCadastroProfessor/ModalCadastroProfessor";
 import FilterSelect from "./FilterSelect";
 import "./enhanced-style.scss";
+import {useRouter} from "next/navigation";
 
 export default function Gerenciar() {
   const { user: currentUser } = useContext(AuthContext);
