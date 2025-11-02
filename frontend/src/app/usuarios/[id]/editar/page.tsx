@@ -53,13 +53,6 @@ const updateUserSchema = z
           message: "Apresentadores e Professores devem ter uma Matrícula.",
         });
       }
-      if (data.registrationNumber.length !== 13) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["registrationNumber"],
-          message: "A Matrícula deve ter 13 dígitos.",
-        });
-      }
     }
   });
 
