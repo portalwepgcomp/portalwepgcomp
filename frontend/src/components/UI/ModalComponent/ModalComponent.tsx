@@ -77,6 +77,7 @@ export default function ModalComponent({
                     className="btn btn-primary button-modal-component"
                     disabled={disabledConfirmButton}
                     style={{ backgroundColor: colorButtonConfirm }}
+                    onClick={onConfirm}
                   >
                     {labelConfirmButton}
                   </button>
