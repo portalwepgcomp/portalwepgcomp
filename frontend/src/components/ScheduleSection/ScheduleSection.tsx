@@ -96,23 +96,26 @@ export default function ScheduleSection() {
             <h1 className="schedule-title">Programação</h1>
           </div>
           
-          <div className="schedule-dates">
+            <div className="schedule-dates">
             {dates.map((date, i) => (
               <button
-                key={i}
-                className={`date-button ${selectedDate === date ? "active" : ""}`}
-                onClick={() => changeDate(date)}
+              key={i}
+              className={`date-button ${
+              (moment(date).isSame(moment(), "day") && "active") || 
+              (selectedDate === date && !dates.some(d => moment(d).isSame(moment(), "day")) && "active")
+              }`}
+              onClick={() => changeDate(date)}
               >
-                <span className="date-label">
-                  {new Date(corrigeData(date).ano, corrigeData(date).mes, corrigeData(date).dia).toLocaleDateString('pt-BR', {
-                      day: '2-digit',
-                      month: 'long'
-                    })
-                  }
-                </span>
+              <span className="date-label">
+              {new Date(corrigeData(date).ano, corrigeData(date).mes, corrigeData(date).dia).toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: 'long'
+              })
+              }
+              </span>
               </button>
             ))}
-          </div>
+            </div>
 
         {loadingRoomsList ? (
           <IndicadorDeCarregamento />
