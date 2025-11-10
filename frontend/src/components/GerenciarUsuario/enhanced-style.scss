@@ -692,7 +692,8 @@
                 padding: 0.5em 0.8em;
 
                 .d-none.d-md-inline {
-                  display: none !important;
+                  display: inline !important;
+                  //display: none !important;
                 }
                 
                 .d-md-none {

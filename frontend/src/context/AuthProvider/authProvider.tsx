@@ -114,9 +114,10 @@ export const AuthProvider = ({ children }) => {
 
   function logout() {
     setIsLoggingOut(true);
-    localStorage.clear();
     router.push("/home");
+    localStorage.clear();
     setUser(null);
+    setTimeout(() => setIsLoggingOut(false), 500);
   }
 
   return (

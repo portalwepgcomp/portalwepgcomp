@@ -30,7 +30,7 @@ export default function ScheduleSection() {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const openModal = useRef<HTMLButtonElement | null>(null);
   const [modalContent, setModalContent] = useState<Presentation>(
-    {} as Presentation,
+    {} as Presentation
   );
 
   useEffect(() => {
@@ -43,17 +43,21 @@ export default function ScheduleSection() {
     }
   }, [Edicao?.id, ensureActiveEdition]);
 
-    useEffect(() => {
-    const eventEditionId = getEventEditionIdStorage();
-    console.log({eventEditionId, Edicao, selectEdition});
+  useEffect(() => {
     if (Edicao?.id && Edicao?.startDate && Edicao?.endDate) {
       listSessions(Edicao?.id);
+
       const generatedDates = generateDatesBetween(
         Edicao.startDate,
-        Edicao.endDate,
+        Edicao.endDate
       );
+
       setDates(generatedDates);
-      setSelectedDate(generatedDates[0]);
+
+      const today = moment().format("YYYY-MM-DD");
+      const todayInsideEvent = generatedDates.includes(today);
+
+      setSelectedDate(todayInsideEvent ? today : generatedDates[0]);
     }
 
     if (Edicao?.id) listRooms(Edicao?.id);
@@ -80,43 +84,43 @@ export default function ScheduleSection() {
     openModal.current?.click();
   }
 
-  useEffect(() => {
-    const eventEditionId = getEventEditionIdStorage();
-    if (eventEditionId && Edicao?.startDate && Edicao?.endDate) {
-      listSessions(eventEditionId);
-      const generatedDates = generateDatesBetween(
-        Edicao.startDate,
-        Edicao.endDate,
-      );
-      setDates(generatedDates);
-      setSelectedDate(generatedDates[0]);
-    }
-    if (Edicao?.id) listRooms(Edicao?.id);
-  }, [Edicao?.id, selectEdition]);
+  function corrigeData(data: string): { dia: number; mes: number; ano: number } {
+    const arrayData = data.split("-");
+    return {
+      ano: parseInt(arrayData[0], 10),
+      mes: parseInt(arrayData[1], 10) - 1,
+      dia: parseInt(arrayData[2], 10),
+    };
+  }
 
   return (
     <div id="Programacao">
-        <div className="schedule-page">
-          <div className="schedule-header">
-            <h1 className="schedule-title">Programação</h1>
-          </div>
-          
-          <div className="schedule-dates">
-            {dates.map((date, i) => (
-              <button
-                key={i}
-                className={`date-button ${selectedDate === date ? "active" : ""}`}
-                onClick={() => changeDate(date)}
-              >
-                <span className="date-label">
-                  {new Date(date.split('/').reverse().join('-')).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: 'long'
-                  })}
-                </span>
-              </button>
-            ))}
-          </div>
+      <div className="schedule-page">
+
+        <div className="schedule-header">
+          <h1 className="schedule-title">Programação</h1>
+        </div>
+
+        <div className="schedule-dates">
+          {dates.map((date, i) => (
+            <button
+              key={i}
+              className={`date-button ${selectedDate === date ? "active" : ""}`}
+              onClick={() => changeDate(date)}
+            >
+              <span className="date-label">
+                {new Date(
+                  corrigeData(date).ano,
+                  corrigeData(date).mes,
+                  corrigeData(date).dia
+                ).toLocaleDateString("pt-BR", {
+                  day: "2-digit",
+                  month: "long",
+                })}
+              </span>
+            </button>
+          ))}
+        </div>
 
         {loadingRoomsList ? (
           <IndicadorDeCarregamento />
@@ -142,11 +146,16 @@ export default function ScheduleSection() {
                       )
                       ?.toSorted(
                         (a, b) =>
-                          new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+                          new Date(a.startTime).getTime() -
+                          new Date(b.startTime).getTime()
                       );
 
                     const groupedByTitle = filteredSessions
-                      ?.filter((sessao) => sessao.type !== "General" && sessao.title !== undefined)
+                      ?.filter(
+                        (sessao) =>
+                          sessao.type !== "General" &&
+                          sessao.title !== undefined
+                      )
                       ?.reduce((acc, sessao) => {
                         if (sessao.title !== undefined) {
                           acc[sessao.title] = acc[sessao.title] || [];
@@ -160,7 +169,10 @@ export default function ScheduleSection() {
                         {filteredSessions?.map((item, index) => {
                           if (item.type === "General") {
                             return (
-                              <div key={index + item.id} className="session-row">
+                              <div
+                                key={index + item.id}
+                                className="session-row"
+                              >
                                 <PresentationCard
                                   type={"GeneralSession"}
                                   presentation={item as any}
@@ -182,7 +194,8 @@ export default function ScheduleSection() {
                                   sess.presentations
                                     ?.toSorted(
                                       (a, b) =>
-                                        a.positionWithinBlock - b.positionWithinBlock
+                                        a.positionWithinBlock -
+                                        b.positionWithinBlock
                                     )
                                     .map((pres: Presentation) => (
                                       <div
@@ -204,29 +217,29 @@ export default function ScheduleSection() {
                       </>
                     );
                   })()}
+
                   {!sessoesList?.some(
                     (sessao) =>
                       moment.utc(sessao.startTime).format("YYYY-MM-DD") ===
-                      moment(selectedDate).format("YYYY-MM-DD") &&
-                      sessao.roomId == room.id
+                        moment(selectedDate).format("YYYY-MM-DD") &&
+                      sessao.roomId === room.id
                   ) && (
-                      <div className="empty-state">
-                        <Image
-                          src="/assets/images/empty_box.svg"
-                          alt="Lista vazia"
-                          width={90}
-                          height={90}
-                        />
-                        <p>Essa lista ainda está vazia</p>
-                      </div>
-                    )}
+                    <div className="empty-state">
+                      <Image
+                        src="/assets/images/empty_box.svg"
+                        alt="Lista vazia"
+                        width={90}
+                        height={90}
+                      />
+                      <p>Essa lista ainda está vazia</p>
+                    </div>
+                  )}
                 </div>
               </React.Fragment>
-
-
             ))}
           </div>
         )}
+
         <Modal
           content={<PresentationModal props={modalContent} />}
           reference={openModal}

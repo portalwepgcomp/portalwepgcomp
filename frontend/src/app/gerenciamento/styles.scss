@@ -1,0 +1,129 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.index-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f3f7 0%, #e8eef5 100%);
+  
+  &__header {
+    background: $color-card;
+    border-bottom: 1px solid $color-border;
+    box-shadow: $shadow-sm;
+    padding: $spacing-2xl;
+    text-align: center;
+  }
+  
+  &__title {
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+    margin: 0 0 $spacing-sm 0;
+  }
+  
+  &__subtitle {
+    font-size: $font-size-xl;
+    color: $color-foreground;
+    font-weight: $font-weight-medium;
+    margin: 0 0 $spacing-sm 0;
+  }
+  
+  &__description {
+    color: $color-muted;
+    margin: 0;
+  }
+  
+  &__main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: $spacing-2xl $spacing-xl;
+  }
+  
+  &__grid {
+    display: grid;
+    gap: $spacing-xl;
+    max-width: 1200px;
+    margin: 0 auto;
+    
+    @include responsive(md) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+.feature-card {
+  @include card;
+  text-align: center;
+  transition: all $transition-base;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+  
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+  
+  &__icon {
+    @include flex-center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: $radius-full;
+    margin: 0 auto $spacing-lg;
+    
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+  
+  &--active &__icon {
+    background: $color-primary-light;
+    
+    svg {
+      color: $color-primary;
+    }
+  }
+  
+  &--disabled &__icon {
+    background: $color-muted-light;
+    
+    svg {
+      color: $color-muted;
+    }
+  }
+  
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    margin: 0 0 $spacing-sm 0;
+  }
+  
+  &--active &__title {
+    color: $color-foreground;
+  }
+  
+  &--disabled &__title {
+    color: $color-muted;
+  }
+  
+  &__description {
+    font-size: $font-size-sm;
+    color: $color-muted;
+    margin: 0 0 $spacing-xl 0;
+  }
+  
+  &__badge {
+    background: $color-muted-light;
+    color: $color-muted;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    display: inline-block;
+  }
+}

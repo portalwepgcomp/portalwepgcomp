@@ -109,39 +109,50 @@ export class CertificateService {
     );
     let texto = '';
 
+    function parseLocalDate(dateStr) {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+
     function dateHandler(
       startDate: string | Date,
       endDate: string | Date,
     ): string {
       const start =
-        typeof startDate === 'string' ? new Date(startDate) : startDate;
-      const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
+        typeof startDate === 'string' ? parseLocalDate(startDate) : startDate;
+      const end =
+        typeof endDate === 'string' ? parseLocalDate(endDate) : endDate;
+
       const startDay = start.getDate();
       const endDay = end.getDate();
       const month = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(
         end,
       );
       const year = end.getFullYear();
-
+      // remova o if abaixo após 2025. adicionei para tratar um erro que surgiu pois desenvolvemos já com o projeto em produção
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      if (year == 2025) {
+        return `${startDay} a ${endDay - 1} de ${month} de ${year}`;
+      }
       return `${startDay} a ${endDay} de ${month} de ${year}`;
     }
 
     if (user.profile == Profile.Professor) {
       texto += `   Certificamos que ${user.name} participou como avaliador(a) em sessões de apresentações no Workshop de Estudantes do PGCOMP (${eventEdition.name}), promovido pelo Programa de Pós-Graduação em Ciência da Computação - Universidade Federal da Bahia, de ${dateHandler(eventEdition.startDate, eventEdition.endDate)}.`;
-      if (user.panelistAwards.length) {
-        texto += ` Também ficamos felizes de informar que ${user.name} foi homenageado(a) como um dos melhores avaliadores pela comissão organizadora do ${eventEdition.name}.`;
-      }
+      // if (user.panelistAwards.length) {
+      //   texto += ` Também ficamos felizes de informar que ${user.name} foi homenageado(a) como um dos melhores avaliadores pela comissão organizadora do ${eventEdition.name}. `;
+      // }
     } else if (user.profile == Profile.Listener) {
-      texto += `   Certificamos que ${user.name} participou como ouvinte no Workshop de Estudantes do PGCOMP (${eventEdition.name}), promovido pelo Programa de Pós-Graduação em Ciência da Computação - Universidade Federal da Bahia, de ${dateHandler(eventEdition.startDate, eventEdition.endDate)}.`;
+      texto += `   Certificamos que ${user.name} participou como ouvinte no Workshop de Estudantes do PGCOMP (${eventEdition.name}), promovido pelo Programa de Pós-Graduação em Ciência da Computação - Universidade Federal da Bahia, de ${dateHandler(eventEdition.startDate, eventEdition.endDate)}, com carga horária total de 10 horas.`;
     } else {
       texto += `    Certificamos que ${user.name} apresentou o trabalho "${userSubmission.title}" na categoria Apresentação Oral no Workshop de Estudantes do PGCOMP (${eventEdition.name}), promovido pelo Programa de Pós-Graduação em Ciência da Computação - Universidade Federal da Bahia, de ${dateHandler(eventEdition.startDate, eventEdition.endDate)}.`;
-      if (userPublicAwardStandings <= 3 && userEvaluatorsAwardStandings <= 3) {
-        texto += ` O trabalho de ${user.name} recebeu o prêmio Escolha do Público, classificado em ${userPublicAwardStandings}º lugar na avaliação dos membros do público. Seu trabalho também recebeu o prêmio Escolha dos Avaliadores, sendo classificado em ${userEvaluatorsAwardStandings}º lugar na avaliação da banca avaliadora.`;
-      } else if (userPublicAwardStandings <= 3) {
-        texto += ` O trabalho de ${user.name} recebeu o prêmio Escolha do Público, classificado em ${userPublicAwardStandings}º lugar na avaliação dos membros do público.`;
-      } else if (userEvaluatorsAwardStandings <= 3) {
-        texto += ` O trabalho de ${user.name} recebeu o prêmio Escolha dos Avaliadores, sendo classificado em ${userEvaluatorsAwardStandings}º lugar na avaliação da banca avaliadora.`;
-      }
+      // if (userPublicAwardStandings <= 3 && userEvaluatorsAwardStandings <= 3) {
+      //   texto += ` O trabalho de ${user.name} recebeu o prêmio Escolha do Público, classificado em ${userPublicAwardStandings}º lugar na avaliação dos membros do público. Seu trabalho também recebeu o prêmio Escolha dos Avaliadores, sendo classificado em ${userEvaluatorsAwardStandings}º lugar na avaliação da banca avaliadora.`;
+      // } else if (userPublicAwardStandings <= 3) {
+      //   texto += ` O trabalho de ${user.name} recebeu o prêmio Escolha do Público, classificado em ${userPublicAwardStandings}º lugar na avaliação dos membros do público.`;
+      // } else if (userEvaluatorsAwardStandings <= 3) {
+      //   texto += ` O trabalho de ${user.name} recebeu o prêmio Escolha dos Avaliadores, sendo classificado em ${userEvaluatorsAwardStandings}º lugar na avaliação da banca avaliadora.`;
+      // }
     }
     const regularFont = await this.getFontAndEmbed(fonts, 'regular', pdfDoc);
     page.drawText(texto, {
@@ -255,7 +266,9 @@ export class CertificateService {
     const title =
       userProfileType == Profile.Professor
         ? 'CERTIFICADO DE AVALIADOR'
-        : 'CERTIFICADO DE APRESENTAÇÃO';
+        : userProfileType == Profile.Presenter
+          ? 'CERTIFICADO DE APRESENTAÇÃO'
+          : 'CERTIFICADO DE PARTICIPAÇÃO';
 
     const title_width = font.widthOfTextAtSize(title, textSize);
 

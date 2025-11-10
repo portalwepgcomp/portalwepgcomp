@@ -76,7 +76,7 @@ export default function PresentationCard({
   }
 
   const handleEvaluateClick = () => {
-    window.location.href = `/avaliacao/${id}`;
+    router.push(`/avaliacao/${id}`);
   };
 
   const presentationDate = moment(presentationData).format("DD/MM");

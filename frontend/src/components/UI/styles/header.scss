@@ -1,0 +1,47 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/mixins.scss';
+
+
+.header {
+  background: $color-card;
+  border-bottom: 1px solid $color-border;
+  box-shadow: $shadow-sm;
+  
+  &__container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: $spacing-lg $spacing-xl;
+    @include flex-between;
+  }
+  
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+  
+  &__icon {
+    background: $color-primary-light;
+    padding: $spacing-sm;
+    border-radius: $radius-md;
+    
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+      color: $color-primary;
+    }
+  }
+  
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+    margin: 0;
+  }
+  
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: $color-muted;
+    margin: 0;
+  }
+}
