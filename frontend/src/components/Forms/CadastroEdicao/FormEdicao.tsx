@@ -150,7 +150,12 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       setValue("inicio", edicaoData.startDate);
       setValue("final", edicaoData.endDate);
       setValue("local", edicaoData.location);
-      setValue("salas", edicaoData?.roomName);
+      const salasFormatadas =
+        edicaoData.roomName?.map((nomeSala) => ({
+          label: nomeSala,
+          value: nomeSala,
+        })) || [];
+      setValue("salas", salasFormatadas);
       setValue(
         "comissao",
         committerList
@@ -210,7 +215,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       name: titulo,
       description: descricao,
       location: local,
-      roomName: !edicaoData?.id ? salas : undefined,
+      roomName: salas,
       coordinatorId: user?.id,
       organizingCommitteeIds: comissao?.map((v) => v.value) || [],
       itSupportIds: [],
@@ -392,44 +397,42 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
         <p className="text-danger error-message">{errors.local?.message}</p>
       </div>
 
-      {!edicaoData?.id && (
-        <div className="col-12 mb-1">
-          <label className="form-label  form-title">Sala(s) do evento</label>
-          <Controller
-            name="salas"
-            control={control}
-            render={({ field }) => (
-              <CreatableSelect
-                {...field}
-                id="salas-select"
-                isMulti
-                placeholder="Digite a sala e aperte Enter"
-                isClearable
-                menuIsOpen={false}
-                components={{
-                  DropdownIndicator: null,
-                  IndicatorSeparator: null,
-                }}
-                inputValue={salaInputValue}
-                onInputChange={(newValue) => setSalaInputValue(newValue)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && salaInputValue) {
-                    event.preventDefault();
+      <div className="col-12 mb-1">
+        <label className="form-label  form-title">Sala(s) do evento</label>
+        <Controller
+          name="salas"
+          control={control}
+          render={({ field }) => (
+            <CreatableSelect
+              {...field}
+              id="salas-select"
+              isMulti
+              placeholder="Digite a sala e aperte Enter"
+              isClearable
+              menuIsOpen={false}
+              components={{
+                DropdownIndicator: null,
+                IndicatorSeparator: null,
+              }}
+              inputValue={salaInputValue}
+              onInputChange={(newValue) => setSalaInputValue(newValue)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && salaInputValue) {
+                  event.preventDefault();
 
-                    const newOption = {
-                      label: salaInputValue,
-                      value: salaInputValue,
-                    };
-                    field.onChange([...(field.value || []), newOption]);
-                    setSalaInputValue("");
-                  }
-                }}
-              />
-            )}
-          />
-          <p className="text-danger error-message">{errors.salas?.message}</p>
-        </div>
-      )}
+                  const newOption = {
+                    label: salaInputValue,
+                    value: salaInputValue,
+                  };
+                  field.onChange([...(field.value || []), newOption]);
+                  setSalaInputValue("");
+                }
+              }}
+            />
+          )}
+        />
+        <p className="text-danger error-message">{errors.salas?.message}</p>
+      </div>
 
       <div className="d-flex flex-column justify-content-center">
         <div className="col-12 mb-1">
