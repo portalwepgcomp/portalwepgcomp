@@ -180,18 +180,23 @@ export class EventEditionService {
       : [];
 
     const rooms = activeEvent
-      ? createEventEditionDto.roomName
-        ? [{ name: createEventEditionDto.roomName, description: '' }]
+      ? createEventEditionDto.roomName &&
+        createEventEditionDto.roomName.length > 0
+        ? createEventEditionDto.roomName.map((name) => ({
+            name,
+            description: '',
+          }))
         : await prisma.room.findMany({
             where: { eventEditionId: activeEvent.id },
             select: { name: true, description: true },
           })
-      : [
-          {
-            name: createEventEditionDto.roomName || 'Auditório Principal',
+      : createEventEditionDto.roomName &&
+          createEventEditionDto.roomName.length > 0
+        ? createEventEditionDto.roomName.map((name) => ({
+            name,
             description: '',
-          },
-        ];
+          }))
+        : [{ name: 'Auditório Principal', description: '' }];
 
     return { evaluationCriteria, rooms };
   }
