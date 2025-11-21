@@ -1,6 +1,7 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -51,7 +52,16 @@ const formEdicaoSchema = z.object({
     .string({ invalid_type_error: "Campo Inválido" })
     .min(1, "Local do Evento é obrigatório!"),
 
-  sala: z.string({ invalid_type_error: "Campo Inválido" }).optional(),
+  salas: z
+    .array(
+      z.object({
+        label: z.string(),
+        value: z.string(),
+      }),
+      { invalid_type_error: "Campo inválido" },
+    )
+    .min(1, "Pelo menos uma sala é obrigatória")
+    .transform((salas) => salas.map((sala) => sala.value)),
 
   comissao: z
     .array(
@@ -108,6 +118,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
   const { getAdmins, admins } = useContext(UserContext);
   const [advisorsLoaded, setAdvisorsLoaded] = useState(false);
   const [adminsLoaded, setAdminsLoaded] = useState(false);
+  const [salaInputValue, setSalaInputValue] = useState("");
   const [avaliadoresOptions, setAvaliadoresOptions] = useState<OptionType[]>(
     [],
   );
@@ -139,7 +150,12 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       setValue("inicio", edicaoData.startDate);
       setValue("final", edicaoData.endDate);
       setValue("local", edicaoData.location);
-      setValue("sala", edicaoData?.roomName);
+      const salasFormatadas =
+        edicaoData.roomName?.map((nomeSala) => ({
+          label: nomeSala,
+          value: nomeSala,
+        })) || [];
+      setValue("salas", salasFormatadas);
       setValue(
         "comissao",
         committerList
@@ -176,7 +192,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       inicio,
       final,
       local,
-      sala,
+      salas,
       comissao,
       sessoes,
       duracao,
@@ -199,7 +215,7 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
       name: titulo,
       description: descricao,
       location: local,
-      roomName: !edicaoData?.id ? sala : undefined,
+      roomName: salas,
       coordinatorId: user?.id,
       organizingCommitteeIds: comissao?.map((v) => v.value) || [],
       itSupportIds: [],
@@ -254,19 +270,18 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
 
   const onInvalid = (errors) => console.error(errors);
 
-
-  const bloquearTeclasInvalidas = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const bloquearTeclasInvalidas = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     const blockedKeys = ["e", "E", "+", "-", ",", "."];
     if (blockedKeys.includes(e.key)) e.preventDefault();
   };
-
 
   const formatarEntradaNumerica = (e: React.FormEvent<HTMLInputElement>) => {
     const t = e.currentTarget;
     const clean = t.value.replace(/\D/g, "").replace(/^0+/, "");
     t.value = clean;
   };
-
 
   const colarApenasNumeros = (e: React.ClipboardEvent<HTMLInputElement>) => {
     const text = e.clipboardData.getData("text");
@@ -382,21 +397,42 @@ export function FormEdicao({ edicaoData }: Readonly<FormEdicao>) {
         <p className="text-danger error-message">{errors.local?.message}</p>
       </div>
 
-      {!edicaoData?.id && (
-        <div className="col-12 mb-1">
-          <label className="form-label  form-title">Sala do evento</label>
-          <input
-            type="text"
-            className="form-control input-title"
-            id="local"
-            placeholder="Digite a sala do evento"
-            value={"Auditório A do IGEO"}
-            readOnly
-            {...register("sala")}
-          />
-          <p className="text-danger error-message">{errors.sala?.message}</p>
-        </div>
-      )}
+      <div className="col-12 mb-1">
+        <label className="form-label  form-title">Sala(s) do evento</label>
+        <Controller
+          name="salas"
+          control={control}
+          render={({ field }) => (
+            <CreatableSelect
+              {...field}
+              id="salas-select"
+              isMulti
+              placeholder="Digite a sala e aperte Enter"
+              isClearable
+              menuIsOpen={false}
+              components={{
+                DropdownIndicator: null,
+                IndicatorSeparator: null,
+              }}
+              inputValue={salaInputValue}
+              onInputChange={(newValue) => setSalaInputValue(newValue)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && salaInputValue) {
+                  event.preventDefault();
+
+                  const newOption = {
+                    label: salaInputValue,
+                    value: salaInputValue,
+                  };
+                  field.onChange([...(field.value || []), newOption]);
+                  setSalaInputValue("");
+                }
+              }}
+            />
+          )}
+        />
+        <p className="text-danger error-message">{errors.salas?.message}</p>
+      </div>
 
       <div className="d-flex flex-column justify-content-center">
         <div className="col-12 mb-1">
