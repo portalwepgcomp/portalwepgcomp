@@ -20,7 +20,7 @@ import PresentationCard from "../Presentation/PresentationCard/PresentationCard"
 import "./style.scss";
 
 export default function ScheduleSection() {
-  const { listSessions, sessoesList, listRooms, roomsList, loadingRoomsList } =
+  const { listSessions, sessoesList, listRooms, roomsList, loadingRoomsList, loadingSessoesList } =
     useSession();
   const { Edicao } = useEdicao();
   const { selectEdition } = useActiveEdition();
@@ -32,6 +32,8 @@ export default function ScheduleSection() {
   const [modalContent, setModalContent] = useState<Presentation>(
     {} as Presentation
   );
+
+  const isLoading = loadingRoomsList || loadingSessoesList;
 
   useEffect(() => {
     moment.locale("pt-br");
@@ -122,7 +124,7 @@ export default function ScheduleSection() {
           ))}
         </div>
 
-        {loadingRoomsList ? (
+        {isLoading ? (
           <IndicadorDeCarregamento />
         ) : (
           <div className="rooms-container">
