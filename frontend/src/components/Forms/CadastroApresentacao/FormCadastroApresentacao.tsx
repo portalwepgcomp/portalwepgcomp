@@ -114,34 +114,17 @@ export function FormCadastroApresentacao() {
     }, [submission, setValue]);
 
     const opcoesApresentadoresSelect = useMemo(() => {
-        const todosApresentadores = userList.filter((u) => u.profile === "Presenter");
-        const apresentadoresSemSubmissao = userList.filter(
-            (usuario) => usuario.profile === "Presenter" && !usuario.hasSubmission
-        );
-
-
-        if (submission?.id && submission.mainAuthorId) {
-            const apresentadorAtual = todosApresentadores.find(
-                (u) => u.id === submission.mainAuthorId
-            );
-
-            if (apresentadorAtual) {
-                const outrosDisponiveis = apresentadoresSemSubmissao.filter(
-                    a => a.id !== apresentadorAtual.id
-                );
-
-                return [apresentadorAtual, ...outrosDisponiveis];
-            }
-
-            return apresentadoresSemSubmissao;
-        }
-
-        return apresentadoresSemSubmissao;
-    }, [
-        userList,
-        submission?.id,
-        submission?.mainAuthorId,
-    ]);
+        // Todos os apresentadores (sem filtrar por disponibilidade)
+        console.log("userList: ", userList.filter((u) => u.profile === "Presenter"));
+        return userList
+            .filter((u) => u.profile === "Presenter")
+            .map((u) => ({
+                ...u,
+                displayLabel: `${u.name} | ${
+                    u.hasSubmission ? "Possui apresentação" : "Não possui apresentação"
+                }`,
+            }));
+    }, [userList]);
 
     useEffect(() => {
         if (!professoresCarregou) {
@@ -362,7 +345,7 @@ export function FormCadastroApresentacao() {
                         ) : (
                             opcoesApresentadoresSelect.map((apresentador) => (
                                 <option key={apresentador.id} value={apresentador.id}>
-                                    {String((apresentador as any).name)}
+                                    {apresentador.displayLabel}
                                 </option>
                             ))
                         )}
