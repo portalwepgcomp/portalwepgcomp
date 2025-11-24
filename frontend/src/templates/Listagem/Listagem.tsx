@@ -82,6 +82,14 @@ export default function Listagem({
     setIsMounted(true);
   }, []);
 
+  function convertDriveLinkToDownload(url: string) {
+    const fileIdMatch = url.match(/\/d\/([\w-]+)/);
+    if (!fileIdMatch) return url; // Se não achar ID, devolve o original
+
+    const fileId = fileIdMatch[1];
+    return `https://drive.google.com/uc?export=download&id=${fileId}`;
+  }
+
   const count = cardsList.length;
   let counterLabelText = "";
   if (count === 1) {
@@ -186,7 +194,7 @@ export default function Listagem({
                               onClickItem(card?.id);
                             }
                           }}
-                          linkHostedFile={card.linkHostedFile}
+                          linkHostedFile={convertDriveLinkToDownload(card.linkHostedFile)}
                           session={card?.block?.title}
                       />
                   ) : (
