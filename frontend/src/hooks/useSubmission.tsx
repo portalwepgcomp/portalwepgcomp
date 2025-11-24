@@ -127,8 +127,6 @@ export const SubmissionProvider = ({ children }: SubmissionProps) => {
         return true;
       })
       .catch((err) => {
-        setSubmission(null);
-
         showAlert({
           icon: "error",
           title: "Erro ao cadastrar apresentação",
@@ -179,8 +177,6 @@ export const SubmissionProvider = ({ children }: SubmissionProps) => {
         );
       })
       .catch((err) => {
-        setSubmission(null);
-
         showAlert({
           icon: "error",
           title: "Erro ao editar apresentação",
