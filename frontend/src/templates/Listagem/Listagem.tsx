@@ -82,12 +82,17 @@ export default function Listagem({
     setIsMounted(true);
   }, []);
 
-  function convertDriveLinkToDownload(url: string) {
+  function convertDriveLinkToDownload(url?: string) {
+    if (url) {
     const fileIdMatch = url.match(/\/d\/([\w-]+)/);
     if (!fileIdMatch) return url; // Se não achar ID, devolve o original
 
     const fileId = fileIdMatch[1];
     return `https://drive.google.com/uc?export=download&id=${fileId}`;
+    } else {
+      return '';
+    }
+
   }
 
   const count = cardsList.length;
