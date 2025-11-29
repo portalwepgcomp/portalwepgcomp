@@ -46,9 +46,18 @@ const esquemaCadastro = z.object({
             message: "O envio do slide em PDF é obrigatório",
         }),
     linkApresentacao: z
-        .string()
-        .trim()
-        .optional(),
+    .string()
+    .trim()
+    .optional()
+    .refine(
+        (val) =>
+        !val ||
+        /^https:\/\/drive\.google\.com\/(file\/d\/[\w-]+(\/.*)?|open\?id=[\w-]+|uc\?id=[\w-]+|drive\/folders\/[\w-]+(\/.*)?)$/i
+            .test(val),
+        {
+        message: "Insira um link válido do Google Drive (arquivo deve ser um PDF)",
+        }
+    ),
 
 });
 
@@ -421,7 +430,7 @@ export function FormCadastroApresentacao() {
 
             <div className="col-12 mb-1">
                 <label className="form-label form-title">
-                    Link da apresentação <span className="txt-min">(Google Drive, Dropbox, Github, etc...)</span>
+                    Link da apresentação <span className="txt-min">(Google Drive)</span>
                 </label>
                 <input
                     type="text"
