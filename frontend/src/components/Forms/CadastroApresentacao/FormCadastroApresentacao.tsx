@@ -126,7 +126,6 @@ export function FormCadastroApresentacao() {
     }, [submission, setValue]);
 
     const opcoesApresentadoresSelect = useMemo(() => {
-        console.log("userList: ", userList.filter((u) => u.profile === "Presenter"));
         return userList
             .filter((u) => u.profile === "Presenter")
             .map((u) => ({
