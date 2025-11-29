@@ -11,7 +11,7 @@ import { z } from "zod";
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 import { useSweetAlert } from "@/hooks/useAlert";
-import { SubmissionContext } from "@/hooks/useSubmission";
+import { SubmissionContext, useSubmission } from "@/hooks/useSubmission";
 import { useSubmissionFile } from "@/hooks/useSubmissionFile";
 import { UserContext } from "@/hooks/useUsers";
 
@@ -81,6 +81,9 @@ export function FormCadastroApresentacao() {
     const [nomeArquivo, setNomeArquivo] = useState<string | null>(null);
     const { Edicao } = useEdicao();
     const [carregandoEnvio, setCarregandoEnvio] = useState(false);
+      const {
+        submissionList
+      } = useSubmission();
 
     const {
         register,
@@ -123,34 +126,15 @@ export function FormCadastroApresentacao() {
     }, [submission, setValue]);
 
     const opcoesApresentadoresSelect = useMemo(() => {
-        const todosApresentadores = userList.filter((u) => u.profile === "Presenter");
-        const apresentadoresSemSubmissao = userList.filter(
-            (usuario) => usuario.profile === "Presenter" && !usuario.hasSubmission
-        );
-
-
-        if (submission?.id && submission.mainAuthorId) {
-            const apresentadorAtual = todosApresentadores.find(
-                (u) => u.id === submission.mainAuthorId
-            );
-
-            if (apresentadorAtual) {
-                const outrosDisponiveis = apresentadoresSemSubmissao.filter(
-                    a => a.id !== apresentadorAtual.id
-                );
-
-                return [apresentadorAtual, ...outrosDisponiveis];
-            }
-
-            return apresentadoresSemSubmissao;
-        }
-
-        return apresentadoresSemSubmissao;
-    }, [
-        userList,
-        submission?.id,
-        submission?.mainAuthorId,
-    ]);
+        return userList
+            .filter((u) => u.profile === "Presenter")
+            .map((u) => ({
+                ...u,
+                displayLabel: `${u.name} | ${
+                    submissionList.some(sub => sub.mainAuthorId === u.id) ? "Possui apresentação" : "Não possui apresentação"
+                }`,
+            }));
+    }, [userList, submissionList]);
 
     useEffect(() => {
         if (!professoresCarregou) {
@@ -371,7 +355,7 @@ export function FormCadastroApresentacao() {
                         ) : (
                             opcoesApresentadoresSelect.map((apresentador) => (
                                 <option key={apresentador.id} value={apresentador.id}>
-                                    {String((apresentador as any).name)}
+                                    {apresentador.displayLabel}
                                 </option>
                             ))
                         )}
