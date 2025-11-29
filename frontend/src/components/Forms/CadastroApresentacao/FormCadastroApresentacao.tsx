@@ -11,7 +11,7 @@ import { z } from "zod";
 import { AuthContext } from "@/context/AuthProvider/authProvider";
 import { getEventEditionIdStorage } from "@/context/AuthProvider/util";
 import { useSweetAlert } from "@/hooks/useAlert";
-import { SubmissionContext } from "@/hooks/useSubmission";
+import { SubmissionContext, useSubmission } from "@/hooks/useSubmission";
 import { useSubmissionFile } from "@/hooks/useSubmissionFile";
 import { UserContext } from "@/hooks/useUsers";
 
@@ -72,6 +72,9 @@ export function FormCadastroApresentacao() {
     const [nomeArquivo, setNomeArquivo] = useState<string | null>(null);
     const { Edicao } = useEdicao();
     const [carregandoEnvio, setCarregandoEnvio] = useState(false);
+      const {
+        submissionList
+      } = useSubmission();
 
     const {
         register,
@@ -114,17 +117,16 @@ export function FormCadastroApresentacao() {
     }, [submission, setValue]);
 
     const opcoesApresentadoresSelect = useMemo(() => {
-        // Todos os apresentadores (sem filtrar por disponibilidade)
         console.log("userList: ", userList.filter((u) => u.profile === "Presenter"));
         return userList
             .filter((u) => u.profile === "Presenter")
             .map((u) => ({
                 ...u,
                 displayLabel: `${u.name} | ${
-                    u.hasSubmission ? "Possui apresentação" : "Não possui apresentação"
+                    submissionList.some(sub => sub.mainAuthorId === u.id) ? "Possui apresentação" : "Não possui apresentação"
                 }`,
             }));
-    }, [userList]);
+    }, [userList, submissionList]);
 
     useEffect(() => {
         if (!professoresCarregou) {
