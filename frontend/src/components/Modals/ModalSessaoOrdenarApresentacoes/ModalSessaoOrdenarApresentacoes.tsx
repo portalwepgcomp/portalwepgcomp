@@ -6,10 +6,12 @@ import { useEdicao } from '@/hooks/useEdicao';
 import { useSession } from "@/hooks/useSession";
 import { useEffect, useState } from 'react';
 
+
 export default function ModalSessaoOrdenarApresentacoes() {
   const { swapPresentationsOnSession, sessao } = useSession();
   const { Edicao } = useEdicao();
   const [listaOrdenada, setListaOrdenada] = useState<any[]>([]);
+
 
   useEffect(() => {
     const listaOrdenadaSessao =
@@ -40,6 +42,10 @@ export default function ModalSessaoOrdenarApresentacoes() {
     );
 
     setListaOrdenada(data);
+    setTimeout(() => {
+      window.location.reload()
+    }, 1800);
+    
   }
 
   return (
