@@ -384,6 +384,7 @@ export default function FormSessaoApresentacoes({
           <table className="table table-sm align-middle">
             <thead>
               <tr>
+                <th></th>
                 <th style={{ width: 56 }}>#</th>
                 <th>Título</th>
                 <th>Apresentador</th>
@@ -400,29 +401,33 @@ export default function FormSessaoApresentacoes({
               )}
               {orderedApresentacoes.map((row, index) => (
                 <tr key={`${row.value}-${index}`}>
+                  <td>
+                    <div className="btn-group btn-group-sm setas-muda-posicao" role="group">
+                      <button
+                          type="button"
+                          className="btn btn-outline-secondary"
+                          title="Subir"
+                          onClick={() => moveUp(index)}
+                          disabled={index === 0}
+                        >
+                          ↑
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary"
+                          title="Descer"
+                          onClick={() => moveDown(index)}
+                          disabled={index === orderedApresentacoes.length - 1}
+                        >
+                          ↓
+                        </button>
+                      </div>
+                    </td>
                   <td>{index + 1}</td>
                   <td>{row.title}</td>
                   <td>{row.presenterName}</td>
                   <td>
                     <div className="btn-group btn-group-sm" role="group">
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        title="Subir"
-                        onClick={() => moveUp(index)}
-                        disabled={index === 0}
-                      >
-                        ↑
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        title="Descer"
-                        onClick={() => moveDown(index)}
-                        disabled={index === orderedApresentacoes.length - 1}
-                      >
-                        ↓
-                      </button>
                       <button
                         type="button"
                         className="btn btn-outline-danger"
