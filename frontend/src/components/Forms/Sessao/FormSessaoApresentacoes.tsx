@@ -18,7 +18,7 @@ import { useSubmission } from "@/hooks/useSubmission";
 import { useUsers } from "@/hooks/useUsers";
 import { formatOptions } from "@/utils/formatOptions";
 import dayjs from "dayjs";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./style.scss";
 
 const formSessaoApresentacoesSchema = z.object({
@@ -122,43 +122,94 @@ export default function FormSessaoApresentacoes({
 
   const salasOptions = formatOptions(roomsList, "name");
 
-  const apresentacoesOptions = submissionList?.map((v) => {
-    const presenterName = v?.mainAuthor?.name || "Apresentador não informado";
-    const title = v?.title || "Título não informado";
-    return {
-      value: v.id,
-      label: title,
-      title: title,
-      presenterName: presenterName,
-    };
-  });
+  // Opções com metadados para montar tabela
+  const apresentacoesOptions = useMemo(() => {
+    return (submissionList || []).map((v) => {
+      const presenterName = v?.mainAuthor?.name || "Apresentador não informado";
+      const title = v?.title || "Título não informado";
+      return {
+        value: v.id,
+        label: title,
+        title,
+        presenterName,
+      };
+    });
+  }, [submissionList]);
 
-  const formatOptionLabel = (option: any, { context }: any) => {
-    // No menu dropdown, mostra título + apresentador
-    if (context === 'menu') {
-      return (
-        <div>
-          <span style={{ fontWeight: 500 }}>{option.title}</span>
-          <span style={{ fontSize: '0.85em', color: '#6c757d', marginLeft: '8px' }}>
-            ({option.presenterName})
-          </span>
-        </div>
-      );
+  // Estado local que guarda a ordem dos selecionados
+  const [orderedApresentacoes, setOrderedApresentacoes] = useState<
+    { value: string; label: string; title: string; presenterName: string }[]
+  >([]);
+
+  // Sincroniza o estado local com o campo RHF "apresentacoes"
+  const syncFormApresentacoes = (
+    items: { value: string; label: string; title: string; presenterName: string }[],
+  ) => {
+    setOrderedApresentacoes(items);
+    setValue(
+      "apresentacoes",
+      items.map((i) => ({ value: i.value, label: i.label })),
+      { shouldValidate: true, shouldDirty: true },
+    );
+  };
+
+  // Ao entrar em modo edição, carregar ordem existente da sessão
+  useEffect(() => {
+    if (sessao?.id && sessao?.presentations?.length) {
+      const loaded =
+        sessao.presentations
+          .toSorted((a, b) => a.positionWithinBlock - b.positionWithinBlock)
+          .map((p) => {
+            const presenterName =
+              p.submission?.mainAuthor?.name || "Apresentador não informado";
+            const title = p.submission?.title || "Título não informado";
+            return {
+              value: p.submission?.id ?? "",
+              label: title,
+              title,
+              presenterName,
+            };
+          }) || [];
+      syncFormApresentacoes(loaded);
+    } else {
+      syncFormApresentacoes([]);
     }
-    // No preview (valor selecionado), mostra apenas o título
-    return option.title;
+  }, [sessao?.id]);
+
+  // Opções disponíveis (remove as já adicionadas para evitar duplicidade)
+  const availableOptions = useMemo(() => {
+    const selectedIds = new Set(orderedApresentacoes.map((a) => a.value));
+    return apresentacoesOptions.filter((opt) => !selectedIds.has(opt.value));
+  }, [apresentacoesOptions, orderedApresentacoes]);
+
+  // Ações: adicionar, subir, descer, remover
+  const addApresentacao = (id: string) => {
+    const opt = apresentacoesOptions.find((o) => o.value === id);
+    if (!opt) return;
+    syncFormApresentacoes([...orderedApresentacoes, opt]);
   };
 
-  // Função customizada de filtro para buscar tanto no título quanto no nome do apresentador
-  const filterOption = (option: any, inputValue: string) => {
-    const searchText = inputValue.toLowerCase();
-    const title = option.data.title?.toLowerCase() || '';
-    const presenterName = option.data.presenterName?.toLowerCase() || '';
-    
-    return title.includes(searchText) || presenterName.includes(searchText);
+  const moveUp = (index: number) => {
+    if (index <= 0) return;
+    const next = [...orderedApresentacoes];
+    [next[index - 1], next[index]] = [next[index], next[index - 1]];
+    syncFormApresentacoes(next);
   };
 
+  const moveDown = (index: number) => {
+    if (index >= orderedApresentacoes.length - 1) return;
+    const next = [...orderedApresentacoes];
+    [next[index + 1], next[index]] = [next[index], next[index + 1]];
+    syncFormApresentacoes(next);
+  };
   const avaliadoresOptions = formatOptions(userList, "name");
+  const removeRow = (index: number) => {
+    console.log("Removendo índice: ", index);
+    console.log("Antes: ", orderedApresentacoes);
+    const next = orderedApresentacoes.filter((_, i) => i !== index);
+    console.log("Depois: ", next);
+    syncFormApresentacoes(next);
+  };
 
   const combinedTimeFilter = (time: Date) => {
     const hour = time.getHours();
@@ -300,25 +351,93 @@ export default function FormSessaoApresentacoes({
           {...register("titulo")}
         />
         <p className="text-danger error-message">{errors.titulo?.message}</p>
+
         <label className="form-label fw-bold form-title">
           {formApresentacoesFields.apresentacoes.label}
         </label>
-        <Controller
-          name="apresentacoes"
-          control={control}
-          render={({ field }) => (
-            <Select
-              {...field}
-              isMulti
-              id="sa-apresentacoes-select"
-              isClearable
-              placeholder={formApresentacoesFields.apresentacoes.placeholder}
-              options={apresentacoesOptions}
-              formatOptionLabel={formatOptionLabel}
-              filterOption={filterOption}
-            />
-          )}
-        />
+
+        {/* Select para adicionar uma apresentação à tabela */}
+        <div className="input-group mb-2">
+          <select
+            className="form-select"
+            id="sa-apresentacoes-add-select"
+            defaultValue=""
+            onChange={(e) => {
+              if (!e.target.value) return;
+              addApresentacao(e.target.value);
+              e.currentTarget.value = ""; // limpa após inclusão
+            }}
+          >
+            <option value="" disabled>
+              {formApresentacoesFields.apresentacoes.placeholder}
+            </option>
+            {availableOptions.map((op) => (
+              <option key={op.value} value={op.value}>
+                {op.title} ({op.presenterName})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Tabela com ordem e ações */}
+        <div className="table-responsive">
+          <table className="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th style={{ width: 56 }}>#</th>
+                <th>Título</th>
+                <th>Apresentador</th>
+                <th style={{ width: 220 }}>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orderedApresentacoes.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="text-body-secondary">
+                    Nenhuma apresentação selecionada.
+                  </td>
+                </tr>
+              )}
+              {orderedApresentacoes.map((row, index) => (
+                <tr key={`${row.value}-${index}`}>
+                  <td>{index + 1}</td>
+                  <td>{row.title}</td>
+                  <td>{row.presenterName}</td>
+                  <td>
+                    <div className="btn-group btn-group-sm" role="group">
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        title="Subir"
+                        onClick={() => moveUp(index)}
+                        disabled={index === 0}
+                      >
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        title="Descer"
+                        onClick={() => moveDown(index)}
+                        disabled={index === orderedApresentacoes.length - 1}
+                      >
+                        ↓
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger"
+                        title="Excluir"
+                        onClick={() => removeRow(index)}
+                      >
+                        Excluir
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         <p className="text-danger error-message">
           {errors.apresentacoes?.message}
