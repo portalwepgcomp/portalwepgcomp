@@ -82,18 +82,36 @@ export default function Listagem({
     setIsMounted(true);
   }, []);
 
-  function convertDriveLinkToDownload(url?: string) {
-    if (url) {
-    const fileIdMatch = url.match(/\/d\/([\w-]+)/);
-    if (!fileIdMatch) return url; // Se não achar ID, devolve o original
+function convertDriveLinkToDownload(url?: string) {
+  if (!url) return '';
+  const normalizedUrl = url.startsWith('/d/') ? url.slice(3) : url;
 
-    const fileId = fileIdMatch[1];
-    return `https://drive.google.com/uc?export=download&id=${fileId}`;
-    } else {
-      return '';
-    }
-
+  const docsMatch = normalizedUrl.match(/docs\.google\.com\/document\/d\/([\w-]+)/);
+  if (docsMatch) {
+    const fileId = docsMatch[1];
+    return `https://docs.google.com/document/d/${fileId}/export?format=pdf`;
   }
+
+  const slidesMatch = normalizedUrl.match(/docs\.google\.com\/presentation\/d\/([\w-]+)/);
+  if (slidesMatch) {
+    const fileId = slidesMatch[1];
+    return `https://docs.google.com/presentation/d/${fileId}/export/pdf`;
+  }
+  const isFileId = /^[\w-]{20,}$/.test(normalizedUrl);
+  if (isFileId) {
+    return `https://drive.google.com/uc?export=download&id=${normalizedUrl}`;
+  }
+
+  const driveFileIdMatch =
+    normalizedUrl.match(/(?:drive\.google\.com\/file\/d\/|\/d\/|id=)([\w-]+)/);
+
+  if (driveFileIdMatch) {
+    const fileId = driveFileIdMatch[1];
+    return `https://drive.google.com/uc?export=download&id=${fileId}`;
+  }
+  return url;
+}
+
 
   const count = cardsList.length;
   let counterLabelText = "";

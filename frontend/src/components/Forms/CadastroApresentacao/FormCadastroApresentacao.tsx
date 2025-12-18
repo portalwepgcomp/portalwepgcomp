@@ -46,19 +46,19 @@ const esquemaCadastro = z.object({
             message: "O envio do slide em PDF é obrigatório",
         }),
     linkApresentacao: z
-    .string()
-    .trim()
-    .optional()
-    .refine(
-        (val) =>
-        !val ||
-        /^https:\/\/drive\.google\.com\/(file\/d\/[\w-]+(\/.*)?|open\?id=[\w-]+|uc\?id=[\w-]+|drive\/folders\/[\w-]+(\/.*)?)$/i
-            .test(val),
-        {
-        message: "Insira um link válido do Google Drive (arquivo deve ser um PDF)",
-        }
-    ),
-
+        .string()
+        .trim()
+        .optional()
+        .refine(
+            (val) =>
+                !val ||
+                /^https:\/\/(drive\.google\.com\/(file\/d\/[\w-]+(\/.*)?|open\?id=[\w-]+|uc\?id=[\w-]+|drive\/folders\/[\w-]+(\/.*)?)|docs\.google\.com\/presentation\/d\/[\w-]+(\/.*)?)$/i
+                    .test(val),
+            {
+                message:
+                    "Insira um link válido do Google Drive ou Google Docs Apresentações (arquivo deve ser um PDF ou apresentação)",
+            }
+        ),
 });
 
 type CadastroFormulario = z.infer<typeof esquemaCadastro>;
